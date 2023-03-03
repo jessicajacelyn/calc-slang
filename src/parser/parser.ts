@@ -12,6 +12,7 @@ import {
   CalcParser,
   DivisionContext,
   ExpressionContext,
+  ModulusContext,
   MultiplicationContext,
   NumberContext,
   ParenthesesContext,
@@ -160,6 +161,17 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
+  
+  visitModulus(ctx: ModulusContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '%',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+  
   visitAddition(ctx: AdditionContext): es.Expression {
     return {
       type: 'BinaryExpression',
