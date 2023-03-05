@@ -10,12 +10,12 @@ import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
   CalcParser,
+  DivisionContext,
+  ExpressionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
-  DivisionContext,
-  ExpressionContext,
   // LiteralContext,
   ModulusContext,
   MultiplicationContext,
@@ -238,7 +238,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       right: this.visit(ctx._right),
       loc: contextToLocation(ctx)
     }
-  } 
+  }
 
   visitLesserEqualComparator(ctx: LesserEqualComparatorContext): es.Expression {
     return {
