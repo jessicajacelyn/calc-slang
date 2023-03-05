@@ -9,8 +9,43 @@ DIV: '/';
 MOD: '%';
 ADD: '+';
 SUB: '-';
+
 NUMBER: [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
+LETTER: [a-zA-Z];
+
+Stringliteral
+:
+	Encodingprefix? '"' Schar* '"'
+	| Encodingprefix? 'R' Rawstring
+;
+
+fragment
+Encodingprefix
+:
+	'u8'
+	| 'u'
+	| 'U'
+	| 'L'
+;
+
+fragment
+Schar
+:
+	[a-zA-Z_]
+;
+
+
+fragment
+Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
+:
+	'"' .*? '(' .*? ')' .*? '"'
+;
+
+// literal
+// :
+// 	Stringliteral # String
+// ;
 
 /*
  * Productions
@@ -26,4 +61,9 @@ expression
    | left=expression operator=MOD right=expression  # Modulus
    | left=expression operator=ADD right=expression  # Addition
    | left=expression operator=SUB right=expression  # Subtraction
+   | left=expression operator=MOD right=expression  # Modulus
+   | Stringliteral                                  # String 
    ;
+
+  
+  

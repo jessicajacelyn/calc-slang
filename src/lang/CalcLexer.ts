@@ -1,147 +1,141 @@
 // Generated from ./src/lang/Calc.g4 by ANTLR 4.9.0-SNAPSHOT
 
-import { ATN } from 'antlr4ts/atn/ATN'
-import { ATNDeserializer } from 'antlr4ts/atn/ATNDeserializer'
-import { LexerATNSimulator } from 'antlr4ts/atn/LexerATNSimulator'
-import { CharStream } from 'antlr4ts/CharStream'
-import { NotNull } from 'antlr4ts/Decorators'
-import { Override } from 'antlr4ts/Decorators'
-import { Lexer } from 'antlr4ts/Lexer'
-import * as Utils from 'antlr4ts/misc/Utils'
-import { RuleContext } from 'antlr4ts/RuleContext'
-import { Vocabulary } from 'antlr4ts/Vocabulary'
-import { VocabularyImpl } from 'antlr4ts/VocabularyImpl'
+
+import { ATN } from "antlr4ts/atn/ATN";
+import { ATNDeserializer } from "antlr4ts/atn/ATNDeserializer";
+import { CharStream } from "antlr4ts/CharStream";
+import { Lexer } from "antlr4ts/Lexer";
+import { LexerATNSimulator } from "antlr4ts/atn/LexerATNSimulator";
+import { NotNull } from "antlr4ts/Decorators";
+import { Override } from "antlr4ts/Decorators";
+import { RuleContext } from "antlr4ts/RuleContext";
+import { Vocabulary } from "antlr4ts/Vocabulary";
+import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
+
+import * as Utils from "antlr4ts/misc/Utils";
+
 
 export class CalcLexer extends Lexer {
-  public static readonly T__0 = 1
-  public static readonly T__1 = 2
-  public static readonly POW = 3
-  public static readonly MUL = 4
-  public static readonly DIV = 5
-  public static readonly MOD = 6
-  public static readonly ADD = 7
-  public static readonly SUB = 8
-  public static readonly NUMBER = 9
-  public static readonly WHITESPACE = 10
+	public static readonly T__0 = 1;
+	public static readonly T__1 = 2;
+	public static readonly POW = 3;
+	public static readonly MUL = 4;
+	public static readonly DIV = 5;
+	public static readonly MOD = 6;
+	public static readonly ADD = 7;
+	public static readonly SUB = 8;
+	public static readonly NUMBER = 9;
+	public static readonly WHITESPACE = 10;
+	public static readonly LETTER = 11;
+	public static readonly Stringliteral = 12;
 
-  // tslint:disable:no-trailing-whitespace
-  public static readonly channelNames: string[] = ['DEFAULT_TOKEN_CHANNEL', 'HIDDEN']
+	// tslint:disable:no-trailing-whitespace
+	public static readonly channelNames: string[] = [
+		"DEFAULT_TOKEN_CHANNEL", "HIDDEN",
+	];
 
-  // tslint:disable:no-trailing-whitespace
-  public static readonly modeNames: string[] = ['DEFAULT_MODE']
+	// tslint:disable:no-trailing-whitespace
+	public static readonly modeNames: string[] = [
+		"DEFAULT_MODE",
+	];
 
-  public static readonly ruleNames: string[] = [
-    'T__0',
-    'T__1',
-    'POW',
-    'MUL',
-    'DIV',
-    'MOD',
-    'ADD',
-    'SUB',
-    'NUMBER',
-    'WHITESPACE'
-  ]
+	public static readonly ruleNames: string[] = [
+		"T__0", "T__1", "POW", "MUL", "DIV", "MOD", "ADD", "SUB", "NUMBER", "WHITESPACE", 
+		"LETTER", "Stringliteral", "Encodingprefix", "Schar", "Rawstring",
+	];
 
-  private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-    undefined,
-    "'('",
-    "')'",
-    "'^'",
-    "'*'",
-    "'/'",
-    "'%'",
-    "'+'",
-    "'-'"
-  ]
-  private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
-    undefined,
-    undefined,
-    undefined,
-    'POW',
-    'MUL',
-    'DIV',
-    'MOD',
-    'ADD',
-    'SUB',
-    'NUMBER',
-    'WHITESPACE'
-  ]
-  public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(
-    CalcLexer._LITERAL_NAMES,
-    CalcLexer._SYMBOLIC_NAMES,
-    []
-  )
+	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
+		undefined, "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'",
+	];
+	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
+		undefined, undefined, undefined, "POW", "MUL", "DIV", "MOD", "ADD", "SUB", 
+		"NUMBER", "WHITESPACE", "LETTER", "Stringliteral",
+	];
+	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcLexer._LITERAL_NAMES, CalcLexer._SYMBOLIC_NAMES, []);
 
-  // @Override
-  // @NotNull
-  public get vocabulary(): Vocabulary {
-    return CalcLexer.VOCABULARY
-  }
-  // tslint:enable:no-trailing-whitespace
+	// @Override
+	// @NotNull
+	public get vocabulary(): Vocabulary {
+		return CalcLexer.VOCABULARY;
+	}
+	// tslint:enable:no-trailing-whitespace
 
-  constructor(input: CharStream) {
-    super(input)
-    this._interp = new LexerATNSimulator(CalcLexer._ATN, this)
-  }
 
-  // @Override
-  public get grammarFileName(): string {
-    return 'Calc.g4'
-  }
+	constructor(input: CharStream) {
+		super(input);
+		this._interp = new LexerATNSimulator(CalcLexer._ATN, this);
+	}
 
-  // @Override
-  public get ruleNames(): string[] {
-    return CalcLexer.ruleNames
-  }
+	// @Override
+	public get grammarFileName(): string { return "Calc.g4"; }
 
-  // @Override
-  public get serializedATN(): string {
-    return CalcLexer._serializedATN
-  }
+	// @Override
+	public get ruleNames(): string[] { return CalcLexer.ruleNames; }
 
-  // @Override
-  public get channelNames(): string[] {
-    return CalcLexer.channelNames
-  }
+	// @Override
+	public get serializedATN(): string { return CalcLexer._serializedATN; }
 
-  // @Override
-  public get modeNames(): string[] {
-    return CalcLexer.modeNames
-  }
+	// @Override
+	public get channelNames(): string[] { return CalcLexer.channelNames; }
 
-  public static readonly _serializedATN: string =
-    '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x02\f3\b\x01\x04' +
-    '\x02\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04' +
-    '\x07\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x03\x02\x03\x02\x03' +
-    '\x03\x03\x03\x03\x04\x03\x04\x03\x05\x03\x05\x03\x06\x03\x06\x03\x07\x03' +
-    '\x07\x03\b\x03\b\x03\t\x03\t\x03\n\x06\n)\n\n\r\n\x0E\n*\x03\v\x06\v.' +
-    '\n\v\r\v\x0E\v/\x03\v\x03\v\x02\x02\x02\f\x03\x02\x03\x05\x02\x04\x07' +
-    '\x02\x05\t\x02\x06\v\x02\x07\r\x02\b\x0F\x02\t\x11\x02\n\x13\x02\v\x15' +
-    '\x02\f\x03\x02\x04\x03\x022;\x05\x02\v\f\x0F\x0F""\x024\x02\x03\x03' +
-    '\x02\x02\x02\x02\x05\x03\x02\x02\x02\x02\x07\x03\x02\x02\x02\x02\t\x03' +
-    '\x02\x02\x02\x02\v\x03\x02\x02\x02\x02\r\x03\x02\x02\x02\x02\x0F\x03\x02' +
-    '\x02\x02\x02\x11\x03\x02\x02\x02\x02\x13\x03\x02\x02\x02\x02\x15\x03\x02' +
-    '\x02\x02\x03\x17\x03\x02\x02\x02\x05\x19\x03\x02\x02\x02\x07\x1B\x03\x02' +
-    '\x02\x02\t\x1D\x03\x02\x02\x02\v\x1F\x03\x02\x02\x02\r!\x03\x02\x02\x02' +
-    '\x0F#\x03\x02\x02\x02\x11%\x03\x02\x02\x02\x13(\x03\x02\x02\x02\x15-\x03' +
-    '\x02\x02\x02\x17\x18\x07*\x02\x02\x18\x04\x03\x02\x02\x02\x19\x1A\x07' +
-    '+\x02\x02\x1A\x06\x03\x02\x02\x02\x1B\x1C\x07`\x02\x02\x1C\b\x03\x02\x02' +
-    '\x02\x1D\x1E\x07,\x02\x02\x1E\n\x03\x02\x02\x02\x1F \x071\x02\x02 \f\x03' +
-    '\x02\x02\x02!"\x07\'\x02\x02"\x0E\x03\x02\x02\x02#$\x07-\x02\x02$\x10' +
-    "\x03\x02\x02\x02%&\x07/\x02\x02&\x12\x03\x02\x02\x02')\t\x02\x02\x02" +
-    "('\x03\x02\x02\x02)*\x03\x02\x02\x02*(\x03\x02\x02\x02*+\x03\x02\x02" +
-    '\x02+\x14\x03\x02\x02\x02,.\t\x03\x02\x02-,\x03\x02\x02\x02./\x03\x02' +
-    '\x02\x02/-\x03\x02\x02\x02/0\x03\x02\x02\x0201\x03\x02\x02\x0212\b\v\x02' +
-    '\x022\x16\x03\x02\x02\x02\x05\x02*/\x03\b\x02\x02'
-  public static __ATN: ATN
-  public static get _ATN(): ATN {
-    if (!CalcLexer.__ATN) {
-      CalcLexer.__ATN = new ATNDeserializer().deserialize(
-        Utils.toCharArray(CalcLexer._serializedATN)
-      )
-    }
+	// @Override
+	public get modeNames(): string[] { return CalcLexer.modeNames; }
 
-    return CalcLexer.__ATN
-  }
+	public static readonly _serializedATN: string =
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x02\x0Eo\b\x01\x04" +
+		"\x02\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04" +
+		"\x07\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r" +
+		"\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x03\x02\x03\x02\x03\x03\x03" +
+		"\x03\x03\x04\x03\x04\x03\x05\x03\x05\x03\x06\x03\x06\x03\x07\x03\x07\x03" +
+		"\b\x03\b\x03\t\x03\t\x03\n\x06\n3\n\n\r\n\x0E\n4\x03\v\x06\v8\n\v\r\v" +
+		"\x0E\v9\x03\v\x03\v\x03\f\x03\f\x03\r\x05\rA\n\r\x03\r\x03\r\x07\rE\n" +
+		"\r\f\r\x0E\rH\v\r\x03\r\x03\r\x05\rL\n\r\x03\r\x03\r\x05\rP\n\r\x03\x0E" +
+		"\x03\x0E\x03\x0E\x05\x0EU\n\x0E\x03\x0F\x03\x0F\x03\x10\x03\x10\x07\x10" +
+		"[\n\x10\f\x10\x0E\x10^\v\x10\x03\x10\x03\x10\x07\x10b\n\x10\f\x10\x0E" +
+		"\x10e\v\x10\x03\x10\x03\x10\x07\x10i\n\x10\f\x10\x0E\x10l\v\x10\x03\x10" +
+		"\x03\x10\x05\\cj\x02\x02\x11\x03\x02\x03\x05\x02\x04\x07\x02\x05\t\x02" +
+		"\x06\v\x02\x07\r\x02\b\x0F\x02\t\x11\x02\n\x13\x02\v\x15\x02\f\x17\x02" +
+		"\r\x19\x02\x0E\x1B\x02\x02\x1D\x02\x02\x1F\x02\x02\x03\x02\x07\x03\x02" +
+		"2;\x05\x02\v\f\x0F\x0F\"\"\x04\x02C\\c|\x05\x02NNWWww\x05\x02C\\aac|\x02" +
+		"u\x02\x03\x03\x02\x02\x02\x02\x05\x03\x02\x02\x02\x02\x07\x03\x02\x02" +
+		"\x02\x02\t\x03\x02\x02\x02\x02\v\x03\x02\x02\x02\x02\r\x03\x02\x02\x02" +
+		"\x02\x0F\x03\x02\x02\x02\x02\x11\x03\x02\x02\x02\x02\x13\x03\x02\x02\x02" +
+		"\x02\x15\x03\x02\x02\x02\x02\x17\x03\x02\x02\x02\x02\x19\x03\x02\x02\x02" +
+		"\x03!\x03\x02\x02\x02\x05#\x03\x02\x02\x02\x07%\x03\x02\x02\x02\t\'\x03" +
+		"\x02\x02\x02\v)\x03\x02\x02\x02\r+\x03\x02\x02\x02\x0F-\x03\x02\x02\x02" +
+		"\x11/\x03\x02\x02\x02\x132\x03\x02\x02\x02\x157\x03\x02\x02\x02\x17=\x03" +
+		"\x02\x02\x02\x19O\x03\x02\x02\x02\x1BT\x03\x02\x02\x02\x1DV\x03\x02\x02" +
+		"\x02\x1FX\x03\x02\x02\x02!\"\x07*\x02\x02\"\x04\x03\x02\x02\x02#$\x07" +
+		"+\x02\x02$\x06\x03\x02\x02\x02%&\x07`\x02\x02&\b\x03\x02\x02\x02\'(\x07" +
+		",\x02\x02(\n\x03\x02\x02\x02)*\x071\x02\x02*\f\x03\x02\x02\x02+,\x07\'" +
+		"\x02\x02,\x0E\x03\x02\x02\x02-.\x07-\x02\x02.\x10\x03\x02\x02\x02/0\x07" +
+		"/\x02\x020\x12\x03\x02\x02\x0213\t\x02\x02\x0221\x03\x02\x02\x0234\x03" +
+		"\x02\x02\x0242\x03\x02\x02\x0245\x03\x02\x02\x025\x14\x03\x02\x02\x02" +
+		"68\t\x03\x02\x0276\x03\x02\x02\x0289\x03\x02\x02\x0297\x03\x02\x02\x02" +
+		"9:\x03\x02\x02\x02:;\x03\x02\x02\x02;<\b\v\x02\x02<\x16\x03\x02\x02\x02" +
+		"=>\t\x04\x02\x02>\x18\x03\x02\x02\x02?A\x05\x1B\x0E\x02@?\x03\x02\x02" +
+		"\x02@A\x03\x02\x02\x02AB\x03\x02\x02\x02BF\x07$\x02\x02CE\x05\x1D\x0F" +
+		"\x02DC\x03\x02\x02\x02EH\x03\x02\x02\x02FD\x03\x02\x02\x02FG\x03\x02\x02" +
+		"\x02GI\x03\x02\x02\x02HF\x03\x02\x02\x02IP\x07$\x02\x02JL\x05\x1B\x0E" +
+		"\x02KJ\x03\x02\x02\x02KL\x03\x02\x02\x02LM\x03\x02\x02\x02MN\x07T\x02" +
+		"\x02NP\x05\x1F\x10\x02O@\x03\x02\x02\x02OK\x03\x02\x02\x02P\x1A\x03\x02" +
+		"\x02\x02QR\x07w\x02\x02RU\x07:\x02\x02SU\t\x05\x02\x02TQ\x03\x02\x02\x02" +
+		"TS\x03\x02\x02\x02U\x1C\x03\x02\x02\x02VW\t\x06\x02\x02W\x1E\x03\x02\x02" +
+		"\x02X\\\x07$\x02\x02Y[\v\x02\x02\x02ZY\x03\x02\x02\x02[^\x03\x02\x02\x02" +
+		"\\]\x03\x02\x02\x02\\Z\x03\x02\x02\x02]_\x03\x02\x02\x02^\\\x03\x02\x02" +
+		"\x02_c\x07*\x02\x02`b\v\x02\x02\x02a`\x03\x02\x02\x02be\x03\x02\x02\x02" +
+		"cd\x03\x02\x02\x02ca\x03\x02\x02\x02df\x03\x02\x02\x02ec\x03\x02\x02\x02" +
+		"fj\x07+\x02\x02gi\v\x02\x02\x02hg\x03\x02\x02\x02il\x03\x02\x02\x02jk" +
+		"\x03\x02\x02\x02jh\x03\x02\x02\x02km\x03\x02\x02\x02lj\x03\x02\x02\x02" +
+		"mn\x07$\x02\x02n \x03\x02\x02\x02\r\x0249@FKOT\\cj\x03\b\x02\x02";
+	public static __ATN: ATN;
+	public static get _ATN(): ATN {
+		if (!CalcLexer.__ATN) {
+			CalcLexer.__ATN = new ATNDeserializer().deserialize(Utils.toCharArray(CalcLexer._serializedATN));
+		}
+
+		return CalcLexer.__ATN;
+	}
+
 }
+
