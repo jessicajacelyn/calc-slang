@@ -16,8 +16,8 @@ LETTER: [a-zA-Z];
 
 Stringliteral
 :
-	Encodingprefix? '"' Schar* '"'
-	| Encodingprefix? 'R' Rawstring
+  [a-zA-Z0-9]+
+
 ;
 
 fragment
@@ -29,17 +29,17 @@ Encodingprefix
 	| 'L'
 ;
 
-fragment
-Schar
-:
-	[a-zA-Z_]
-;
-
 
 fragment
 Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
 :
 	'"' .*? '(' .*? ')' .*? '"'
+;
+
+assignmentoperator
+:
+	'='
+	| ':='
 ;
 
 // literal
@@ -62,6 +62,7 @@ expression
    | left=expression operator=SUB right=expression  # Subtraction
    | left=expression operator=MOD right=expression  # Modulus
    | Stringliteral                                  # String 
+   | left=expression operator=assignmentoperator right=expression # Assignment
    ;
 
   

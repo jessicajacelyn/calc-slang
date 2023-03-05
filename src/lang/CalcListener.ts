@@ -12,6 +12,8 @@ import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
+import { AssignmentContext } from "./CalcParser";
+import { AssignmentoperatorContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -137,6 +139,30 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitString?: (ctx: StringContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `Assignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterAssignment?: (ctx: AssignmentContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Assignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitAssignment?: (ctx: AssignmentContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.assignmentoperator`.
+	 * @param ctx the parse tree
+	 */
+	enterAssignmentoperator?: (ctx: AssignmentoperatorContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.assignmentoperator`.
+	 * @param ctx the parse tree
+	 */
+	exitAssignmentoperator?: (ctx: AssignmentoperatorContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.start`.

@@ -165,7 +165,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
-
+// TODO: Implement assignment expression
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
     throw new Error(`not supported yet: ${node.type}`)
   },

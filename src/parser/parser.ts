@@ -9,10 +9,10 @@ import * as es from 'estree'
 import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
+  AssignmentContext,
   CalcParser,
   DivisionContext,
   ExpressionContext,
-  // LiteralContext,
   ModulusContext,
   MultiplicationContext,
   NumberContext,
@@ -125,6 +125,18 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
   }
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
+  visitAssignment(ctx: AssignmentContext): es.Expression {
+    console.log(ctx.text)
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text,
+      },
+      right: this.visit(ctx._right),
+    }
+  }
   visitString(ctx: StringContext): es.Expression {
     console.log(ctx.text)
     return {
@@ -244,58 +256,11 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 }
 
-class LiteralGenerator implements CalcVisitor<es.Expression> {
-  visitString(ctx: StringContext): es.Expression {
-    console.log(ctx.text)
-    return {
-      type: 'Literal',
-      value: ctx.text,
-      raw: ctx.text,
-      loc: contextToLocation(ctx)
-    }
-  }
-  // visitLiteral?: ((ctx: LiteralContext) => es.Expression) | undefined;
-
-  visit(tree: ParseTree): es.Expression {
-    return tree.accept(this)
-  }
-  visitChildren(node: RuleNode): es.Expression {
-    const expressions: es.Expression[] = []
-    for (let i = 0; i < node.childCount; i++) {
-      expressions.push(node.getChild(i).accept(this))
-    }
-    return {
-      type: 'SequenceExpression',
-      expressions
-    }
-  }
-  visitTerminal(node: TerminalNode): es.Expression {
-    return node.accept(this)
-  }
-
-  visitErrorNode(node: ErrorNode): es.Expression {
-    throw new FatalSyntaxError(
-      {
-        start: {
-          line: node.symbol.line,
-          column: node.symbol.charPositionInLine
-        },
-        end: {
-          line: node.symbol.line,
-          column: node.symbol.charPositionInLine + 1
-        }
-      },
-      `invalid syntax ${node.text}`
-    )
-  }
-}
-
 function convertExpression(expression: ExpressionContext): es.Expression {
   const generator = new ExpressionGenerator()
   console.log("expression -- ", expression)
   return expression.accept(generator)
 }
-
 
 function convertSource(expression: ExpressionContext): es.Program {
   return {
