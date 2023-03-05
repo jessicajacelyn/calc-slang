@@ -31,13 +31,13 @@ export class CalcParser extends Parser {
 	public static readonly T__0 = 1;
 	public static readonly T__1 = 2;
 	public static readonly T__2 = 3;
-	public static readonly T__3 = 4;
-	public static readonly POW = 5;
-	public static readonly MUL = 6;
-	public static readonly DIV = 7;
-	public static readonly MOD = 8;
-	public static readonly ADD = 9;
-	public static readonly SUB = 10;
+	public static readonly POW = 4;
+	public static readonly MUL = 5;
+	public static readonly DIV = 6;
+	public static readonly MOD = 7;
+	public static readonly ADD = 8;
+	public static readonly SUB = 9;
+	public static readonly EQUAL = 10;
 	public static readonly NUMBER = 11;
 	public static readonly WHITESPACE = 12;
 	public static readonly LETTER = 13;
@@ -51,12 +51,12 @@ export class CalcParser extends Parser {
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'='", "':='", "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", 
-		"'-'",
+		undefined, "':='", "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'", 
+		"'='",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
-		undefined, undefined, undefined, undefined, undefined, "POW", "MUL", "DIV", 
-		"MOD", "ADD", "SUB", "NUMBER", "WHITESPACE", "LETTER", "Stringliteral",
+		undefined, undefined, undefined, undefined, "POW", "MUL", "DIV", "MOD", 
+		"ADD", "SUB", "EQUAL", "NUMBER", "WHITESPACE", "LETTER", "Stringliteral",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcParser._LITERAL_NAMES, CalcParser._SYMBOLIC_NAMES, []);
 
@@ -94,7 +94,7 @@ export class CalcParser extends Parser {
 			{
 			this.state = 6;
 			_la = this._input.LA(1);
-			if (!(_la === CalcParser.T__0 || _la === CalcParser.T__1)) {
+			if (!(_la === CalcParser.T__0 || _la === CalcParser.EQUAL)) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -177,17 +177,17 @@ export class CalcParser extends Parser {
 				this.match(CalcParser.NUMBER);
 				}
 				break;
-			case CalcParser.T__2:
+			case CalcParser.T__1:
 				{
 				_localctx = new ParenthesesContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 				this.state = 12;
-				this.match(CalcParser.T__2);
+				this.match(CalcParser.T__1);
 				this.state = 13;
 				(_localctx as ParenthesesContext)._inner = this.expression(0);
 				this.state = 14;
-				this.match(CalcParser.T__3);
+				this.match(CalcParser.T__2);
 				}
 				break;
 			case CalcParser.Stringliteral:
@@ -203,7 +203,7 @@ export class CalcParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 43;
+			this.state = 42;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 2, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
@@ -213,7 +213,7 @@ export class CalcParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 41;
+					this.state = 40;
 					this._errHandler.sync(this);
 					switch ( this.interpreter.adaptivePredict(this._input, 1, this._ctx) ) {
 					case 1:
@@ -322,7 +322,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 1)");
 						}
 						this.state = 38;
-						(_localctx as AssignmentContext)._operator = this.assignmentoperator();
+						(_localctx as AssignmentContext)._operator = this.match(CalcParser.EQUAL);
 						this.state = 39;
 						(_localctx as AssignmentContext)._right = this.expression(2);
 						}
@@ -330,7 +330,7 @@ export class CalcParser extends Parser {
 					}
 					}
 				}
-				this.state = 45;
+				this.state = 44;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 2, this._ctx);
 			}
@@ -385,29 +385,28 @@ export class CalcParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x101\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x100\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x03\x02\x03\x02\x03\x03\x03\x03\x03" +
 		"\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04\x14\n\x04" +
 		"\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04" +
 		"\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04" +
-		"\x03\x04\x03\x04\x03\x04\x03\x04\x07\x04,\n\x04\f\x04\x0E\x04/\v\x04\x03" +
-		"\x04\x02\x02\x03\x06\x05\x02\x02\x04\x02\x06\x02\x02\x03\x03\x02\x03\x04" +
-		"\x026\x02\b\x03\x02\x02\x02\x04\n\x03\x02\x02\x02\x06\x13\x03\x02\x02" +
-		"\x02\b\t\t\x02\x02\x02\t\x03\x03\x02\x02\x02\n\v\x05\x06\x04\x02\v\x05" +
-		"\x03\x02\x02\x02\f\r\b\x04\x01\x02\r\x14\x07\r\x02\x02\x0E\x0F\x07\x05" +
-		"\x02\x02\x0F\x10\x05\x06\x04\x02\x10\x11\x07\x06\x02\x02\x11\x14\x03\x02" +
-		"\x02\x02\x12\x14\x07\x10\x02\x02\x13\f\x03\x02\x02\x02\x13\x0E\x03\x02" +
-		"\x02\x02\x13\x12\x03\x02\x02\x02\x14-\x03\x02\x02\x02\x15\x16\f\n\x02" +
-		"\x02\x16\x17\x07\x07\x02\x02\x17,\x05\x06\x04\v\x18\x19\f\t\x02\x02\x19" +
-		"\x1A\x07\b\x02\x02\x1A,\x05\x06\x04\n\x1B\x1C\f\b\x02\x02\x1C\x1D\x07" +
-		"\t\x02\x02\x1D,\x05\x06\x04\t\x1E\x1F\f\x07\x02\x02\x1F \x07\v\x02\x02" +
-		" ,\x05\x06\x04\b!\"\f\x06\x02\x02\"#\x07\f\x02\x02#,\x05\x06\x04\x07$" +
-		"%\f\x05\x02\x02%&\x07\n\x02\x02&,\x05\x06\x04\x06\'(\f\x03\x02\x02()\x05" +
-		"\x02\x02\x02)*\x05\x06\x04\x04*,\x03\x02\x02\x02+\x15\x03\x02\x02\x02" +
-		"+\x18\x03\x02\x02\x02+\x1B\x03\x02\x02\x02+\x1E\x03\x02\x02\x02+!\x03" +
-		"\x02\x02\x02+$\x03\x02\x02\x02+\'\x03\x02\x02\x02,/\x03\x02\x02\x02-+" +
-		"\x03\x02\x02\x02-.\x03\x02\x02\x02.\x07\x03\x02\x02\x02/-\x03\x02\x02" +
-		"\x02\x05\x13+-";
+		"\x03\x04\x03\x04\x03\x04\x07\x04+\n\x04\f\x04\x0E\x04.\v\x04\x03\x04\x02" +
+		"\x02\x03\x06\x05\x02\x02\x04\x02\x06\x02\x02\x03\x04\x02\x03\x03\f\f\x02" +
+		"5\x02\b\x03\x02\x02\x02\x04\n\x03\x02\x02\x02\x06\x13\x03\x02\x02\x02" +
+		"\b\t\t\x02\x02\x02\t\x03\x03\x02\x02\x02\n\v\x05\x06\x04\x02\v\x05\x03" +
+		"\x02\x02\x02\f\r\b\x04\x01\x02\r\x14\x07\r\x02\x02\x0E\x0F\x07\x04\x02" +
+		"\x02\x0F\x10\x05\x06\x04\x02\x10\x11\x07\x05\x02\x02\x11\x14\x03\x02\x02" +
+		"\x02\x12\x14\x07\x10\x02\x02\x13\f\x03\x02\x02\x02\x13\x0E\x03\x02\x02" +
+		"\x02\x13\x12\x03\x02\x02\x02\x14,\x03\x02\x02\x02\x15\x16\f\n\x02\x02" +
+		"\x16\x17\x07\x06\x02\x02\x17+\x05\x06\x04\v\x18\x19\f\t\x02\x02\x19\x1A" +
+		"\x07\x07\x02\x02\x1A+\x05\x06\x04\n\x1B\x1C\f\b\x02\x02\x1C\x1D\x07\b" +
+		"\x02\x02\x1D+\x05\x06\x04\t\x1E\x1F\f\x07\x02\x02\x1F \x07\n\x02\x02 " +
+		"+\x05\x06\x04\b!\"\f\x06\x02\x02\"#\x07\v\x02\x02#+\x05\x06\x04\x07$%" +
+		"\f\x05\x02\x02%&\x07\t\x02\x02&+\x05\x06\x04\x06\'(\f\x03\x02\x02()\x07" +
+		"\f\x02\x02)+\x05\x06\x04\x04*\x15\x03\x02\x02\x02*\x18\x03\x02\x02\x02" +
+		"*\x1B\x03\x02\x02\x02*\x1E\x03\x02\x02\x02*!\x03\x02\x02\x02*$\x03\x02" +
+		"\x02\x02*\'\x03\x02\x02\x02+.\x03\x02\x02\x02,*\x03\x02\x02\x02,-\x03" +
+		"\x02\x02\x02-\x07\x03\x02\x02\x02.,\x03\x02\x02\x02\x05\x13*,";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!CalcParser.__ATN) {
@@ -420,6 +419,7 @@ export class CalcParser extends Parser {
 }
 
 export class AssignmentoperatorContext extends ParserRuleContext {
+	public EQUAL(): TerminalNode { return this.getToken(CalcParser.EQUAL, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -810,7 +810,7 @@ export class StringContext extends ExpressionContext {
 }
 export class AssignmentContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _operator!: AssignmentoperatorContext;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -821,9 +821,7 @@ export class AssignmentContext extends ExpressionContext {
 			return this.getRuleContext(i, ExpressionContext);
 		}
 	}
-	public assignmentoperator(): AssignmentoperatorContext {
-		return this.getRuleContext(0, AssignmentoperatorContext);
-	}
+	public EQUAL(): TerminalNode { return this.getToken(CalcParser.EQUAL, 0); }
 	constructor(ctx: ExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
 		this.copyFrom(ctx);

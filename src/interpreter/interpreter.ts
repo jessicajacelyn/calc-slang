@@ -167,7 +167,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 // TODO: Implement assignment expression
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    // const left = yield* actualValue(node.left, context)
+    const right = yield* actualValue(node.right, context)
+    // if(typeof left.value === 'string') {
+    //   console.log('its a string', left.value)
+    // } else {
+    //   console.log('idk')
+    // }
+    return node.left
   },
 
   FunctionDeclaration: function* (node: es.FunctionDeclaration, context: Context) {

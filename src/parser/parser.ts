@@ -126,19 +126,19 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitAssignment(ctx: AssignmentContext): es.Expression {
-    console.log(ctx.text)
+    console.log('iwehfiowhefoiqhfoihqowiefhqhewoi')
     return {
       type: 'AssignmentExpression',
       operator: '=',
       left: {
         type: 'Identifier',
-        name: ctx._left.text,
+        name: ctx._left.text
       },
-      right: this.visit(ctx._right),
+      right: this.visit(ctx._right)
     }
   }
   visitString(ctx: StringContext): es.Expression {
-    console.log(ctx.text)
+    console.log('string', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
@@ -148,7 +148,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
   visitNumber(ctx: NumberContext): es.Expression {
     console.log(ctx.text)
-    
+
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
@@ -217,8 +217,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
-  
-  
+
   visitExpression?: ((ctx: ExpressionContext) => es.Expression) | undefined
   visitStart?: ((ctx: StartContext) => es.Expression) | undefined
 
@@ -258,7 +257,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
 function convertExpression(expression: ExpressionContext): es.Expression {
   const generator = new ExpressionGenerator()
-  console.log("expression -- ", expression)
+  console.log('expression -- ', expression)
   return expression.accept(generator)
 }
 
@@ -269,8 +268,8 @@ function convertSource(expression: ExpressionContext): es.Program {
     body: [
       {
         type: 'ExpressionStatement',
-        expression: convertExpression(expression),
-      },
+        expression: convertExpression(expression)
+      }
       // {
       //   type: 'ExpressionStatement',
       //   expression: convertLiteral(expression),
@@ -282,7 +281,7 @@ function convertSource(expression: ExpressionContext): es.Program {
 // function convertLiteral(expression: LiteralContext): es.Expression {
 //   const generator = new LiteralGenerator()
 //   console.log("expression -- ", expression)
-  
+
 //   return expression.accept(generator)
 // }
 
@@ -325,7 +324,7 @@ export function parse(source: string, context: Context) {
       return undefined
     }
   } else {
-    console.log("first else")
+    console.log('first else')
     return undefined
   }
 }

@@ -16,7 +16,7 @@ public class CalcParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, POW=5, MUL=6, DIV=7, MOD=8, ADD=9, SUB=10, 
+		T__0=1, T__1=2, T__2=3, POW=4, MUL=5, DIV=6, MOD=7, ADD=8, SUB=9, EQUAL=10, 
 		NUMBER=11, WHITESPACE=12, LETTER=13, Stringliteral=14;
 	public static final int
 		RULE_assignmentoperator = 0, RULE_start = 1, RULE_expression = 2;
@@ -29,14 +29,14 @@ public class CalcParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'='", "':='", "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", 
-			"'-'"
+			null, "':='", "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'", 
+			"'='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, "POW", "MUL", "DIV", "MOD", "ADD", "SUB", 
+			null, null, null, null, "POW", "MUL", "DIV", "MOD", "ADD", "SUB", "EQUAL", 
 			"NUMBER", "WHITESPACE", "LETTER", "Stringliteral"
 		};
 	}
@@ -92,6 +92,7 @@ public class CalcParser extends Parser {
 	}
 
 	public static class AssignmentoperatorContext extends ParserRuleContext {
+		public TerminalNode EQUAL() { return getToken(CalcParser.EQUAL, 0); }
 		public AssignmentoperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -107,7 +108,7 @@ public class CalcParser extends Parser {
 			{
 			setState(6);
 			_la = _input.LA(1);
-			if ( !(_la==T__0 || _la==T__1) ) {
+			if ( !(_la==T__0 || _la==EQUAL) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -172,7 +173,7 @@ public class CalcParser extends Parser {
 	}
 	public static class AssignmentContext extends ExpressionContext {
 		public ExpressionContext left;
-		public AssignmentoperatorContext operator;
+		public Token operator;
 		public ExpressionContext right;
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -180,9 +181,7 @@ public class CalcParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public AssignmentoperatorContext assignmentoperator() {
-			return getRuleContext(AssignmentoperatorContext.class,0);
-		}
+		public TerminalNode EQUAL() { return getToken(CalcParser.EQUAL, 0); }
 		public AssignmentContext(ExpressionContext ctx) { copyFrom(ctx); }
 	}
 	public static class MultiplicationContext extends ExpressionContext {
@@ -307,17 +306,17 @@ public class CalcParser extends Parser {
 				match(NUMBER);
 				}
 				break;
-			case T__2:
+			case T__1:
 				{
 				_localctx = new ParenthesesContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(12);
-				match(T__2);
+				match(T__1);
 				setState(13);
 				((ParenthesesContext)_localctx).inner = expression(0);
 				setState(14);
-				match(T__3);
+				match(T__2);
 				}
 				break;
 			case Stringliteral:
@@ -333,7 +332,7 @@ public class CalcParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(43);
+			setState(42);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -341,7 +340,7 @@ public class CalcParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(41);
+					setState(40);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
@@ -430,7 +429,7 @@ public class CalcParser extends Parser {
 						setState(37);
 						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
 						setState(38);
-						((AssignmentContext)_localctx).operator = assignmentoperator();
+						((AssignmentContext)_localctx).operator = match(EQUAL);
 						setState(39);
 						((AssignmentContext)_localctx).right = expression(2);
 						}
@@ -438,7 +437,7 @@ public class CalcParser extends Parser {
 					}
 					} 
 				}
-				setState(45);
+				setState(44);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -483,20 +482,19 @@ public class CalcParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20\61\4\2\t\2\4\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20\60\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\3\2\3\2\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\24\n\4\3"+
 		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\7\4,\n\4\f\4\16\4/\13\4\3\4\2\3\6\5\2\4\6\2\3\3\2\3\4"+
-		"\2\66\2\b\3\2\2\2\4\n\3\2\2\2\6\23\3\2\2\2\b\t\t\2\2\2\t\3\3\2\2\2\n\13"+
-		"\5\6\4\2\13\5\3\2\2\2\f\r\b\4\1\2\r\24\7\r\2\2\16\17\7\5\2\2\17\20\5\6"+
-		"\4\2\20\21\7\6\2\2\21\24\3\2\2\2\22\24\7\20\2\2\23\f\3\2\2\2\23\16\3\2"+
-		"\2\2\23\22\3\2\2\2\24-\3\2\2\2\25\26\f\n\2\2\26\27\7\7\2\2\27,\5\6\4\13"+
-		"\30\31\f\t\2\2\31\32\7\b\2\2\32,\5\6\4\n\33\34\f\b\2\2\34\35\7\t\2\2\35"+
-		",\5\6\4\t\36\37\f\7\2\2\37 \7\13\2\2 ,\5\6\4\b!\"\f\6\2\2\"#\7\f\2\2#"+
-		",\5\6\4\7$%\f\5\2\2%&\7\n\2\2&,\5\6\4\6\'(\f\3\2\2()\5\2\2\2)*\5\6\4\4"+
-		"*,\3\2\2\2+\25\3\2\2\2+\30\3\2\2\2+\33\3\2\2\2+\36\3\2\2\2+!\3\2\2\2+"+
-		"$\3\2\2\2+\'\3\2\2\2,/\3\2\2\2-+\3\2\2\2-.\3\2\2\2.\7\3\2\2\2/-\3\2\2"+
-		"\2\5\23+-";
+		"\3\4\3\4\3\4\7\4+\n\4\f\4\16\4.\13\4\3\4\2\3\6\5\2\4\6\2\3\4\2\3\3\f\f"+
+		"\2\65\2\b\3\2\2\2\4\n\3\2\2\2\6\23\3\2\2\2\b\t\t\2\2\2\t\3\3\2\2\2\n\13"+
+		"\5\6\4\2\13\5\3\2\2\2\f\r\b\4\1\2\r\24\7\r\2\2\16\17\7\4\2\2\17\20\5\6"+
+		"\4\2\20\21\7\5\2\2\21\24\3\2\2\2\22\24\7\20\2\2\23\f\3\2\2\2\23\16\3\2"+
+		"\2\2\23\22\3\2\2\2\24,\3\2\2\2\25\26\f\n\2\2\26\27\7\6\2\2\27+\5\6\4\13"+
+		"\30\31\f\t\2\2\31\32\7\7\2\2\32+\5\6\4\n\33\34\f\b\2\2\34\35\7\b\2\2\35"+
+		"+\5\6\4\t\36\37\f\7\2\2\37 \7\n\2\2 +\5\6\4\b!\"\f\6\2\2\"#\7\13\2\2#"+
+		"+\5\6\4\7$%\f\5\2\2%&\7\t\2\2&+\5\6\4\6\'(\f\3\2\2()\7\f\2\2)+\5\6\4\4"+
+		"*\25\3\2\2\2*\30\3\2\2\2*\33\3\2\2\2*\36\3\2\2\2*!\3\2\2\2*$\3\2\2\2*"+
+		"\'\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\7\3\2\2\2.,\3\2\2\2\5\23*,";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

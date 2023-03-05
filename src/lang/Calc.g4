@@ -9,6 +9,7 @@ DIV: '/';
 MOD: '%';
 ADD: '+';
 SUB: '-';
+EQUAL: '=';
 
 NUMBER: [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
@@ -62,7 +63,7 @@ expression
    | left=expression operator=SUB right=expression  # Subtraction
    | left=expression operator=MOD right=expression  # Modulus
    | Stringliteral                                  # String 
-   | left=expression operator=assignmentoperator right=expression # Assignment
+   | left=expression operator=EQUAL right=expression # Assignment
    ;
 
   
