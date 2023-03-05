@@ -8,9 +8,13 @@ import { ParenthesesContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
 import { DivisionContext } from "./CalcParser";
+import { ModulusContext } from "./CalcParser";
 import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
-import { ModulusContext } from "./CalcParser";
+import { GreaterComparatorContext } from "./CalcParser";
+import { LesserComparatorContext } from "./CalcParser";
+import { GreaterEqualComparatorContext } from "./CalcParser";
+import { LesserEqualComparatorContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
@@ -87,6 +91,19 @@ export interface CalcListener extends ParseTreeListener {
 	exitDivision?: (ctx: DivisionContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `Modulus`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterModulus?: (ctx: ModulusContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Modulus`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitModulus?: (ctx: ModulusContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `Addition`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -113,17 +130,56 @@ export interface CalcListener extends ParseTreeListener {
 	exitSubtraction?: (ctx: SubtractionContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `Modulus`
+	 * Enter a parse tree produced by the `GreaterComparator`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterModulus?: (ctx: ModulusContext) => void;
+	enterGreaterComparator?: (ctx: GreaterComparatorContext) => void;
 	/**
-	 * Exit a parse tree produced by the `Modulus`
+	 * Exit a parse tree produced by the `GreaterComparator`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitModulus?: (ctx: ModulusContext) => void;
+	exitGreaterComparator?: (ctx: GreaterComparatorContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `LesserComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterLesserComparator?: (ctx: LesserComparatorContext) => void;
+	/**
+	 * Exit a parse tree produced by the `LesserComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitLesserComparator?: (ctx: LesserComparatorContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `GreaterEqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterGreaterEqualComparator?: (ctx: GreaterEqualComparatorContext) => void;
+	/**
+	 * Exit a parse tree produced by the `GreaterEqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitGreaterEqualComparator?: (ctx: GreaterEqualComparatorContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `LesserEqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterLesserEqualComparator?: (ctx: LesserEqualComparatorContext) => void;
+	/**
+	 * Exit a parse tree produced by the `LesserEqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitLesserEqualComparator?: (ctx: LesserEqualComparatorContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `String`

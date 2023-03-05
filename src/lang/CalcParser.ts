@@ -40,6 +40,10 @@ export class CalcParser extends Parser {
 	public static readonly WHITESPACE = 10;
 	public static readonly LETTER = 11;
 	public static readonly Stringliteral = 12;
+	public static readonly GT = 13;
+	public static readonly LT = 14;
+	public static readonly GE = 15;
+	public static readonly LE = 16;
 	public static readonly RULE_start = 0;
 	public static readonly RULE_expression = 1;
 	// tslint:disable:no-trailing-whitespace
@@ -48,11 +52,12 @@ export class CalcParser extends Parser {
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'",
+		undefined, "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'", undefined, 
+		undefined, undefined, undefined, "'>'", "'<'", "'>='", "'<='",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, "POW", "MUL", "DIV", "MOD", "ADD", "SUB", 
-		"NUMBER", "WHITESPACE", "LETTER", "Stringliteral",
+		"NUMBER", "WHITESPACE", "LETTER", "Stringliteral", "GT", "LT", "GE", "LE",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcParser._LITERAL_NAMES, CalcParser._SYMBOLIC_NAMES, []);
 
@@ -163,7 +168,7 @@ export class CalcParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 35;
+			this.state = 50;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 2, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
@@ -173,7 +178,7 @@ export class CalcParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 33;
+					this.state = 48;
 					this._errHandler.sync(this);
 					switch ( this.interpreter.adaptivePredict(this._input, 1, this._ctx) ) {
 					case 1:
@@ -182,13 +187,13 @@ export class CalcParser extends Parser {
 						(_localctx as PowerContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
 						this.state = 15;
-						if (!(this.precpred(this._ctx, 7))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
+						if (!(this.precpred(this._ctx, 12))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 12)");
 						}
 						this.state = 16;
 						(_localctx as PowerContext)._operator = this.match(CalcParser.POW);
 						this.state = 17;
-						(_localctx as PowerContext)._right = this.expression(8);
+						(_localctx as PowerContext)._right = this.expression(13);
 						}
 						break;
 
@@ -198,13 +203,13 @@ export class CalcParser extends Parser {
 						(_localctx as MultiplicationContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
 						this.state = 18;
-						if (!(this.precpred(this._ctx, 6))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						if (!(this.precpred(this._ctx, 11))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 11)");
 						}
 						this.state = 19;
 						(_localctx as MultiplicationContext)._operator = this.match(CalcParser.MUL);
 						this.state = 20;
-						(_localctx as MultiplicationContext)._right = this.expression(7);
+						(_localctx as MultiplicationContext)._right = this.expression(12);
 						}
 						break;
 
@@ -214,67 +219,147 @@ export class CalcParser extends Parser {
 						(_localctx as DivisionContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
 						this.state = 21;
-						if (!(this.precpred(this._ctx, 5))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
+						if (!(this.precpred(this._ctx, 10))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 10)");
 						}
 						this.state = 22;
 						(_localctx as DivisionContext)._operator = this.match(CalcParser.DIV);
 						this.state = 23;
-						(_localctx as DivisionContext)._right = this.expression(6);
+						(_localctx as DivisionContext)._right = this.expression(11);
 						}
 						break;
 
 					case 4:
 						{
-						_localctx = new AdditionContext(new ExpressionContext(_parentctx, _parentState));
-						(_localctx as AdditionContext)._left = _prevctx;
+						_localctx = new ModulusContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as ModulusContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
 						this.state = 24;
-						if (!(this.precpred(this._ctx, 4))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
+						if (!(this.precpred(this._ctx, 9))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
 						this.state = 25;
-						(_localctx as AdditionContext)._operator = this.match(CalcParser.ADD);
+						(_localctx as ModulusContext)._operator = this.match(CalcParser.MOD);
 						this.state = 26;
-						(_localctx as AdditionContext)._right = this.expression(5);
+						(_localctx as ModulusContext)._right = this.expression(10);
 						}
 						break;
 
 					case 5:
 						{
-						_localctx = new SubtractionContext(new ExpressionContext(_parentctx, _parentState));
-						(_localctx as SubtractionContext)._left = _prevctx;
+						_localctx = new AdditionContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as AdditionContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
 						this.state = 27;
-						if (!(this.precpred(this._ctx, 3))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
+						if (!(this.precpred(this._ctx, 8))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
 						this.state = 28;
-						(_localctx as SubtractionContext)._operator = this.match(CalcParser.SUB);
+						(_localctx as AdditionContext)._operator = this.match(CalcParser.ADD);
 						this.state = 29;
-						(_localctx as SubtractionContext)._right = this.expression(4);
+						(_localctx as AdditionContext)._right = this.expression(9);
 						}
 						break;
 
 					case 6:
 						{
+						_localctx = new SubtractionContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as SubtractionContext)._left = _prevctx;
+						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
+						this.state = 30;
+						if (!(this.precpred(this._ctx, 7))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
+						}
+						this.state = 31;
+						(_localctx as SubtractionContext)._operator = this.match(CalcParser.SUB);
+						this.state = 32;
+						(_localctx as SubtractionContext)._right = this.expression(8);
+						}
+						break;
+
+					case 7:
+						{
 						_localctx = new ModulusContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as ModulusContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 30;
+						this.state = 33;
+						if (!(this.precpred(this._ctx, 6))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						}
+						this.state = 34;
+						(_localctx as ModulusContext)._operator = this.match(CalcParser.MOD);
+						this.state = 35;
+						(_localctx as ModulusContext)._right = this.expression(7);
+						}
+						break;
+
+					case 8:
+						{
+						_localctx = new GreaterComparatorContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as GreaterComparatorContext)._left = _prevctx;
+						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
+						this.state = 36;
+						if (!(this.precpred(this._ctx, 5))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
+						}
+						this.state = 37;
+						(_localctx as GreaterComparatorContext)._op = this.match(CalcParser.GT);
+						this.state = 38;
+						(_localctx as GreaterComparatorContext)._right = this.expression(6);
+						}
+						break;
+
+					case 9:
+						{
+						_localctx = new LesserComparatorContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as LesserComparatorContext)._left = _prevctx;
+						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
+						this.state = 39;
+						if (!(this.precpred(this._ctx, 4))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
+						}
+						this.state = 40;
+						(_localctx as LesserComparatorContext)._op = this.match(CalcParser.LT);
+						this.state = 41;
+						(_localctx as LesserComparatorContext)._right = this.expression(5);
+						}
+						break;
+
+					case 10:
+						{
+						_localctx = new GreaterEqualComparatorContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as GreaterEqualComparatorContext)._left = _prevctx;
+						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
+						this.state = 42;
+						if (!(this.precpred(this._ctx, 3))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
+						}
+						this.state = 43;
+						(_localctx as GreaterEqualComparatorContext)._op = this.match(CalcParser.GE);
+						this.state = 44;
+						(_localctx as GreaterEqualComparatorContext)._right = this.expression(4);
+						}
+						break;
+
+					case 11:
+						{
+						_localctx = new LesserEqualComparatorContext(new ExpressionContext(_parentctx, _parentState));
+						(_localctx as LesserEqualComparatorContext)._left = _prevctx;
+						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
+						this.state = 45;
 						if (!(this.precpred(this._ctx, 2))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
-						this.state = 31;
-						(_localctx as ModulusContext)._operator = this.match(CalcParser.MOD);
-						this.state = 32;
-						(_localctx as ModulusContext)._right = this.expression(3);
+						this.state = 46;
+						(_localctx as LesserEqualComparatorContext)._op = this.match(CalcParser.LE);
+						this.state = 47;
+						(_localctx as LesserEqualComparatorContext)._right = this.expression(3);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 37;
+				this.state = 52;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 2, this._ctx);
 			}
@@ -305,47 +390,68 @@ export class CalcParser extends Parser {
 	private expression_sempred(_localctx: ExpressionContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return this.precpred(this._ctx, 7);
+			return this.precpred(this._ctx, 12);
 
 		case 1:
-			return this.precpred(this._ctx, 6);
+			return this.precpred(this._ctx, 11);
 
 		case 2:
-			return this.precpred(this._ctx, 5);
+			return this.precpred(this._ctx, 10);
 
 		case 3:
-			return this.precpred(this._ctx, 4);
+			return this.precpred(this._ctx, 9);
 
 		case 4:
-			return this.precpred(this._ctx, 3);
+			return this.precpred(this._ctx, 8);
 
 		case 5:
+			return this.precpred(this._ctx, 7);
+
+		case 6:
+			return this.precpred(this._ctx, 6);
+
+		case 7:
+			return this.precpred(this._ctx, 5);
+
+		case 8:
+			return this.precpred(this._ctx, 4);
+
+		case 9:
+			return this.precpred(this._ctx, 3);
+
+		case 10:
 			return this.precpred(this._ctx, 2);
 		}
 		return true;
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x0E)\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x128\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
 		"\x03\x03\x03\x03\x03\x05\x03\x10\n\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
 		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03$\n\x03\f\x03\x0E\x03" +
-		"\'\v\x03\x03\x03\x02\x02\x03\x04\x04\x02\x02\x04\x02\x02\x02\x02.\x02" +
-		"\x06\x03\x02\x02\x02\x04\x0F\x03\x02\x02\x02\x06\x07\x05\x04\x03\x02\x07" +
-		"\x03\x03\x02\x02\x02\b\t\b\x03\x01\x02\t\x10\x07\v\x02\x02\n\v\x07\x03" +
-		"\x02\x02\v\f\x05\x04\x03\x02\f\r\x07\x04\x02\x02\r\x10\x03\x02\x02\x02" +
-		"\x0E\x10\x07\x0E\x02\x02\x0F\b\x03\x02\x02\x02\x0F\n\x03\x02\x02\x02\x0F" +
-		"\x0E\x03\x02\x02\x02\x10%\x03\x02\x02\x02\x11\x12\f\t\x02\x02\x12\x13" +
-		"\x07\x05\x02\x02\x13$\x05\x04\x03\n\x14\x15\f\b\x02\x02\x15\x16\x07\x06" +
-		"\x02\x02\x16$\x05\x04\x03\t\x17\x18\f\x07\x02\x02\x18\x19\x07\x07\x02" +
-		"\x02\x19$\x05\x04\x03\b\x1A\x1B\f\x06\x02\x02\x1B\x1C\x07\t\x02\x02\x1C" +
-		"$\x05\x04\x03\x07\x1D\x1E\f\x05\x02\x02\x1E\x1F\x07\n\x02\x02\x1F$\x05" +
-		"\x04\x03\x06 !\f\x04\x02\x02!\"\x07\b\x02\x02\"$\x05\x04\x03\x05#\x11" +
-		"\x03\x02\x02\x02#\x14\x03\x02\x02\x02#\x17\x03\x02\x02\x02#\x1A\x03\x02" +
-		"\x02\x02#\x1D\x03\x02\x02\x02# \x03\x02\x02\x02$\'\x03\x02\x02\x02%#\x03" +
-		"\x02\x02\x02%&\x03\x02\x02\x02&\x05\x03\x02\x02\x02\'%\x03\x02\x02\x02" +
-		"\x05\x0F#%";
+		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
+		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
+		"\x03\x03\x03\x03\x07\x033\n\x03\f\x03\x0E\x036\v\x03\x03\x03\x02\x02\x03" +
+		"\x04\x04\x02\x02\x04\x02\x02\x02\x02B\x02\x06\x03\x02\x02\x02\x04\x0F" +
+		"\x03\x02\x02\x02\x06\x07\x05\x04\x03\x02\x07\x03\x03\x02\x02\x02\b\t\b" +
+		"\x03\x01\x02\t\x10\x07\v\x02\x02\n\v\x07\x03\x02\x02\v\f\x05\x04\x03\x02" +
+		"\f\r\x07\x04\x02\x02\r\x10\x03\x02\x02\x02\x0E\x10\x07\x0E\x02\x02\x0F" +
+		"\b\x03\x02\x02\x02\x0F\n\x03\x02\x02\x02\x0F\x0E\x03\x02\x02\x02\x104" +
+		"\x03\x02\x02\x02\x11\x12\f\x0E\x02\x02\x12\x13\x07\x05\x02\x02\x133\x05" +
+		"\x04\x03\x0F\x14\x15\f\r\x02\x02\x15\x16\x07\x06\x02\x02\x163\x05\x04" +
+		"\x03\x0E\x17\x18\f\f\x02\x02\x18\x19\x07\x07\x02\x02\x193\x05\x04\x03" +
+		"\r\x1A\x1B\f\v\x02\x02\x1B\x1C\x07\b\x02\x02\x1C3\x05\x04\x03\f\x1D\x1E" +
+		"\f\n\x02\x02\x1E\x1F\x07\t\x02\x02\x1F3\x05\x04\x03\v !\f\t\x02\x02!\"" +
+		"\x07\n\x02\x02\"3\x05\x04\x03\n#$\f\b\x02\x02$%\x07\b\x02\x02%3\x05\x04" +
+		"\x03\t&\'\f\x07\x02\x02\'(\x07\x0F\x02\x02(3\x05\x04\x03\b)*\f\x06\x02" +
+		"\x02*+\x07\x10\x02\x02+3\x05\x04\x03\x07,-\f\x05\x02\x02-.\x07\x11\x02" +
+		"\x02.3\x05\x04\x03\x06/0\f\x04\x02\x0201\x07\x12\x02\x0213\x05\x04\x03" +
+		"\x052\x11\x03\x02\x02\x022\x14\x03\x02\x02\x022\x17\x03\x02\x02\x022\x1A" +
+		"\x03\x02\x02\x022\x1D\x03\x02\x02\x022 \x03\x02\x02\x022#\x03\x02\x02" +
+		"\x022&\x03\x02\x02\x022)\x03\x02\x02\x022,\x03\x02\x02\x022/\x03\x02\x02" +
+		"\x0236\x03\x02\x02\x0242\x03\x02\x02\x0245\x03\x02\x02\x025\x05\x03\x02" +
+		"\x02\x0264\x03\x02\x02\x02\x05\x0F24";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!CalcParser.__ATN) {
@@ -574,45 +680,43 @@ export class DivisionContext extends ExpressionContext {
 	}
 }
 export class ModulusContext extends ExpressionContext {
-  public _left!: ExpressionContext
-  public _operator!: Token
-  public _right!: ExpressionContext
-  public expression(): ExpressionContext[]
-  public expression(i: number): ExpressionContext
-  public expression(i?: number): ExpressionContext | ExpressionContext[] {
-    if (i === undefined) {
-      return this.getRuleContexts(ExpressionContext)
-    } else {
-      return this.getRuleContext(i, ExpressionContext)
-    }
-  }
-  public MOD(): TerminalNode {
-    return this.getToken(CalcParser.MOD, 0)
-  }
-  constructor(ctx: ExpressionContext) {
-    super(ctx.parent, ctx.invokingState)
-    this.copyFrom(ctx)
-  }
-  // @Override
-  public enterRule(listener: CalcListener): void {
-    if (listener.enterModulus) {
-      listener.enterModulus(this)
-    }
-  }
-  // @Override
-  public exitRule(listener: CalcListener): void {
-    if (listener.exitModulus) {
-      listener.exitModulus(this)
-    }
-  }
-  // @Override
-  public accept<Result>(visitor: CalcVisitor<Result>): Result {
-    if (visitor.visitModulus) {
-      return visitor.visitModulus(this)
-    } else {
-      return visitor.visitChildren(this)
-    }
-  }
+	public _left!: ExpressionContext;
+	public _operator!: Token;
+	public _right!: ExpressionContext;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	public MOD(): TerminalNode { return this.getToken(CalcParser.MOD, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: CalcListener): void {
+		if (listener.enterModulus) {
+			listener.enterModulus(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: CalcListener): void {
+		if (listener.exitModulus) {
+			listener.exitModulus(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: CalcVisitor<Result>): Result {
+		if (visitor.visitModulus) {
+			return visitor.visitModulus(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
 }
 export class AdditionContext extends ExpressionContext {
 	public _left!: ExpressionContext;
@@ -692,9 +796,9 @@ export class SubtractionContext extends ExpressionContext {
 		}
 	}
 }
-export class ModulusContext extends ExpressionContext {
+export class GreaterComparatorContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _operator!: Token;
+	public _op!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -705,27 +809,144 @@ export class ModulusContext extends ExpressionContext {
 			return this.getRuleContext(i, ExpressionContext);
 		}
 	}
-	public MOD(): TerminalNode { return this.getToken(CalcParser.MOD, 0); }
+	public GT(): TerminalNode { return this.getToken(CalcParser.GT, 0); }
 	constructor(ctx: ExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
 		this.copyFrom(ctx);
 	}
 	// @Override
 	public enterRule(listener: CalcListener): void {
-		if (listener.enterModulus) {
-			listener.enterModulus(this);
+		if (listener.enterGreaterComparator) {
+			listener.enterGreaterComparator(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: CalcListener): void {
-		if (listener.exitModulus) {
-			listener.exitModulus(this);
+		if (listener.exitGreaterComparator) {
+			listener.exitGreaterComparator(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: CalcVisitor<Result>): Result {
-		if (visitor.visitModulus) {
-			return visitor.visitModulus(this);
+		if (visitor.visitGreaterComparator) {
+			return visitor.visitGreaterComparator(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class LesserComparatorContext extends ExpressionContext {
+	public _left!: ExpressionContext;
+	public _op!: Token;
+	public _right!: ExpressionContext;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	public LT(): TerminalNode { return this.getToken(CalcParser.LT, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: CalcListener): void {
+		if (listener.enterLesserComparator) {
+			listener.enterLesserComparator(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: CalcListener): void {
+		if (listener.exitLesserComparator) {
+			listener.exitLesserComparator(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: CalcVisitor<Result>): Result {
+		if (visitor.visitLesserComparator) {
+			return visitor.visitLesserComparator(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class GreaterEqualComparatorContext extends ExpressionContext {
+	public _left!: ExpressionContext;
+	public _op!: Token;
+	public _right!: ExpressionContext;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	public GE(): TerminalNode { return this.getToken(CalcParser.GE, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: CalcListener): void {
+		if (listener.enterGreaterEqualComparator) {
+			listener.enterGreaterEqualComparator(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: CalcListener): void {
+		if (listener.exitGreaterEqualComparator) {
+			listener.exitGreaterEqualComparator(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: CalcVisitor<Result>): Result {
+		if (visitor.visitGreaterEqualComparator) {
+			return visitor.visitGreaterEqualComparator(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class LesserEqualComparatorContext extends ExpressionContext {
+	public _left!: ExpressionContext;
+	public _op!: Token;
+	public _right!: ExpressionContext;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	public LE(): TerminalNode { return this.getToken(CalcParser.LE, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: CalcListener): void {
+		if (listener.enterLesserEqualComparator) {
+			listener.enterLesserEqualComparator(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: CalcListener): void {
+		if (listener.exitLesserEqualComparator) {
+			listener.exitLesserEqualComparator(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: CalcVisitor<Result>): Result {
+		if (visitor.visitLesserEqualComparator) {
+			return visitor.visitLesserEqualComparator(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

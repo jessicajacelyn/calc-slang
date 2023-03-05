@@ -10,6 +10,10 @@ NUMBER=9
 WHITESPACE=10
 LETTER=11
 Stringliteral=12
+GT=13
+LT=14
+GE=15
+LE=16
 '('=1
 ')'=2
 '^'=3
@@ -18,3 +22,7 @@ Stringliteral=12
 '%'=6
 '+'=7
 '-'=8
+'>'=13
+'<'=14
+'>='=15
+'<='=16

@@ -8,9 +8,13 @@ import { ParenthesesContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
 import { DivisionContext } from "./CalcParser";
+import { ModulusContext } from "./CalcParser";
 import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
-import { ModulusContext } from "./CalcParser";
+import { GreaterComparatorContext } from "./CalcParser";
+import { LesserComparatorContext } from "./CalcParser";
+import { GreaterEqualComparatorContext } from "./CalcParser";
+import { LesserEqualComparatorContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
@@ -65,6 +69,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitDivision?: (ctx: DivisionContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `Modulus`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitModulus?: (ctx: ModulusContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `Addition`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -81,12 +93,36 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitSubtraction?: (ctx: SubtractionContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `Modulus`
+	 * Visit a parse tree produced by the `GreaterComparator`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitModulus?: (ctx: ModulusContext) => Result;
+	visitGreaterComparator?: (ctx: GreaterComparatorContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `LesserComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLesserComparator?: (ctx: LesserComparatorContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `GreaterEqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitGreaterEqualComparator?: (ctx: GreaterEqualComparatorContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `LesserEqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLesserEqualComparator?: (ctx: LesserEqualComparatorContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `String`

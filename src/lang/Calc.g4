@@ -47,6 +47,11 @@ Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
 // 	Stringliteral # String
 // ;
 
+GT: '>';
+LT: '<';
+GE: '>=';
+LE: '<=';
+
 /*
  * Productions
  */
@@ -62,6 +67,10 @@ expression
    | left=expression operator=ADD right=expression  # Addition
    | left=expression operator=SUB right=expression  # Subtraction
    | left=expression operator=MOD right=expression  # Modulus
+   | left=expression op=GT right=expression         #GreaterComparator
+   | left=expression op=LT right=expression         #LesserComparator
+   | left=expression op=GE right=expression         #GreaterEqualComparator
+   | left=expression op=LE right=expression         #LesserEqualComparator
    | Stringliteral                                  # String 
    ;
 
