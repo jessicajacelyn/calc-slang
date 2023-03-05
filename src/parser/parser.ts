@@ -12,16 +12,19 @@ import {
   CalcParser,
   DivisionContext,
   ExpressionContext,
+  // LiteralContext,
   ModulusContext,
   MultiplicationContext,
   NumberContext,
   ParenthesesContext,
   PowerContext,
   StartContext,
+  StringContext,
   SubtractionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
+import { literal } from '../utils/astCreator'
 import { stripIndent } from '../utils/formatters'
 
 export class DisallowedConstructError implements SourceError {
@@ -122,7 +125,18 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
   }
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
+  visitString(ctx: StringContext): es.Expression {
+    console.log(ctx.text)
+    return {
+      type: 'Literal',
+      value: ctx.text,
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
   visitNumber(ctx: NumberContext): es.Expression {
+    console.log(ctx.text)
+    
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
@@ -161,7 +175,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
-  
+
   visitModulus(ctx: ModulusContext): es.Expression {
     return {
       type: 'BinaryExpression',
@@ -171,7 +185,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
-  
+
   visitAddition(ctx: AdditionContext): es.Expression {
     return {
       type: 'BinaryExpression',
@@ -191,7 +205,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
-
+  
+  
   visitExpression?: ((ctx: ExpressionContext) => es.Expression) | undefined
   visitStart?: ((ctx: StartContext) => es.Expression) | undefined
 
@@ -229,10 +244,58 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 }
 
+class LiteralGenerator implements CalcVisitor<es.Expression> {
+  visitString(ctx: StringContext): es.Expression {
+    console.log(ctx.text)
+    return {
+      type: 'Literal',
+      value: ctx.text,
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
+  // visitLiteral?: ((ctx: LiteralContext) => es.Expression) | undefined;
+
+  visit(tree: ParseTree): es.Expression {
+    return tree.accept(this)
+  }
+  visitChildren(node: RuleNode): es.Expression {
+    const expressions: es.Expression[] = []
+    for (let i = 0; i < node.childCount; i++) {
+      expressions.push(node.getChild(i).accept(this))
+    }
+    return {
+      type: 'SequenceExpression',
+      expressions
+    }
+  }
+  visitTerminal(node: TerminalNode): es.Expression {
+    return node.accept(this)
+  }
+
+  visitErrorNode(node: ErrorNode): es.Expression {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
 function convertExpression(expression: ExpressionContext): es.Expression {
   const generator = new ExpressionGenerator()
+  console.log("expression -- ", expression)
   return expression.accept(generator)
 }
+
 
 function convertSource(expression: ExpressionContext): es.Program {
   return {
@@ -241,11 +304,35 @@ function convertSource(expression: ExpressionContext): es.Program {
     body: [
       {
         type: 'ExpressionStatement',
-        expression: convertExpression(expression)
-      }
+        expression: convertExpression(expression),
+      },
+      // {
+      //   type: 'ExpressionStatement',
+      //   expression: convertLiteral(expression),
+      // }
     ]
   }
 }
+
+// function convertLiteral(expression: LiteralContext): es.Expression {
+//   const generator = new LiteralGenerator()
+//   console.log("expression -- ", expression)
+  
+//   return expression.accept(generator)
+// }
+
+// function convertLit(expression: LiteralContext): es.Program {
+//   return {
+//     type: 'Program',
+//     sourceType: 'script',
+//     body: [
+//       {
+//         type: 'ExpressionStatement',
+//         expression: convertExpression(expression)
+//       }
+//     ]
+//   }
+// }
 
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
@@ -273,6 +360,7 @@ export function parse(source: string, context: Context) {
       return undefined
     }
   } else {
+    console.log("first else")
     return undefined
   }
 }

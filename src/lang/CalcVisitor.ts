@@ -11,6 +11,7 @@ import { DivisionContext } from "./CalcParser";
 import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
+import { StringContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -86,6 +87,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitModulus?: (ctx: ModulusContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitString?: (ctx: StringContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.start`.
