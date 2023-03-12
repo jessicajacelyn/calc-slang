@@ -14,6 +14,18 @@ NUMBER: [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
 
+GT: '>';
+LT: '<';
+GE: '>=';
+LE: '<=';
+
+AND: '&&';
+OR:'||';
+
+BOOLEAN: 'true' | 'false';
+
+
+
 Stringliteral
 :
 	Encodingprefix? '"' Schar* '"'
@@ -47,10 +59,7 @@ Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
 // 	Stringliteral # String
 // ;
 
-GT: '>';
-LT: '<';
-GE: '>=';
-LE: '<=';
+
 
 /*
  * Productions
@@ -67,10 +76,13 @@ expression
    | left=expression operator=ADD right=expression  # Addition
    | left=expression operator=SUB right=expression  # Subtraction
    | left=expression operator=MOD right=expression  # Modulus
-   | left=expression op=GT right=expression         #GreaterComparator
-   | left=expression op=LT right=expression         #LesserComparator
-   | left=expression op=GE right=expression         #GreaterEqualComparator
-   | left=expression op=LE right=expression         #LesserEqualComparator
+   | left=expression op=GT right=expression         # GreaterComparator
+   | left=expression op=LT right=expression         # LesserComparator
+   | left=expression op=GE right=expression         # GreaterEqualComparator
+   | left=expression op=LE right=expression         # LesserEqualComparator
+   | left=expression op=AND right=expression        # AndLogical
+   | left=expression op=OR right=expression         # OrLogical
+   | BOOLEAN                                        # Boolean
    | Stringliteral                                  # String 
    ;
 
