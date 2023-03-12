@@ -153,24 +153,21 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitBoolean(ctx: BooleanContext): es.Expression{
-    let val;
-    if(ctx.text === 'true'){
-      val = true;
-    }
-    else{
-      val = false;
+  visitBoolean(ctx: BooleanContext): es.Expression {
+    let val
+    if (ctx.text === 'true') {
+      val = true
+    } else {
+      val = false
     }
 
-    return{
+    return {
       type: 'Literal',
       value: val,
       raw: ctx.text,
       loc: contextToLocation(ctx)
     }
-      
   }
-
 
   visitParentheses(ctx: ParenthesesContext): es.Expression {
     return this.visit(ctx.expression())
@@ -274,7 +271,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitAndLogical(ctx: AndLogicalContext): es.Expression{
+  visitAndLogical(ctx: AndLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
       operator: '&&',
@@ -284,7 +281,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitOrLogical(ctx: OrLogicalContext): es.Expression{
+  visitOrLogical(ctx: OrLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
       operator: '||',
