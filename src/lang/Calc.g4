@@ -9,6 +9,7 @@ DIV: '/';
 MOD: '%';
 ADD: '+';
 SUB: '-';
+EQUAL: '=';
 
 NUMBER: [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
@@ -28,8 +29,8 @@ BOOLEAN: 'true' | 'false';
 
 Stringliteral
 :
-	Encodingprefix? '"' Schar* '"'
-	| Encodingprefix? 'R' Rawstring
+  [a-zA-Z0-9]+
+
 ;
 
 fragment
@@ -41,12 +42,6 @@ Encodingprefix
 	| 'L'
 ;
 
-fragment
-Schar
-:
-	[a-zA-Z_]
-;
-
 
 fragment
 Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
@@ -54,12 +49,11 @@ Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
 	'"' .*? '(' .*? ')' .*? '"'
 ;
 
-// literal
-// :
-// 	Stringliteral # String
-// ;
-
-
+assignmentoperator
+:
+	'='
+	| ':='
+;
 
 /*
  * Productions
@@ -84,6 +78,7 @@ expression
    | left=expression op=OR right=expression         # OrLogical
    | BOOLEAN                                        # Boolean
    | Stringliteral                                  # String 
+   | left=expression operator=EQUAL right=expression # Assignment
    ;
 
   
