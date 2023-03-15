@@ -38,16 +38,16 @@ export class CalcParser extends Parser {
 	public static readonly ADD = 8;
 	public static readonly SUB = 9;
 	public static readonly EQUAL = 10;
-	public static readonly NUMBER = 11;
-	public static readonly WHITESPACE = 12;
-	public static readonly LETTER = 13;
+	public static readonly AND = 11;
+	public static readonly OR = 12;
+	public static readonly BOOLEAN = 13;
 	public static readonly GT = 14;
 	public static readonly LT = 15;
 	public static readonly GE = 16;
 	public static readonly LE = 17;
-	public static readonly AND = 18;
-	public static readonly OR = 19;
-	public static readonly BOOLEAN = 20;
+	public static readonly NUMBER = 18;
+	public static readonly WHITESPACE = 19;
+	public static readonly LETTER = 20;
 	public static readonly Stringliteral = 21;
 	public static readonly RULE_assignmentoperator = 0;
 	public static readonly RULE_start = 1;
@@ -59,13 +59,12 @@ export class CalcParser extends Parser {
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
 		undefined, "':='", "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'", 
-		"'='", undefined, undefined, undefined, "'>'", "'<'", "'>='", "'<='", 
-		"'&&'", "'||'",
+		"'='", "'&&'", "'||'", undefined, "'>'", "'<'", "'>='", "'<='",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, undefined, "POW", "MUL", "DIV", "MOD", 
-		"ADD", "SUB", "EQUAL", "NUMBER", "WHITESPACE", "LETTER", "GT", "LT", "GE", 
-		"LE", "AND", "OR", "BOOLEAN", "Stringliteral",
+		"ADD", "SUB", "EQUAL", "AND", "OR", "BOOLEAN", "GT", "LT", "GE", "LE", 
+		"NUMBER", "WHITESPACE", "LETTER", "Stringliteral",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcParser._LITERAL_NAMES, CalcParser._SYMBOLIC_NAMES, []);
 
@@ -548,8 +547,8 @@ export class CalcParser extends Parser {
 		"\x02\x02\x03\x04\x02\x03\x03\f\f\x02S\x02\b\x03\x02\x02\x02\x04\n\x03" +
 		"\x02\x02\x02\x06\x14\x03\x02\x02\x02\b\t\t\x02\x02\x02\t\x03\x03\x02\x02" +
 		"\x02\n\v\x05\x06\x04\x02\v\x05\x03\x02\x02\x02\f\r\b\x04\x01\x02\r\x15" +
-		"\x07\r\x02\x02\x0E\x0F\x07\x04\x02\x02\x0F\x10\x05\x06\x04\x02\x10\x11" +
-		"\x07\x05\x02\x02\x11\x15\x03\x02\x02\x02\x12\x15\x07\x16\x02\x02\x13\x15" +
+		"\x07\x14\x02\x02\x0E\x0F\x07\x04\x02\x02\x0F\x10\x05\x06\x04\x02\x10\x11" +
+		"\x07\x05\x02\x02\x11\x15\x03\x02\x02\x02\x12\x15\x07\x0F\x02\x02\x13\x15" +
 		"\x07\x17\x02\x02\x14\f\x03\x02\x02\x02\x14\x0E\x03\x02\x02\x02\x14\x12" +
 		"\x03\x02\x02\x02\x14\x13\x03\x02\x02\x02\x15B\x03\x02\x02\x02\x16\x17" +
 		"\f\x12\x02\x02\x17\x18\x07\x06\x02\x02\x18A\x05\x06\x04\x13\x19\x1A\f" +
@@ -560,8 +559,8 @@ export class CalcParser extends Parser {
 		"\f\x02\x02)*\x07\t\x02\x02*A\x05\x06\x04\r+,\f\v\x02\x02,-\x07\x10\x02" +
 		"\x02-A\x05\x06\x04\f./\f\n\x02\x02/0\x07\x11\x02\x020A\x05\x06\x04\v1" +
 		"2\f\t\x02\x0223\x07\x12\x02\x023A\x05\x06\x04\n45\f\b\x02\x0256\x07\x13" +
-		"\x02\x026A\x05\x06\x04\t78\f\x07\x02\x0289\x07\x14\x02\x029A\x05\x06\x04" +
-		"\b:;\f\x06\x02\x02;<\x07\x15\x02\x02<A\x05\x06\x04\x07=>\f\x03\x02\x02" +
+		"\x02\x026A\x05\x06\x04\t78\f\x07\x02\x0289\x07\r\x02\x029A\x05\x06\x04" +
+		"\b:;\f\x06\x02\x02;<\x07\x0E\x02\x02<A\x05\x06\x04\x07=>\f\x03\x02\x02" +
 		">?\x07\f\x02\x02?A\x05\x06\x04\x04@\x16\x03\x02\x02\x02@\x19\x03\x02\x02" +
 		"\x02@\x1C\x03\x02\x02\x02@\x1F\x03\x02\x02\x02@\"\x03\x02\x02\x02@%\x03" +
 		"\x02\x02\x02@(\x03\x02\x02\x02@+\x03\x02\x02\x02@.\x03\x02\x02\x02@1\x03" +

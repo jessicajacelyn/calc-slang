@@ -1,4 +1,4 @@
-import { BinaryOperator, UnaryOperator } from 'estree'
+import { BinaryOperator, LogicalOperator, UnaryOperator } from 'estree'
 
 import { LazyBuiltIn } from '../createContext'
 import {
@@ -197,6 +197,17 @@ export function evaluateBinaryExpression(operator: BinaryOperator, left: any, ri
       return left > right
     case '>=':
       return left >= right
+    default:
+      return undefined
+  }
+}
+
+export function evaluateLogicalExpression(operator: LogicalOperator, left: any, right: any) {
+  switch (operator) {
+    case '&&':
+      return left && right
+    case '||':
+      return left || right
     default:
       return undefined
   }

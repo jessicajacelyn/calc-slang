@@ -9,6 +9,7 @@ import * as es from 'estree'
 import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
+  AssignmentContext,
   AndLogicalContext,
   BooleanContext,
   CalcParser,
@@ -286,17 +287,18 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitAndLogical(ctx: AndLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
-      operator: '&&',
+      operator: "&&",
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
       loc: contextToLocation(ctx)
+
     }
   }
 
   visitOrLogical(ctx: OrLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
-      operator: '||',
+      operator: "||",
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
       loc: contextToLocation(ctx)
@@ -355,33 +357,9 @@ function convertSource(expression: ExpressionContext): es.Program {
         type: 'ExpressionStatement',
         expression: convertExpression(expression)
       }
-      // {
-      //   type: 'ExpressionStatement',
-      //   expression: convertLiteral(expression),
-      // }
     ]
   }
 }
-
-// function convertLiteral(expression: LiteralContext): es.Expression {
-//   const generator = new LiteralGenerator()
-//   console.log("expression -- ", expression)
-
-//   return expression.accept(generator)
-// }
-
-// function convertLit(expression: LiteralContext): es.Program {
-//   return {
-//     type: 'Program',
-//     sourceType: 'script',
-//     body: [
-//       {
-//         type: 'ExpressionStatement',
-//         expression: convertExpression(expression)
-//       }
-//     ]
-//   }
-// }
 
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined

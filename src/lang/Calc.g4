@@ -10,21 +10,16 @@ MOD: '%';
 ADD: '+';
 SUB: '-';
 EQUAL: '=';
-
-NUMBER: [0-9]+;
-WHITESPACE: [ \r\n\t]+ -> skip;
-LETTER: [a-zA-Z];
-
+AND: '&&';
+OR:'||';
+BOOLEAN: 'true' | 'false';
 GT: '>';
 LT: '<';
 GE: '>=';
 LE: '<=';
-
-AND: '&&';
-OR:'||';
-
-BOOLEAN: 'true' | 'false';
-
+NUMBER: [0-9]+;
+WHITESPACE: [ \r\n\t]+ -> skip;
+LETTER: [a-zA-Z];
 
 
 Stringliteral
