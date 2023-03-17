@@ -28,7 +28,7 @@ import {
   PowerContext,
   StartContext,
   StringContext,
-  SubtractionContext,
+  SubtractionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
@@ -146,7 +146,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       right: this.visit(ctx._right)
     }
   }
-  
+
   visitString(ctx: StringContext): es.Expression {
     console.log('string', ctx.text)
     return {
@@ -288,17 +288,17 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitAndLogical(ctx: AndLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
-      operator:('&&' || 'and' || 'andalso'),
+      operator: '&&' || 'and' || 'andalso',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
-      loc: contextToLocation(ctx) 
+      loc: contextToLocation(ctx)
     }
   }
 
   visitOrLogical(ctx: OrLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
-      operator: ('||' || 'or' || 'orelse'),
+      operator: '||' || 'or' || 'orelse',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
       loc: contextToLocation(ctx)

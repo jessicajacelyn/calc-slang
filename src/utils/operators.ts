@@ -213,16 +213,15 @@ export function evaluateLogicalExpression(operator: LogicalOperator, left: any, 
     case 'or':
       return left || right
     case 'andalso':
-      if(left===false){
+      if (left === false) {
         return false
-      } else{
+      } else {
         return right
       }
     case 'orelse':
-      if(left === true){
+      if (left === true) {
         return true
-      }
-      else{
+      } else {
         return right
       }
     default:
