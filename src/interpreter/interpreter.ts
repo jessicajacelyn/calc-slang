@@ -3,7 +3,11 @@ import * as es from 'estree'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Value } from '../types'
-import { evaluateBinaryExpression, evaluateLogicalExpression, evaluateUnaryExpression } from '../utils/operators'
+import {
+  evaluateBinaryExpression,
+  evaluateLogicalExpression,
+  evaluateUnaryExpression
+} from '../utils/operators'
 import * as rttc from '../utils/rttc'
 
 class Thunk {

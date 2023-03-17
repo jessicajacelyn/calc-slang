@@ -92,26 +92,28 @@ export const checkBinaryExpression = (
   }
 }
 
-export const checkLogicalExpression = (node: es.Node,
+export const checkLogicalExpression = (
+  node: es.Node,
   operator: es.LogicalOperator,
   left: Value,
   right: Value
 ) => {
-  switch(operator) {
+  switch (operator) {
     case '&&':
     case '||':
+    case 'and':
+    case 'or':
+    case 'andalso':
+    case 'orelse':
       if (!isBool(left)) {
         return new TypeError(node, LHS, 'boolean', typeOf(left))
-      }
-      else if(!isBool(right)) {
+      } else if (!isBool(right)) {
         return new TypeError(node, RHS, 'boolean', typeOf(right))
-      }
-      else {
+      } else {
         return
       }
     default:
       return
-    
   }
 }
 

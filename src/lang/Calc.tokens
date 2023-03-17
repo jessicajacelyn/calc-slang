@@ -18,7 +18,8 @@ LE=17
 NUMBER=18
 WHITESPACE=19
 LETTER=20
-Stringliteral=21
+VAL=21
+Stringliteral=22
 ':='=1
 '('=2
 ')'=3
@@ -29,9 +30,8 @@ Stringliteral=21
 '+'=8
 '-'=9
 '='=10
-'&&'=11
-'||'=12
 '>'=14
 '<'=15
 '>='=16
 '<='=17
+'val'=21

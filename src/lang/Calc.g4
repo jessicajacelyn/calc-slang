@@ -10,8 +10,8 @@ MOD: '%';
 ADD: '+';
 SUB: '-';
 EQUAL: '=';
-AND: '&&';
-OR:'||';
+AND: '&&' | 'and' | 'andalso';
+OR:'||' | 'or' | 'orelse';
 BOOLEAN: 'true' | 'false';
 GT: '>';
 LT: '<';
@@ -20,7 +20,7 @@ LE: '<=';
 NUMBER: [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
-
+VAL: 'val';
 
 Stringliteral
 :
@@ -65,12 +65,12 @@ expression
    | left=expression operator=ADD right=expression  # Addition
    | left=expression operator=SUB right=expression  # Subtraction
    | left=expression operator=MOD right=expression  # Modulus
-   | left=expression op=GT right=expression         # GreaterComparator
-   | left=expression op=LT right=expression         # LesserComparator
-   | left=expression op=GE right=expression         # GreaterEqualComparator
-   | left=expression op=LE right=expression         # LesserEqualComparator
-   | left=expression op=AND right=expression        # AndLogical
-   | left=expression op=OR right=expression         # OrLogical
+   | left=expression operator=GT right=expression   # GreaterComparator
+   | left=expression operator=LT right=expression   # LesserComparator
+   | left=expression operator=GE right=expression   # GreaterEqualComparator
+   | left=expression operator=LE right=expression   # LesserEqualComparator
+   | left=expression operator=AND right=expression  # AndLogical
+   | left=expression operator=OR right=expression   # OrLogical
    | BOOLEAN                                        # Boolean
    | Stringliteral                                  # String 
    | left=expression operator=EQUAL right=expression # Assignment

@@ -48,7 +48,8 @@ export class CalcParser extends Parser {
 	public static readonly NUMBER = 18;
 	public static readonly WHITESPACE = 19;
 	public static readonly LETTER = 20;
-	public static readonly Stringliteral = 21;
+	public static readonly VAL = 21;
+	public static readonly Stringliteral = 22;
 	public static readonly RULE_assignmentoperator = 0;
 	public static readonly RULE_start = 1;
 	public static readonly RULE_expression = 2;
@@ -59,12 +60,13 @@ export class CalcParser extends Parser {
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
 		undefined, "':='", "'('", "')'", "'^'", "'*'", "'/'", "'%'", "'+'", "'-'", 
-		"'='", "'&&'", "'||'", undefined, "'>'", "'<'", "'>='", "'<='",
+		"'='", undefined, undefined, undefined, "'>'", "'<'", "'>='", "'<='", 
+		undefined, undefined, undefined, "'val'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, undefined, "POW", "MUL", "DIV", "MOD", 
 		"ADD", "SUB", "EQUAL", "AND", "OR", "BOOLEAN", "GT", "LT", "GE", "LE", 
-		"NUMBER", "WHITESPACE", "LETTER", "Stringliteral",
+		"NUMBER", "WHITESPACE", "LETTER", "VAL", "Stringliteral",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcParser._LITERAL_NAMES, CalcParser._SYMBOLIC_NAMES, []);
 
@@ -355,7 +357,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
 						this.state = 42;
-						(_localctx as GreaterComparatorContext)._op = this.match(CalcParser.GT);
+						(_localctx as GreaterComparatorContext)._operator = this.match(CalcParser.GT);
 						this.state = 43;
 						(_localctx as GreaterComparatorContext)._right = this.expression(10);
 						}
@@ -371,7 +373,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
 						this.state = 45;
-						(_localctx as LesserComparatorContext)._op = this.match(CalcParser.LT);
+						(_localctx as LesserComparatorContext)._operator = this.match(CalcParser.LT);
 						this.state = 46;
 						(_localctx as LesserComparatorContext)._right = this.expression(9);
 						}
@@ -387,7 +389,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
 						this.state = 48;
-						(_localctx as GreaterEqualComparatorContext)._op = this.match(CalcParser.GE);
+						(_localctx as GreaterEqualComparatorContext)._operator = this.match(CalcParser.GE);
 						this.state = 49;
 						(_localctx as GreaterEqualComparatorContext)._right = this.expression(8);
 						}
@@ -403,7 +405,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
 						}
 						this.state = 51;
-						(_localctx as LesserEqualComparatorContext)._op = this.match(CalcParser.LE);
+						(_localctx as LesserEqualComparatorContext)._operator = this.match(CalcParser.LE);
 						this.state = 52;
 						(_localctx as LesserEqualComparatorContext)._right = this.expression(7);
 						}
@@ -419,7 +421,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
 						}
 						this.state = 54;
-						(_localctx as AndLogicalContext)._op = this.match(CalcParser.AND);
+						(_localctx as AndLogicalContext)._operator = this.match(CalcParser.AND);
 						this.state = 55;
 						(_localctx as AndLogicalContext)._right = this.expression(6);
 						}
@@ -435,7 +437,7 @@ export class CalcParser extends Parser {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
 						}
 						this.state = 57;
-						(_localctx as OrLogicalContext)._op = this.match(CalcParser.OR);
+						(_localctx as OrLogicalContext)._operator = this.match(CalcParser.OR);
 						this.state = 58;
 						(_localctx as OrLogicalContext)._right = this.expression(5);
 						}
@@ -535,7 +537,7 @@ export class CalcParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x17F\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x18F\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x03\x02\x03\x02\x03\x03\x03\x03\x03" +
 		"\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04\x15" +
 		"\n\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04" +
@@ -549,7 +551,7 @@ export class CalcParser extends Parser {
 		"\x02\n\v\x05\x06\x04\x02\v\x05\x03\x02\x02\x02\f\r\b\x04\x01\x02\r\x15" +
 		"\x07\x14\x02\x02\x0E\x0F\x07\x04\x02\x02\x0F\x10\x05\x06\x04\x02\x10\x11" +
 		"\x07\x05\x02\x02\x11\x15\x03\x02\x02\x02\x12\x15\x07\x0F\x02\x02\x13\x15" +
-		"\x07\x17\x02\x02\x14\f\x03\x02\x02\x02\x14\x0E\x03\x02\x02\x02\x14\x12" +
+		"\x07\x18\x02\x02\x14\f\x03\x02\x02\x02\x14\x0E\x03\x02\x02\x02\x14\x12" +
 		"\x03\x02\x02\x02\x14\x13\x03\x02\x02\x02\x15B\x03\x02\x02\x02\x16\x17" +
 		"\f\x12\x02\x02\x17\x18\x07\x06\x02\x02\x18A\x05\x06\x04\x13\x19\x1A\f" +
 		"\x11\x02\x02\x1A\x1B\x07\x07\x02\x02\x1BA\x05\x06\x04\x12\x1C\x1D\f\x10" +
@@ -943,7 +945,7 @@ export class SubtractionContext extends ExpressionContext {
 }
 export class GreaterComparatorContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _op!: Token;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -982,7 +984,7 @@ export class GreaterComparatorContext extends ExpressionContext {
 }
 export class LesserComparatorContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _op!: Token;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1021,7 +1023,7 @@ export class LesserComparatorContext extends ExpressionContext {
 }
 export class GreaterEqualComparatorContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _op!: Token;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1060,7 +1062,7 @@ export class GreaterEqualComparatorContext extends ExpressionContext {
 }
 export class LesserEqualComparatorContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _op!: Token;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1099,7 +1101,7 @@ export class LesserEqualComparatorContext extends ExpressionContext {
 }
 export class AndLogicalContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _op!: Token;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1138,7 +1140,7 @@ export class AndLogicalContext extends ExpressionContext {
 }
 export class OrLogicalContext extends ExpressionContext {
 	public _left!: ExpressionContext;
-	public _op!: Token;
+	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
