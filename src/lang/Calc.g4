@@ -18,6 +18,7 @@ LT: '<';
 GE: '>=';
 LE: '<=';
 NUMBER: [0-9]+;
+REAL: [0-9]+ '.' [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
 VAL: 'val';
@@ -42,6 +43,7 @@ start: expression;
 
 expression:
 	NUMBER																# Number
+	| REAL																# Real
 	| '(' inner = expression ')' ';'									# Parentheses
 	| left = expression operator = POW right = expression ';'			# Power
 	| left = expression operator = MUL right = expression ';'			# Multiplication
