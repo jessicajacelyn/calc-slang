@@ -7,8 +7,19 @@ import { ParenthesesContext } from './CalcParser'
 import { PowerContext } from './CalcParser'
 import { MultiplicationContext } from './CalcParser'
 import { DivisionContext } from './CalcParser'
+import { ModulusContext } from './CalcParser'
 import { AdditionContext } from './CalcParser'
 import { SubtractionContext } from './CalcParser'
+import { GreaterComparatorContext } from './CalcParser'
+import { LesserComparatorContext } from './CalcParser'
+import { GreaterEqualComparatorContext } from './CalcParser'
+import { LesserEqualComparatorContext } from './CalcParser'
+import { AndLogicalContext } from './CalcParser'
+import { OrLogicalContext } from './CalcParser'
+import { BooleanContext } from './CalcParser'
+import { StringContext } from './CalcParser'
+import { AssignmentContext } from './CalcParser'
+import { AssignmentoperatorContext } from './CalcParser'
 import { StartContext } from './CalcParser'
 import { ExpressionContext } from './CalcParser'
 
@@ -83,6 +94,19 @@ export interface CalcListener extends ParseTreeListener {
   exitDivision?: (ctx: DivisionContext) => void
 
   /**
+   * Enter a parse tree produced by the `Modulus`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterModulus?: (ctx: ModulusContext) => void
+  /**
+   * Exit a parse tree produced by the `Modulus`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitModulus?: (ctx: ModulusContext) => void
+
+  /**
    * Enter a parse tree produced by the `Addition`
    * labeled alternative in `CalcParser.expression`.
    * @param ctx the parse tree
@@ -107,6 +131,134 @@ export interface CalcListener extends ParseTreeListener {
    * @param ctx the parse tree
    */
   exitSubtraction?: (ctx: SubtractionContext) => void
+
+  /**
+   * Enter a parse tree produced by the `GreaterComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterGreaterComparator?: (ctx: GreaterComparatorContext) => void
+  /**
+   * Exit a parse tree produced by the `GreaterComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitGreaterComparator?: (ctx: GreaterComparatorContext) => void
+
+  /**
+   * Enter a parse tree produced by the `LesserComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterLesserComparator?: (ctx: LesserComparatorContext) => void
+  /**
+   * Exit a parse tree produced by the `LesserComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitLesserComparator?: (ctx: LesserComparatorContext) => void
+
+  /**
+   * Enter a parse tree produced by the `GreaterEqualComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterGreaterEqualComparator?: (ctx: GreaterEqualComparatorContext) => void
+  /**
+   * Exit a parse tree produced by the `GreaterEqualComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitGreaterEqualComparator?: (ctx: GreaterEqualComparatorContext) => void
+
+  /**
+   * Enter a parse tree produced by the `LesserEqualComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterLesserEqualComparator?: (ctx: LesserEqualComparatorContext) => void
+  /**
+   * Exit a parse tree produced by the `LesserEqualComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitLesserEqualComparator?: (ctx: LesserEqualComparatorContext) => void
+
+  /**
+   * Enter a parse tree produced by the `AndLogical`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterAndLogical?: (ctx: AndLogicalContext) => void
+  /**
+   * Exit a parse tree produced by the `AndLogical`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitAndLogical?: (ctx: AndLogicalContext) => void
+
+  /**
+   * Enter a parse tree produced by the `OrLogical`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterOrLogical?: (ctx: OrLogicalContext) => void
+  /**
+   * Exit a parse tree produced by the `OrLogical`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitOrLogical?: (ctx: OrLogicalContext) => void
+
+  /**
+   * Enter a parse tree produced by the `Boolean`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterBoolean?: (ctx: BooleanContext) => void
+  /**
+   * Exit a parse tree produced by the `Boolean`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitBoolean?: (ctx: BooleanContext) => void
+
+  /**
+   * Enter a parse tree produced by the `String`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterString?: (ctx: StringContext) => void
+  /**
+   * Exit a parse tree produced by the `String`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitString?: (ctx: StringContext) => void
+
+  /**
+   * Enter a parse tree produced by the `Assignment`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  enterAssignment?: (ctx: AssignmentContext) => void
+  /**
+   * Exit a parse tree produced by the `Assignment`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   */
+  exitAssignment?: (ctx: AssignmentContext) => void
+
+  /**
+   * Enter a parse tree produced by `CalcParser.assignmentoperator`.
+   * @param ctx the parse tree
+   */
+  enterAssignmentoperator?: (ctx: AssignmentoperatorContext) => void
+  /**
+   * Exit a parse tree produced by `CalcParser.assignmentoperator`.
+   * @param ctx the parse tree
+   */
+  exitAssignmentoperator?: (ctx: AssignmentoperatorContext) => void
 
   /**
    * Enter a parse tree produced by `CalcParser.start`.

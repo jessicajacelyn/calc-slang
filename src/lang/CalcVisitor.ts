@@ -7,8 +7,19 @@ import { ParenthesesContext } from './CalcParser'
 import { PowerContext } from './CalcParser'
 import { MultiplicationContext } from './CalcParser'
 import { DivisionContext } from './CalcParser'
+import { ModulusContext } from './CalcParser'
 import { AdditionContext } from './CalcParser'
 import { SubtractionContext } from './CalcParser'
+import { GreaterComparatorContext } from './CalcParser'
+import { LesserComparatorContext } from './CalcParser'
+import { GreaterEqualComparatorContext } from './CalcParser'
+import { LesserEqualComparatorContext } from './CalcParser'
+import { AndLogicalContext } from './CalcParser'
+import { OrLogicalContext } from './CalcParser'
+import { BooleanContext } from './CalcParser'
+import { StringContext } from './CalcParser'
+import { AssignmentContext } from './CalcParser'
+import { AssignmentoperatorContext } from './CalcParser'
 import { StartContext } from './CalcParser'
 import { ExpressionContext } from './CalcParser'
 
@@ -61,6 +72,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
   visitDivision?: (ctx: DivisionContext) => Result
 
   /**
+   * Visit a parse tree produced by the `Modulus`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitModulus?: (ctx: ModulusContext) => Result
+
+  /**
    * Visit a parse tree produced by the `Addition`
    * labeled alternative in `CalcParser.expression`.
    * @param ctx the parse tree
@@ -75,6 +94,85 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
    * @return the visitor result
    */
   visitSubtraction?: (ctx: SubtractionContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `GreaterComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitGreaterComparator?: (ctx: GreaterComparatorContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `LesserComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitLesserComparator?: (ctx: LesserComparatorContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `GreaterEqualComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitGreaterEqualComparator?: (ctx: GreaterEqualComparatorContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `LesserEqualComparator`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitLesserEqualComparator?: (ctx: LesserEqualComparatorContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `AndLogical`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitAndLogical?: (ctx: AndLogicalContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `OrLogical`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitOrLogical?: (ctx: OrLogicalContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `Boolean`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitBoolean?: (ctx: BooleanContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `String`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitString?: (ctx: StringContext) => Result
+
+  /**
+   * Visit a parse tree produced by the `Assignment`
+   * labeled alternative in `CalcParser.expression`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitAssignment?: (ctx: AssignmentContext) => Result
+
+  /**
+   * Visit a parse tree produced by `CalcParser.assignmentoperator`.
+   * @param ctx the parse tree
+   * @return the visitor result
+   */
+  visitAssignmentoperator?: (ctx: AssignmentoperatorContext) => Result
 
   /**
    * Visit a parse tree produced by `CalcParser.start`.

@@ -9,19 +9,32 @@ import * as es from 'estree'
 import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
+  AndLogicalContext,
+  AssignmentContext,
+  BooleanContext,
   CalcParser,
   DivisionContext,
   ExpressionContext,
+  GreaterComparatorContext,
+  GreaterEqualComparatorContext,
+  LesserComparatorContext,
+  LesserEqualComparatorContext,
+  // LiteralContext,
+  ModulusContext,
   MultiplicationContext,
   NumberContext,
+  OrLogicalContext,
   ParenthesesContext,
   PowerContext,
   StartContext,
+  StringContext,
   SubtractionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
+import { literal } from '../utils/astCreator'
 import { stripIndent } from '../utils/formatters'
+import { binaryOp } from '../utils/operators'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -121,7 +134,31 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
   }
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
+  visitAssignment(ctx: AssignmentContext): es.Expression {
+    console.log('iwehfiowhefoiqhfoihqowiefhqhewoi')
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text
+      },
+      right: this.visit(ctx._right)
+    }
+  }
+
+  visitString(ctx: StringContext): es.Expression {
+    console.log('string', ctx.text)
+    return {
+      type: 'Literal',
+      value: ctx.text,
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
   visitNumber(ctx: NumberContext): es.Expression {
+    console.log(ctx.text)
+
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
@@ -129,6 +166,23 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
+
+  visitBoolean(ctx: BooleanContext): es.Expression {
+    let val
+    if (ctx.text === 'true') {
+      val = true
+    } else {
+      val = false
+    }
+
+    return {
+      type: 'Literal',
+      value: val,
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
+
   visitParentheses(ctx: ParenthesesContext): es.Expression {
     return this.visit(ctx.expression())
   }
@@ -160,6 +214,17 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
+
+  visitModulus(ctx: ModulusContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '%',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
   visitAddition(ctx: AdditionContext): es.Expression {
     return {
       type: 'BinaryExpression',
@@ -174,6 +239,66 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return {
       type: 'BinaryExpression',
       operator: '-',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitGreaterComparator(ctx: GreaterComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '>',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitLesserComparator(ctx: LesserComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '<',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitGreaterEqualComparator(ctx: GreaterEqualComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '>=',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitLesserEqualComparator(ctx: LesserEqualComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '<=',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitAndLogical(ctx: AndLogicalContext): es.Expression {
+    return {
+      type: 'LogicalExpression',
+      operator: '&&' || 'and' || 'andalso',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitOrLogical(ctx: OrLogicalContext): es.Expression {
+    return {
+      type: 'LogicalExpression',
+      operator: '||' || 'or' || 'orelse',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
       loc: contextToLocation(ctx)
@@ -219,6 +344,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
 function convertExpression(expression: ExpressionContext): es.Expression {
   const generator = new ExpressionGenerator()
+  console.log('expression -- ', expression)
   return expression.accept(generator)
 }
 
@@ -261,6 +387,7 @@ export function parse(source: string, context: Context) {
       return undefined
     }
   } else {
+    console.log('first else')
     return undefined
   }
 }
