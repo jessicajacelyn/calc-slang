@@ -16,6 +16,7 @@ import {
   ExpressionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
+  IfThenElseConditionContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetAssignmentContext,
@@ -291,6 +292,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       operator: '<=',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression{
+    return {
+      type: 'ConditionalExpression',
+      test: this.visit(ctx._test),
+      consequent: this.visit(ctx._consequent),
+      alternate: this.visit(ctx._alternate),
       loc: contextToLocation(ctx)
     }
   }

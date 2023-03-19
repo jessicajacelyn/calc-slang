@@ -35,14 +35,20 @@ emptydeclaration: ';';
 
 // literal : Stringliteral # String ;
 
+IF : 'if';
+THEN: 'then';
+ELSE : 'else';
+WHILE : 'while';
+
+
 /*
  * Productions
  */
 start: expression;
 
 expression:
-	NUMBER																# Number
-	| '(' inner = expression ')' ';'									# Parentheses
+	NUMBER																                        # Number
+	| '(' inner = expression ')' ';'									            # Parentheses
 	| left = expression operator = POW right = expression ';'			# Power
 	| left = expression operator = MUL right = expression ';'			# Multiplication
 	| left = expression operator = DIV right = expression ';'			# Division
@@ -51,12 +57,12 @@ expression:
 	| left = expression operator = MOD right = expression ';'			# Modulus
 	| 'let' left = expression operator = EQUAL right = expression ';'	# LetAssignment
 	| 'val' left = expression operator = EQUAL right = expression ';'	# ValAssignment
-	| Stringliteral														# String
+  | IF test = expression THEN consequent = expression ELSE alternate = expression ';' #IfThenElseCondition
 	| left = expression operator = GT right = expression				# GreaterComparator
 	| left = expression operator = LT right = expression				# LesserComparator
 	| left = expression operator = GE right = expression				# GreaterEqualComparator
 	| left = expression operator = LE right = expression				# LesserEqualComparator
 	| left = expression operator = AND right = expression				# AndLogical
 	| left = expression operator = OR right = expression				# OrLogical
-	| Stringliteral														# String
-	| BOOLEAN															# Boolean;
+	| Stringliteral														                  # String
+	| BOOLEAN															                      # Boolean;

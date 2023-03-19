@@ -13,13 +13,14 @@ import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
 import { LetAssignmentContext } from "./CalcParser";
 import { ValAssignmentContext } from "./CalcParser";
-import { StringContext } from "./CalcParser";
+import { IfThenElseConditionContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
 import { LesserComparatorContext } from "./CalcParser";
 import { GreaterEqualComparatorContext } from "./CalcParser";
 import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
+import { StringContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
@@ -116,12 +117,12 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitValAssignment?: (ctx: ValAssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `String`
+	 * Visit a parse tree produced by the `IfThenElseCondition`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitString?: (ctx: StringContext) => Result;
+	visitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `GreaterComparator`
@@ -170,6 +171,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitOrLogical?: (ctx: OrLogicalContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitString?: (ctx: StringContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `Boolean`
