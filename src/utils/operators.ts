@@ -45,6 +45,7 @@ export function wrapLazyCallee(candidate: any) {
       makeWrapper(candidate.func, wrapped)
       wrapped[Symbol.toStringTag] = () => candidate.toString()
       wrapped.toString = () => candidate.toString()
+      console.log('thanks for waiting lols')
       return wrapped
     } else {
       return candidate

@@ -11,9 +11,11 @@ import { DivisionContext } from "./CalcParser";
 import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
+import { LetAssignmentContext } from "./CalcParser";
+import { ValAssignmentContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
-import { AssignmentContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
+import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -91,6 +93,22 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitModulus?: (ctx: ModulusContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `LetAssignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLetAssignment?: (ctx: LetAssignmentContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `ValAssignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitValAssignment?: (ctx: ValAssignmentContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `String`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -99,19 +117,18 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitString?: (ctx: StringContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `Assignment`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitAssignment?: (ctx: AssignmentContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by `CalcParser.assignmentoperator`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitAssignmentoperator?: (ctx: AssignmentoperatorContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.emptydeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitEmptydeclaration?: (ctx: EmptydeclarationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.start`.
