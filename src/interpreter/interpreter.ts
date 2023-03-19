@@ -3,7 +3,11 @@ import * as es from 'estree'
 
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Value } from '../types'
-import { evaluateBinaryExpression, evaluateUnaryExpression } from '../utils/operators'
+import {
+  evaluateBinaryExpression,
+  evaluateLogicalExpression,
+  evaluateUnaryExpression
+} from '../utils/operators'
 import * as rttc from '../utils/rttc'
 
 class Thunk {
@@ -146,7 +150,14 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   LogicalExpression: function* (node: es.LogicalExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    //throw new Error(`not supported yet: ${node.type}`)
+    const left = yield* actualValue(node.left, context)
+    const right = yield* actualValue(node.right, context)
+    const error = rttc.checkLogicalExpression(node, node.operator, left, right)
+    if (error) {
+      return handleRuntimeError(context, error)
+    }
+    return evaluateLogicalExpression(node.operator, left, right)
   },
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {

@@ -10,10 +10,17 @@ MOD: '%';
 ADD: '+';
 SUB: '-';
 EQUAL: '=';
-
+AND: '&&' | 'and' | 'andalso';
+OR: '||' | 'or' | 'orelse';
+BOOLEAN: 'true' | 'false';
+GT: '>';
+LT: '<';
+GE: '>=';
+LE: '<=';
 NUMBER: [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
+VAL: 'val';
 
 Stringliteral: [a-zA-Z0-9];
 
@@ -44,4 +51,12 @@ expression:
 	| left = expression operator = MOD right = expression ';'			# Modulus
 	| 'let' left = expression operator = EQUAL right = expression ';'	# LetAssignment
 	| 'val' left = expression operator = EQUAL right = expression ';'	# ValAssignment
-	| Stringliteral														# String;
+	| Stringliteral														# String
+	| left = expression operator = GT right = expression				# GreaterComparator
+	| left = expression operator = LT right = expression				# LesserComparator
+	| left = expression operator = GE right = expression				# GreaterEqualComparator
+	| left = expression operator = LE right = expression				# LesserEqualComparator
+	| left = expression operator = AND right = expression				# AndLogical
+	| left = expression operator = OR right = expression				# OrLogical
+	| Stringliteral														# String
+	| BOOLEAN															# Boolean;

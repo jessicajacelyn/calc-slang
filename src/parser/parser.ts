@@ -9,13 +9,21 @@ import * as es from 'estree'
 import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
+  AndLogicalContext,
+  BooleanContext,
   CalcParser,
   DivisionContext,
   ExpressionContext,
+  GreaterComparatorContext,
+  GreaterEqualComparatorContext,
+  LesserComparatorContext,
+  LesserEqualComparatorContext,
   LetAssignmentContext,
+  // LiteralContext,
   ModulusContext,
   MultiplicationContext,
   NumberContext,
+  OrLogicalContext,
   ParenthesesContext,
   PowerContext,
   StartContext,
@@ -27,6 +35,7 @@ import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
 import { literal } from '../utils/astCreator'
 import { stripIndent } from '../utils/formatters'
+import { binaryOp } from '../utils/operators'
 
 export class DisallowedConstructError implements SourceError {
   public type = ErrorType.SYNTAX
@@ -148,6 +157,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       right: this.visit(ctx._right)
     }
   }
+
   visitString(ctx: StringContext): es.Expression {
     return {
       type: 'Literal',
@@ -166,6 +176,23 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
+
+  visitBoolean(ctx: BooleanContext): es.Expression {
+    let val
+    if (ctx.text === 'true') {
+      val = true
+    } else {
+      val = false
+    }
+
+    return {
+      type: 'Literal',
+      value: val,
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
+
   visitParentheses(ctx: ParenthesesContext): es.Expression {
     return this.visit(ctx.expression())
   }
@@ -228,6 +255,66 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  visitGreaterComparator(ctx: GreaterComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '>',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitLesserComparator(ctx: LesserComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '<',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitGreaterEqualComparator(ctx: GreaterEqualComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '>=',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitLesserEqualComparator(ctx: LesserEqualComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '<=',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitAndLogical(ctx: AndLogicalContext): es.Expression {
+    return {
+      type: 'LogicalExpression',
+      operator: '&&' || 'and' || 'andalso',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitOrLogical(ctx: OrLogicalContext): es.Expression {
+    return {
+      type: 'LogicalExpression',
+      operator: '||' || 'or' || 'orelse',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
   visitExpression?: ((ctx: ExpressionContext) => es.Expression) | undefined
   visitStart?: ((ctx: StartContext) => es.Expression) | undefined
 
@@ -280,33 +367,9 @@ function convertSource(expression: ExpressionContext): es.Program {
         type: 'ExpressionStatement',
         expression: convertExpression(expression)
       }
-      // {
-      //   type: 'ExpressionStatement',
-      //   expression: convertLiteral(expression),
-      // }
     ]
   }
 }
-
-// function convertLiteral(expression: LiteralContext): es.Expression {
-//   const generator = new LiteralGenerator()
-//   console.log("expression -- ", expression)
-
-//   return expression.accept(generator)
-// }
-
-// function convertLit(expression: LiteralContext): es.Program {
-//   return {
-//     type: 'Program',
-//     sourceType: 'script',
-//     body: [
-//       {
-//         type: 'ExpressionStatement',
-//         expression: convertExpression(expression)
-//       }
-//     ]
-//   }
-// }
 
 export function parse(source: string, context: Context) {
   let program: es.Program | undefined
