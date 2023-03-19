@@ -185,6 +185,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // } else {
     //   console.log('idk')
     // }
+    if(node.left.type === 'Identifier') {
+      console.log('its an identifier', node.left.name)
+      const environment = context.runtime.environments[0]
+      const variable = environment.head.get(node.left.name)
+      variable.value = right
+      return right
+    } else if(node.left.type === 'MemberExpression') {
+      console.log('its a member expression')
+      const object = yield* actualValue(node.left.object, context)
+      const property = yield* actualValue(node.left.property, context)
+      if(object.type === 'object') {
+        object.value[property.value] = right
+        return right
+      } else {
+        throw new Error(`not supported yet: ${node.type}`)
+      }
+    } else {
+      throw new Error(`not supported yet: ${node.type}`)
+    }
+    
     return node.left
   },
 

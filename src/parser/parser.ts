@@ -10,7 +10,6 @@ import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
   AndLogicalContext,
-  AssignmentContext,
   BooleanContext,
   CalcParser,
   DivisionContext,
@@ -19,6 +18,7 @@ import {
   GreaterEqualComparatorContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
+  LetAssignmentContext,
   // LiteralContext,
   ModulusContext,
   MultiplicationContext,
@@ -28,7 +28,8 @@ import {
   PowerContext,
   StartContext,
   StringContext,
-  SubtractionContext
+  SubtractionContext,
+  ValAssignmentContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
@@ -134,8 +135,18 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
   }
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
-  visitAssignment(ctx: AssignmentContext): es.Expression {
-    console.log('iwehfiowhefoiqhfoihqowiefhqhewoi')
+  visitValAssignment(ctx: ValAssignmentContext): es.Expression {
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text
+      },
+      right: this.visit(ctx._right)
+    }
+  }
+  visitLetAssignment(ctx: LetAssignmentContext): es.Expression {
     return {
       type: 'AssignmentExpression',
       operator: '=',
@@ -148,7 +159,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
-    console.log('string', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
