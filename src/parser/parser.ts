@@ -20,13 +20,13 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetAssignmentContext,
-  // LiteralContext,
   ModulusContext,
   MultiplicationContext,
   NumberContext,
   OrLogicalContext,
   ParenthesesContext,
   PowerContext,
+  RealContext,
   StartContext,
   StringContext,
   SubtractionContext,
@@ -178,6 +178,17 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  visitReal(ctx: RealContext): es.Expression {
+    console.log(ctx.text)
+
+    return {
+      type: 'Literal',
+      value: parseFloat(ctx.text),
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
+
   visitBoolean(ctx: BooleanContext): es.Expression {
     let val
     if (ctx.text === 'true') {
@@ -237,6 +248,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitAddition(ctx: AdditionContext): es.Expression {
+    console.log('LEFT: ', this.visit(ctx._left))
+    console.log('RIGHT: ', this.visit(ctx._right))
     return {
       type: 'BinaryExpression',
       operator: '+',

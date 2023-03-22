@@ -18,6 +18,7 @@ LT: '<';
 GE: '>=';
 LE: '<=';
 NUMBER: [0-9]+;
+REAL: [0-9]+ '.' [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
 VAL: 'val';
@@ -38,7 +39,6 @@ emptydeclaration: ';';
 IF : 'if';
 THEN: 'then';
 ELSE : 'else';
-WHILE : 'while';
 
 
 /*
@@ -48,6 +48,7 @@ start: expression;
 
 expression:
 	NUMBER																                        # Number
+	| REAL																# Real
 	| '(' inner = expression ')' ';'									            # Parentheses
 	| left = expression operator = POW right = expression ';'			# Power
 	| left = expression operator = MUL right = expression ';'			# Multiplication
@@ -57,7 +58,7 @@ expression:
 	| left = expression operator = MOD right = expression ';'			# Modulus
 	| 'let' left = expression operator = EQUAL right = expression ';'	# LetAssignment
 	| 'val' left = expression operator = EQUAL right = expression ';'	# ValAssignment
-  | IF test = expression THEN consequent = expression ELSE alternate = expression ';' #IfThenElseCondition
+  	| IF test = expression THEN consequent = expression ELSE alternate = expression ';' #IfThenElseCondition
 	| left = expression operator = GT right = expression				# GreaterComparator
 	| left = expression operator = LT right = expression				# LesserComparator
 	| left = expression operator = GE right = expression				# GreaterEqualComparator
