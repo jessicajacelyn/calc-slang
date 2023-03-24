@@ -29,6 +29,8 @@ import { BooleanContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
+import { StatementContext } from "./CalcParser";
+import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
 
@@ -368,6 +370,28 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitStart?: (ctx: StartContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.statement`.
+	 * @param ctx the parse tree
+	 */
+	enterStatement?: (ctx: StatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.statement`.
+	 * @param ctx the parse tree
+	 */
+	exitStatement?: (ctx: StatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.expressionStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterExpressionStatement?: (ctx: ExpressionStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.expressionStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitExpressionStatement?: (ctx: ExpressionStatementContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.expression`.

@@ -15,6 +15,7 @@ import {
   DivisionContext,
   EqualComparatorContext,
   ExpressionContext,
+  ExpressionStatementContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
   IfThenElseConditionContext,
@@ -31,6 +32,7 @@ import {
   PowerContext,
   RealContext,
   StartContext,
+  StatementContext,
   StringContext,
   SubtractionContext,
   ValAssignmentContext
@@ -138,6 +140,123 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
     }
   }
 }
+
+class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
+  visitStart?: ((ctx: StartContext) => es.Statement[]) | undefined;
+
+  visit(tree: ParseTree): es.Statement[] {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.Statement[] {
+    const stmtGenerator: StatementGenerator = new StatementGenerator()
+    const statements: es.Statement[] = []
+    for (let i = 0; i < node.childCount; i++) {
+      statements.push(node.getChild(i).accept(stmtGenerator))
+    }
+    return statements
+  }
+
+  visitTerminal(node: TerminalNode): es.Statement[] {
+    throw new Error('Method not implemented.')
+  }
+
+  visitErrorNode(node: ErrorNode): es.Statement[] {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  } 
+}
+
+class StatementGenerator implements CalcVisitor<es.Statement> {
+
+  visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
+    const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
+    return ctx.accept(generator)
+  }
+
+  visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
+
+  visit(tree: ParseTree): es.Statement {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.Statement {
+    // First child is the statement
+    return this.visit(node.getChild(0))
+  }
+
+  visitTerminal(node: TerminalNode): es.Statement {
+    throw new Error('Method not implemented.')
+  }
+
+  visitErrorNode(node: ErrorNode): es.Statement {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
+class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement> {
+  visitExpressioStatement?:
+    | ((ctx: ExpressionStatementContext) => es.ExpressionStatement)
+    | undefined
+
+  visit(tree: ParseTree): es.ExpressionStatement {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.ExpressionStatement {
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    // First child is an expression
+    const expression: es.Expression = node.getChild(0).accept(generator)
+    return {
+      type: 'ExpressionStatement',
+      expression
+    }
+  }
+
+  visitTerminal(node: TerminalNode): es.ExpressionStatement {
+    return node.accept(this)
+  }
+
+  visitErrorNode(node: ErrorNode): es.ExpressionStatement {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitValAssignment(ctx: ValAssignmentContext): es.Expression {
     return {
@@ -411,22 +530,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 }
 
-function convertExpression(expression: ExpressionContext): es.Expression {
-  const generator = new ExpressionGenerator()
-  console.log('expression -- ', expression)
-  return expression.accept(generator)
+function convertStatementExpression(start: StartContext): Array<es.Statement> {
+  const generator = new ExpressionArrayGenerator()
+  return start.accept(generator)
 }
 
-function convertSource(expression: ExpressionContext): es.Program {
+function convertSource(start: StartContext): es.Program {
   return {
     type: 'Program',
     sourceType: 'script',
-    body: [
-      {
-        type: 'ExpressionStatement',
-        expression: convertExpression(expression)
-      }
-    ]
+    body: convertStatementExpression(start)
   }
 }
 
@@ -440,7 +553,7 @@ export function parse(source: string, context: Context) {
     const parser = new CalcParser(tokenStream)
     parser.buildParseTree = true
     try {
-      const tree = parser.expression()
+      const tree = parser.start()
       program = convertSource(tree)
     } catch (error) {
       if (error instanceof FatalSyntaxError) {

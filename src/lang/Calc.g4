@@ -47,8 +47,12 @@ ELSE : 'else';
 /*
  * Productions
  */
-start: expression;
+start: statement*;
 
+statement:
+	expressionStatement;
+
+expressionStatement: expression ';' ;
 
 expression:
 	NUMBER																                        # Number

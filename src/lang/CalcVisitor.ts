@@ -29,6 +29,8 @@ import { BooleanContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
+import { StatementContext } from "./CalcParser";
+import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
 
@@ -244,6 +246,20 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStart?: (ctx: StartContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.statement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStatement?: (ctx: StatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.expressionStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitExpressionStatement?: (ctx: ExpressionStatementContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.expression`.
