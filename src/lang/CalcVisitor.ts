@@ -14,13 +14,16 @@ import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
 import { LetAssignmentContext } from "./CalcParser";
 import { ValAssignmentContext } from "./CalcParser";
+import { LocalValAssignmentContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
+import { EqualComparatorContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
 import { LesserComparatorContext } from "./CalcParser";
 import { GreaterEqualComparatorContext } from "./CalcParser";
 import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
+import { NotLogicalContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
@@ -126,12 +129,28 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitValAssignment?: (ctx: ValAssignmentContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `LocalValAssignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLocalValAssignment?: (ctx: LocalValAssignmentContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `IfThenElseCondition`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `EqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitEqualComparator?: (ctx: EqualComparatorContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `GreaterComparator`
@@ -180,6 +199,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitOrLogical?: (ctx: OrLogicalContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `NotLogical`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNotLogical?: (ctx: NotLogicalContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `String`

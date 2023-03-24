@@ -14,13 +14,16 @@ import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
 import { LetAssignmentContext } from "./CalcParser";
 import { ValAssignmentContext } from "./CalcParser";
+import { LocalValAssignmentContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
+import { EqualComparatorContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
 import { LesserComparatorContext } from "./CalcParser";
 import { GreaterEqualComparatorContext } from "./CalcParser";
 import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
+import { NotLogicalContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
@@ -178,6 +181,19 @@ export interface CalcListener extends ParseTreeListener {
 	exitValAssignment?: (ctx: ValAssignmentContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `LocalValAssignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterLocalValAssignment?: (ctx: LocalValAssignmentContext) => void;
+	/**
+	 * Exit a parse tree produced by the `LocalValAssignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitLocalValAssignment?: (ctx: LocalValAssignmentContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `IfThenElseCondition`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -189,6 +205,19 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `EqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterEqualComparator?: (ctx: EqualComparatorContext) => void;
+	/**
+	 * Exit a parse tree produced by the `EqualComparator`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitEqualComparator?: (ctx: EqualComparatorContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `GreaterComparator`
@@ -267,6 +296,19 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitOrLogical?: (ctx: OrLogicalContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `NotLogical`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterNotLogical?: (ctx: NotLogicalContext) => void;
+	/**
+	 * Exit a parse tree produced by the `NotLogical`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitNotLogical?: (ctx: NotLogicalContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `String`

@@ -13,6 +13,7 @@ import {
   BooleanContext,
   CalcParser,
   DivisionContext,
+  EqualComparatorContext,
   ExpressionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
@@ -20,8 +21,10 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetAssignmentContext,
+  LocalValAssignmentContext,
   ModulusContext,
   MultiplicationContext,
+  NotLogicalContext,
   NumberContext,
   OrLogicalContext,
   ParenthesesContext,
@@ -158,6 +161,18 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       right: this.visit(ctx._right)
     }
   }
+  
+  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression{
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text
+      },
+      right: this.visit(ctx._right)
+    }
+  }
 
   visitString(ctx: StringContext): es.Expression {
     return {
@@ -269,6 +284,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  visitEqualComparator(ctx: EqualComparatorContext) : es.Expression{
+    return{
+      type: 'BinaryExpression',
+      operator: '=',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
   visitGreaterComparator(ctx: GreaterComparatorContext): es.Expression {
     return {
       type: 'BinaryExpression',
@@ -309,7 +334,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression{
+  visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression {
     return {
       type: 'ConditionalExpression',
       test: this.visit(ctx._test),
@@ -335,6 +360,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       operator: '||' || 'or' || 'orelse',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitNotLogical(ctx: NotLogicalContext) : es.Expression{
+    return {
+      type: 'UnaryExpression',
+      operator: '!' || 'not',
+      argument: this.visit(ctx._left),
+      prefix: true,
       loc: contextToLocation(ctx)
     }
   }
