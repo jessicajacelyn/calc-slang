@@ -12,6 +12,7 @@ import {
   AndLogicalContext,
   BooleanContext,
   CalcParser,
+  DeclarationContext,
   DivisionContext,
   EqualComparatorContext,
   ExpressionContext,
@@ -35,7 +36,8 @@ import {
   StatementContext,
   StringContext,
   SubtractionContext,
-  ValAssignmentContext
+  ValAssignmentContext,
+  WhileConditionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
@@ -142,7 +144,7 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
 }
 
 class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
-  visitStart?: ((ctx: StartContext) => es.Statement[]) | undefined;
+  visitStart?: ((ctx: StartContext) => es.Statement[]) | undefined
 
   visit(tree: ParseTree): es.Statement[] {
     return tree.accept(this)
@@ -175,14 +177,32 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
       },
       `invalid syntax ${node.text}`
     )
-  } 
+  }
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
-
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
+  }
+
+  visitIfThenElseCondition(ctx: IfThenElseConditionContext) :es.Statement{
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return{
+      type: 'IfStatement',
+      test: ctx._test.accept(generator),
+      consequent: this.visit(ctx._consequent),
+      alternate: this.visit(ctx._alternate)
+    }
+  }
+
+  visitWhileCondition(ctx: WhileConditionContext) : es.Statement{
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return{
+      type: 'WhileStatement',
+      test: ctx._test.accept(generator),
+      body: this.visit(ctx._body)
+    }
   }
 
   visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
@@ -280,8 +300,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       right: this.visit(ctx._right)
     }
   }
-  
-  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression{
+
+  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression {
     return {
       type: 'AssignmentExpression',
       operator: '=',
@@ -403,8 +423,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitEqualComparator(ctx: EqualComparatorContext) : es.Expression{
-    return{
+  visitEqualComparator(ctx: EqualComparatorContext): es.Expression {
+    return {
       type: 'BinaryExpression',
       operator: '=',
       left: this.visit(ctx._left),
@@ -453,15 +473,15 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression {
-    return {
-      type: 'ConditionalExpression',
-      test: this.visit(ctx._test),
-      consequent: this.visit(ctx._consequent),
-      alternate: this.visit(ctx._alternate),
-      loc: contextToLocation(ctx)
-    }
-  }
+  // visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression {
+  //   return {
+  //     type: 'ConditionalExpression',
+  //     test: this.visit(ctx._test),
+  //     consequent: this.visit(ctx._consequent),
+  //     alternate: this.visit(ctx._alternate),
+  //     loc: contextToLocation(ctx)
+  //   }
+  // }
 
   visitAndLogical(ctx: AndLogicalContext): es.Expression {
     return {
@@ -483,7 +503,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitNotLogical(ctx: NotLogicalContext) : es.Expression{
+  visitNotLogical(ctx: NotLogicalContext): es.Expression {
     return {
       type: 'UnaryExpression',
       operator: '!' || 'not',

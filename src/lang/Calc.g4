@@ -22,52 +22,91 @@ NUMBER: [0-9]+;
 REAL: [0-9]+ '.' [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
+LET: 'let';
 VAL: 'val';
 LOCAL: 'local val';
-
+OPAR : '(';
+CPAR : ')';
+OBRACE : '{';
+CBRACE : '}';
+DOUBLEQUOTE: '"' ;
 
 Stringliteral: [a-zA-Z0-9];
-
-fragment Encodingprefix: 'u8' | 'u' | 'U' | 'L';
-
-fragment Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */:
-	'"' .*? '(' .*? ')' .*? '"';
 
 assignmentoperator: '=' | ':=';
 
 emptydeclaration: ';';
 
-// literal : Stringliteral # String ;
-
 IF : 'if';
 THEN: 'then';
 ELSE : 'else';
+WHILE: 'while';
+DO: 'do';
+
+CHAR: 'char';
+STRING: 'string';
+INT: 'int';
+BOOL: 'bool';
+REALNUM: 'real';
+
 
 
 /*
  * Productions
  */
-start: statement*;
+start: (statement| function)*;
 
 statement:
-	expressionStatement;
+	expressionStatement
+	| ifThenElseStatement
+	| whileStatement
+	| declaration
+	| block;
+
+ifThenElseStatement:
+	IF test = expression THEN consequent = statement ELSE alternate = statement #IfThenElseCondition;
+
+whileStatement:
+	WHILE test = expression DO body = statement #WhileCondition; 
+
+type: 
+	CHAR
+	| STRING
+	| INT
+	| BOOL
+	| REALNUM;
+
+declaration:
+	t = type id = Stringliteral;
+
+block: 
+	OBRACE stmts = statement* CBRACE ;
+
+print:
+	OPAR DOUBLEQUOTE expr = Stringliteral DOUBLEQUOTE CPAR;
+
+parameters:
+	declaration (',' declaration)* ;
+
+function: 
+	t=type id=Stringliteral OPAR params = parameters CPAR body = block ; 
+
 
 expressionStatement: expression ';' ;
 
 expression:
 	NUMBER																                        # Number
 	| REAL																# Real
-	| '(' inner = expression ')' 									 # Parentheses
+	| OPAR inner = expression CPAR 									 # Parentheses
 	| left = expression operator = POW right = expression 			# Power
 	| left = expression operator = MUL right = expression 			# Multiplication
 	| left = expression operator = DIV right = expression 			# Division
 	| left = expression operator = ADD right = expression 			# Addition
 	| left = expression operator = SUB right = expression 			# Subtraction
 	| left = expression operator = MOD right = expression 			# Modulus
-	| 'let' left = expression operator = EQUAL right = expression 	# LetAssignment
-	| 'val' left = expression operator = EQUAL right = expression 	# ValAssignment
+	| LET left = expression operator = EQUAL right = expression 	# LetAssignment
+	| VAL left = expression operator = EQUAL right = expression 	# ValAssignment
 	| LOCAL left = expression operator = EQUAL right = expression    # LocalValAssignment
-  	| IF test = expression THEN consequent = expression ELSE alternate = expression  #IfThenElseCondition
 	| left = expression operator = EQUAL right = expression             # EqualComparator
 	| left = expression operator = GT right = expression				# GreaterComparator
 	| left = expression operator = LT right = expression				# LesserComparator

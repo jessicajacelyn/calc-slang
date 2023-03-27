@@ -148,24 +148,25 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   ConditionalExpression: function* (node: es.ConditionalExpression, context: Context) {
     // console.log('ConditionalExpression NOT IMPLEMENTED YET!!!!!!!!')
     //throw new Error(`not supported yet: ${node.type}`)
-    console.log('Context: ', context)
+    // console.log('Context: ', context)
     console.log('IF statement evaluating')
-    const test = yield* actualValue(node.test, context)
-    console.log('test: ', test) 
-    const error  = rttc.checkIfStatement(node, test)
-    if(error) {
-      console.log('there is error!!!!!!')
-      return handleRuntimeError(context, error)
-    }
+    // const test = yield* actualValue(node.test, context)
+    // console.log('test: ', test) 
+    // const error  = rttc.checkIfStatement(node, test)
+    // if(error) {
+    //   console.log('there is error!!!!!!')
+    //   return handleRuntimeError(context, error)
+    // }
 
-    if(test){
-      console.log('test is true')
-      return yield* actualValue(node.consequent, context)
-    } else{
-      console.log('test is false')
-      return yield* actualValue(node.alternate, context)
-    }
- 
+    // if(test){
+    //   console.log('test is true')
+    //   return yield* actualValue(node.consequent, context)
+    // } else{
+    //   console.log('test is false')
+    //   return yield* actualValue(node.alternate, context)
+    // }
+
+    return yield* this.IfStatement(node, context)
   },
 
   LogicalExpression: function* (node: es.LogicalExpression, context: Context) {
@@ -231,7 +232,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   IfStatement: function* (node: es.IfStatement | es.ConditionalExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    //throw new Error(`not supported yet: ${node.type}`)
+    const test = yield* actualValue(node.test, context)
+
+    if(test === null){
+      console.log('test is null')
+      return undefined
+    }
+
+    if(test === false){
+      console.log('test is false')
+      return yield* actualValue(node.alternate, context)
+    } else{
+      console.log('test is true')
+      return yield* actualValue(node.consequent, context)
+    }
   },
 
   ExpressionStatement: function* (node: es.ExpressionStatement, context: Context) {
@@ -243,7 +258,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   WhileStatement: function* (node: es.WhileStatement, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    let result
+    while((yield* actualValue(node.test, context)) !== 0) {
+      result = yield* evaluate(node.body, context)
+    }
+    return result
   },
 
 

@@ -15,7 +15,6 @@ import { ModulusContext } from "./CalcParser";
 import { LetAssignmentContext } from "./CalcParser";
 import { ValAssignmentContext } from "./CalcParser";
 import { LocalValAssignmentContext } from "./CalcParser";
-import { IfThenElseConditionContext } from "./CalcParser";
 import { EqualComparatorContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
 import { LesserComparatorContext } from "./CalcParser";
@@ -26,10 +25,20 @@ import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
+import { WhileConditionContext } from "./CalcParser";
+import { IfThenElseConditionContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { StatementContext } from "./CalcParser";
+import { IfThenElseStatementContext } from "./CalcParser";
+import { WhileStatementContext } from "./CalcParser";
+import { TypeContext } from "./CalcParser";
+import { DeclarationContext } from "./CalcParser";
+import { BlockContext } from "./CalcParser";
+import { PrintContext } from "./CalcParser";
+import { ParametersContext } from "./CalcParser";
+import { FunctionContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -196,19 +205,6 @@ export interface CalcListener extends ParseTreeListener {
 	exitLocalValAssignment?: (ctx: LocalValAssignmentContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `IfThenElseCondition`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterIfThenElseCondition?: (ctx: IfThenElseConditionContext) => void;
-	/**
-	 * Exit a parse tree produced by the `IfThenElseCondition`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => void;
-
-	/**
 	 * Enter a parse tree produced by the `EqualComparator`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -339,6 +335,32 @@ export interface CalcListener extends ParseTreeListener {
 	exitBoolean?: (ctx: BooleanContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `WhileCondition`
+	 * labeled alternative in `CalcParser.whileStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterWhileCondition?: (ctx: WhileConditionContext) => void;
+	/**
+	 * Exit a parse tree produced by the `WhileCondition`
+	 * labeled alternative in `CalcParser.whileStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitWhileCondition?: (ctx: WhileConditionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `IfThenElseCondition`
+	 * labeled alternative in `CalcParser.ifThenElseStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterIfThenElseCondition?: (ctx: IfThenElseConditionContext) => void;
+	/**
+	 * Exit a parse tree produced by the `IfThenElseCondition`
+	 * labeled alternative in `CalcParser.ifThenElseStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `CalcParser.assignmentoperator`.
 	 * @param ctx the parse tree
 	 */
@@ -381,6 +403,94 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitStatement?: (ctx: StatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.ifThenElseStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterIfThenElseStatement?: (ctx: IfThenElseStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.ifThenElseStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitIfThenElseStatement?: (ctx: IfThenElseStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.whileStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterWhileStatement?: (ctx: WhileStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.whileStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitWhileStatement?: (ctx: WhileStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.type`.
+	 * @param ctx the parse tree
+	 */
+	enterType?: (ctx: TypeContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.type`.
+	 * @param ctx the parse tree
+	 */
+	exitType?: (ctx: TypeContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.declaration`.
+	 * @param ctx the parse tree
+	 */
+	enterDeclaration?: (ctx: DeclarationContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.declaration`.
+	 * @param ctx the parse tree
+	 */
+	exitDeclaration?: (ctx: DeclarationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.block`.
+	 * @param ctx the parse tree
+	 */
+	enterBlock?: (ctx: BlockContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.block`.
+	 * @param ctx the parse tree
+	 */
+	exitBlock?: (ctx: BlockContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.print`.
+	 * @param ctx the parse tree
+	 */
+	enterPrint?: (ctx: PrintContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.print`.
+	 * @param ctx the parse tree
+	 */
+	exitPrint?: (ctx: PrintContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.parameters`.
+	 * @param ctx the parse tree
+	 */
+	enterParameters?: (ctx: ParametersContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.parameters`.
+	 * @param ctx the parse tree
+	 */
+	exitParameters?: (ctx: ParametersContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.function`.
+	 * @param ctx the parse tree
+	 */
+	enterFunction?: (ctx: FunctionContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.function`.
+	 * @param ctx the parse tree
+	 */
+	exitFunction?: (ctx: FunctionContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.expressionStatement`.

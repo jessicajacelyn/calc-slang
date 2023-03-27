@@ -15,7 +15,6 @@ import { ModulusContext } from "./CalcParser";
 import { LetAssignmentContext } from "./CalcParser";
 import { ValAssignmentContext } from "./CalcParser";
 import { LocalValAssignmentContext } from "./CalcParser";
-import { IfThenElseConditionContext } from "./CalcParser";
 import { EqualComparatorContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
 import { LesserComparatorContext } from "./CalcParser";
@@ -26,10 +25,20 @@ import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
+import { WhileConditionContext } from "./CalcParser";
+import { IfThenElseConditionContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { StatementContext } from "./CalcParser";
+import { IfThenElseStatementContext } from "./CalcParser";
+import { WhileStatementContext } from "./CalcParser";
+import { TypeContext } from "./CalcParser";
+import { DeclarationContext } from "./CalcParser";
+import { BlockContext } from "./CalcParser";
+import { PrintContext } from "./CalcParser";
+import { ParametersContext } from "./CalcParser";
+import { FunctionContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -139,14 +148,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitLocalValAssignment?: (ctx: LocalValAssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `IfThenElseCondition`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `EqualComparator`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -227,6 +228,22 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitBoolean?: (ctx: BooleanContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `WhileCondition`
+	 * labeled alternative in `CalcParser.whileStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitWhileCondition?: (ctx: WhileConditionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `IfThenElseCondition`
+	 * labeled alternative in `CalcParser.ifThenElseStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `CalcParser.assignmentoperator`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -253,6 +270,62 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStatement?: (ctx: StatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.ifThenElseStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIfThenElseStatement?: (ctx: IfThenElseStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.whileStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitWhileStatement?: (ctx: WhileStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.type`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitType?: (ctx: TypeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.declaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDeclaration?: (ctx: DeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.block`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitBlock?: (ctx: BlockContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.print`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPrint?: (ctx: PrintContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.parameters`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParameters?: (ctx: ParametersContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.function`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunction?: (ctx: FunctionContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.expressionStatement`.
