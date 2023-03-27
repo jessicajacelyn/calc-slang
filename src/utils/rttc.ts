@@ -78,6 +78,7 @@ export const checkBinaryExpression = (
     case '<=':
     case '>':
     case '>=':
+    case '=':
     case '!==':
     case '===':
       if (isNumber(left)) {

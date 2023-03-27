@@ -12,24 +12,32 @@ import {
   AndLogicalContext,
   BooleanContext,
   CalcParser,
+  DeclarationContext,
   DivisionContext,
+  EqualComparatorContext,
   ExpressionContext,
+  ExpressionStatementContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
+  IfThenElseConditionContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetAssignmentContext,
-  // LiteralContext,
+  LocalValAssignmentContext,
   ModulusContext,
   MultiplicationContext,
+  NotLogicalContext,
   NumberContext,
   OrLogicalContext,
   ParenthesesContext,
   PowerContext,
+  RealContext,
   StartContext,
+  StatementContext,
   StringContext,
   SubtractionContext,
-  ValAssignmentContext
+  ValAssignmentContext,
+  WhileConditionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
 import { Context, ErrorSeverity, ErrorType, SourceError } from '../types'
@@ -134,6 +142,141 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
     }
   }
 }
+
+class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
+  visitStart?: ((ctx: StartContext) => es.Statement[]) | undefined
+
+  visit(tree: ParseTree): es.Statement[] {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.Statement[] {
+    const stmtGenerator: StatementGenerator = new StatementGenerator()
+    const statements: es.Statement[] = []
+    for (let i = 0; i < node.childCount; i++) {
+      statements.push(node.getChild(i).accept(stmtGenerator))
+    }
+    return statements
+  }
+
+  visitTerminal(node: TerminalNode): es.Statement[] {
+    throw new Error('Method not implemented.')
+  }
+
+  visitErrorNode(node: ErrorNode): es.Statement[] {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
+class StatementGenerator implements CalcVisitor<es.Statement> {
+  visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
+    const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
+    return ctx.accept(generator)
+  }
+
+  visitIfThenElseCondition(ctx: IfThenElseConditionContext) :es.Statement{
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return{
+      type: 'IfStatement',
+      test: ctx._test.accept(generator),
+      consequent: this.visit(ctx._consequent),
+      alternate: this.visit(ctx._alternate)
+    }
+  }
+
+  visitWhileCondition(ctx: WhileConditionContext) : es.Statement{
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return{
+      type: 'WhileStatement',
+      test: ctx._test.accept(generator),
+      body: this.visit(ctx._body)
+    }
+  }
+
+  visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
+
+  visit(tree: ParseTree): es.Statement {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.Statement {
+    // First child is the statement
+    return this.visit(node.getChild(0))
+  }
+
+  visitTerminal(node: TerminalNode): es.Statement {
+    throw new Error('Method not implemented.')
+  }
+
+  visitErrorNode(node: ErrorNode): es.Statement {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
+class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement> {
+  visitExpressioStatement?:
+    | ((ctx: ExpressionStatementContext) => es.ExpressionStatement)
+    | undefined
+
+  visit(tree: ParseTree): es.ExpressionStatement {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.ExpressionStatement {
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    // First child is an expression
+    const expression: es.Expression = node.getChild(0).accept(generator)
+    return {
+      type: 'ExpressionStatement',
+      expression
+    }
+  }
+
+  visitTerminal(node: TerminalNode): es.ExpressionStatement {
+    return node.accept(this)
+  }
+
+  visitErrorNode(node: ErrorNode): es.ExpressionStatement {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitValAssignment(ctx: ValAssignmentContext): es.Expression {
     return {
@@ -147,6 +290,18 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
   visitLetAssignment(ctx: LetAssignmentContext): es.Expression {
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text
+      },
+      right: this.visit(ctx._right)
+    }
+  }
+
+  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression {
     return {
       type: 'AssignmentExpression',
       operator: '=',
@@ -172,6 +327,17 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
+      raw: ctx.text,
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitReal(ctx: RealContext): es.Expression {
+    console.log(ctx.text)
+
+    return {
+      type: 'Literal',
+      value: parseFloat(ctx.text),
       raw: ctx.text,
       loc: contextToLocation(ctx)
     }
@@ -236,6 +402,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitAddition(ctx: AdditionContext): es.Expression {
+    console.log('LEFT: ', this.visit(ctx._left))
+    console.log('RIGHT: ', this.visit(ctx._right))
     return {
       type: 'BinaryExpression',
       operator: '+',
@@ -249,6 +417,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return {
       type: 'BinaryExpression',
       operator: '-',
+      left: this.visit(ctx._left),
+      right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitEqualComparator(ctx: EqualComparatorContext): es.Expression {
+    return {
+      type: 'BinaryExpression',
+      operator: '=',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
       loc: contextToLocation(ctx)
@@ -295,6 +473,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  // visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression {
+  //   return {
+  //     type: 'ConditionalExpression',
+  //     test: this.visit(ctx._test),
+  //     consequent: this.visit(ctx._consequent),
+  //     alternate: this.visit(ctx._alternate),
+  //     loc: contextToLocation(ctx)
+  //   }
+  // }
+
   visitAndLogical(ctx: AndLogicalContext): es.Expression {
     return {
       type: 'LogicalExpression',
@@ -311,6 +499,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       operator: '||' || 'or' || 'orelse',
       left: this.visit(ctx._left),
       right: this.visit(ctx._right),
+      loc: contextToLocation(ctx)
+    }
+  }
+
+  visitNotLogical(ctx: NotLogicalContext): es.Expression {
+    return {
+      type: 'UnaryExpression',
+      operator: '!' || 'not',
+      argument: this.visit(ctx._left),
+      prefix: true,
       loc: contextToLocation(ctx)
     }
   }
@@ -352,22 +550,16 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 }
 
-function convertExpression(expression: ExpressionContext): es.Expression {
-  const generator = new ExpressionGenerator()
-  console.log('expression -- ', expression)
-  return expression.accept(generator)
+function convertStatementExpression(start: StartContext): Array<es.Statement> {
+  const generator = new ExpressionArrayGenerator()
+  return start.accept(generator)
 }
 
-function convertSource(expression: ExpressionContext): es.Program {
+function convertSource(start: StartContext): es.Program {
   return {
     type: 'Program',
     sourceType: 'script',
-    body: [
-      {
-        type: 'ExpressionStatement',
-        expression: convertExpression(expression)
-      }
-    ]
+    body: convertStatementExpression(start)
   }
 }
 
@@ -381,7 +573,7 @@ export function parse(source: string, context: Context) {
     const parser = new CalcParser(tokenStream)
     parser.buildParseTree = true
     try {
-      const tree = parser.expression()
+      const tree = parser.start()
       program = convertSource(tree)
     } catch (error) {
       if (error instanceof FatalSyntaxError) {
