@@ -17,6 +17,7 @@ import {
   EqualComparatorContext,
   ExpressionContext,
   ExpressionStatementContext,
+  FunctionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
   IfThenElseConditionContext,
@@ -29,6 +30,7 @@ import {
   NotLogicalContext,
   NumberContext,
   OrLogicalContext,
+  ParametersContext,
   ParenthesesContext,
   PowerContext,
   RealContext,
@@ -181,14 +183,44 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
+
+  visitFunction(ctx: FunctionContext) : es.Statement{
+    const functionType = ctx._t;
+
+    const id: es.Identifier = {
+      type: 'Identifier',
+      name: ctx._id.text as string
+    }
+
+    const params: es.Pattern[] = []
+    const paramList = ctx._params 
+    for (let i = 0; i < paramList.childCount; i++) {
+      const param = paramList.getChild(i) as DeclarationContext
+      const paramID: es.Identifier = {
+        type: 'Identifier',
+        name: param._id.text as string
+      }
+      params.push(paramID)
+    }
+
+    const body: es.BlockStatement = this.visit(ctx._body) as es.BlockStatement
+
+    return{
+      type: 'FunctionDeclaration',
+      id,
+      params,
+      body
+    }
+  }
+
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
   }
 
-  visitIfThenElseCondition(ctx: IfThenElseConditionContext) :es.Statement{
+  visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Statement {
     const generator: ExpressionGenerator = new ExpressionGenerator()
-    return{
+    return {
       type: 'IfStatement',
       test: ctx._test.accept(generator),
       consequent: this.visit(ctx._consequent),
@@ -196,9 +228,9 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
-  visitWhileCondition(ctx: WhileConditionContext) : es.Statement{
+  visitWhileCondition(ctx: WhileConditionContext): es.Statement {
     const generator: ExpressionGenerator = new ExpressionGenerator()
-    return{
+    return {
       type: 'WhileStatement',
       test: ctx._test.accept(generator),
       body: this.visit(ctx._body)
@@ -284,7 +316,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       operator: '=',
       left: {
         type: 'Identifier',
-        name: ctx._left.text
+        name: ctx._left.text as string
       },
       right: this.visit(ctx._right)
     }
@@ -295,7 +327,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       operator: '=',
       left: {
         type: 'Identifier',
-        name: ctx._left.text
+        name: ctx._left.text as string
       },
       right: this.visit(ctx._right)
     }
@@ -307,7 +339,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       operator: '=',
       left: {
         type: 'Identifier',
-        name: ctx._left.text
+        name: ctx._left.text as string
       },
       right: this.visit(ctx._right)
     }

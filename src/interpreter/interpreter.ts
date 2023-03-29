@@ -9,7 +9,7 @@ import {
   evaluateUnaryExpression
 } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-
+import createContext, { createGlobalEnvironment } from '../createContext'
 class Thunk {
   public value: Value
   public isMemoized: boolean
@@ -57,6 +57,7 @@ function* leave(context: Context) {
   yield context
 }
 
+const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
 export const pushEnvironment = (context: Context, environment: Environment) => {
   context.runtime.environments.unshift(environment)
@@ -205,11 +206,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     //   console.log('idk')
     // }
     if(node.left.type === 'Identifier') {
-      console.log('its an identifier', node.left.name)
-      const environment = context.runtime.environments[0]
-      const variable = environment.head.get(node.left.name)
-      variable.value = right
-      return right
+      // console.log('its an identifier', node.left.name)
+      // const environment = context.runtime.environments[0]
+      // const variable = environment.head.get(node.left.name)
+      // variable.value = right
+      // return right
+      const value = yield* evaluate(node.right, context)
+      return value
     } else if(node.left.type === 'MemberExpression') {
       console.log('its a member expression')
       const object = yield* actualValue(node.left.object, context)
@@ -223,8 +226,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else {
       throw new Error(`not supported yet: ${node.type}`)
     }
-    
-    return node.left
   },
 
   FunctionDeclaration: function* (node: es.FunctionDeclaration, context: Context) {
@@ -271,6 +272,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Program: function* (node: es.BlockStatement, context: Context) {
+    const env = createGlobalEnvironment()
+    pushEnvironment(context, env)
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
   }

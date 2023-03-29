@@ -97,16 +97,16 @@ expressionStatement: expression ';' ;
 expression:
 	NUMBER																                        # Number
 	| REAL																# Real
-	| OPAR inner = expression CPAR 									 # Parentheses
-	| left = expression operator = POW right = expression 			# Power
-	| left = expression operator = MUL right = expression 			# Multiplication
-	| left = expression operator = DIV right = expression 			# Division
-	| left = expression operator = ADD right = expression 			# Addition
-	| left = expression operator = SUB right = expression 			# Subtraction
-	| left = expression operator = MOD right = expression 			# Modulus
-	| LET left = expression operator = EQUAL right = expression 	# LetAssignment
-	| VAL left = expression operator = EQUAL right = expression 	# ValAssignment
-	| LOCAL left = expression operator = EQUAL right = expression    # LocalValAssignment
+	| OPAR inner = expression CPAR 									 	# Parentheses
+	| left = expression operator = POW right = expression 				# Power
+	| left = expression operator = MUL right = expression 				# Multiplication
+	| left = expression operator = DIV right = expression 				# Division
+	| left = expression operator = ADD right = expression 				# Addition
+	| left = expression operator = SUB right = expression 				# Subtraction
+	| left = expression operator = MOD right = expression 				# Modulus
+	| LET left = expression operator = EQUAL right = expression 		# LetAssignment
+	| VAL left = expression operator = EQUAL right = expression 		# ValAssignment
+	| LOCAL left = expression operator = EQUAL right = expression    	# LocalValAssignment
 	| left = expression operator = EQUAL right = expression             # EqualComparator
 	| left = expression operator = GT right = expression				# GreaterComparator
 	| left = expression operator = LT right = expression				# LesserComparator
@@ -115,5 +115,5 @@ expression:
 	| left = expression operator = AND right = expression				# AndLogical
 	| left = expression operator = OR right = expression				# OrLogical
 	| NOT left = expression                   							# NotLogical
-	| Stringliteral														                  # String
-	| BOOLEAN															                      # Boolean;
+	| Stringliteral														# String
+	| BOOLEAN															# Boolean;
