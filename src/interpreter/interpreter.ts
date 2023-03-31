@@ -102,7 +102,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrayExpression: function* (node: es.ArrayExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    //throw new Error(`not supported yet: ${node.type}`)
+    console.log('array expression at interpreter !!!!!!' )
+    return undefined
   },
 
 

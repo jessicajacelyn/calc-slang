@@ -47,7 +47,7 @@ STRING: 'string';
 INT: 'int';
 BOOL: 'bool';
 REALNUM: 'real';
-Stringliteral: [a-zA-Z] [a-zA-Z0-9]*;
+Stringliteral: [a-zA-Z] [a-zA-Z0-9]+;
 ID : ('a'..'z' | 'A'..'Z' | '_' | '\'') ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '\'')*;
 
 /*
@@ -95,6 +95,9 @@ identifier:
 	| REAL			# Real
 	| BOOLEAN		# Boolean;
 
+
+elements : expression (',' expression)*;
+
 expressionStatement: expression ';';
 
 expression:
@@ -115,5 +118,6 @@ expression:
 	| left = expression operator = AND right = expression	# AndLogical
 	| left = expression operator = OR right = expression	# OrLogical
 	| NOT left = expression									# NotLogical
+	| '['element = elements? ']'							# List
 	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment
-	| FN name = Stringliteral operator = ARROW right = expression # Lambda;
+	| FN name = Stringliteral operator = ARROW right = expression 	# Lambda;

@@ -27,6 +27,7 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
+  ListContext,
   LocalDeclarationContext,
   ModulusContext,
   MultiplicationContext,
@@ -462,9 +463,23 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
         type: 'Identifier',
         name: ctx._name.text as string
       },
-      operator: "=>",
+      operator: '=>',
       body: this.visit(ctx._right),
       value: this.visit(ctx._right)
+    }
+  }
+
+  visitList?(ctx: ListContext) : es.Expression{
+    const elements: es.Expression[] = []
+    for (let i = 0; i < ctx._element.childCount; i++) {
+      if(ctx._element.getChild(i).text != ","){
+        elements.push(this.visit(ctx._element.getChild(i)))
+      }
+    }
+    console.log("list elements are: ", elements)
+    return {
+      type: 'ArrayExpression',
+      elements: elements
     }
   }
 
