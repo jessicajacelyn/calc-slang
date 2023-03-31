@@ -20,6 +20,7 @@ import {
   FunctionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
+  IdentifiersContext,
   IfThenElseConditionContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
@@ -184,9 +185,8 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
-
-  visitFunction(ctx: FunctionContext) : es.Statement{
-    const functionType = ctx._t;
+  visitFunction(ctx: FunctionContext): es.Statement {
+    const functionType = ctx._t
 
     const id: es.Identifier = {
       type: 'Identifier',
@@ -194,7 +194,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
 
     const params: es.Pattern[] = []
-    const paramList = ctx._params 
+    const paramList = ctx._params
     for (let i = 0; i < paramList.childCount; i++) {
       const param = paramList.getChild(i) as DeclarationContext
       const paramID: es.Identifier = {
@@ -206,7 +206,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
     const body: es.BlockStatement = this.visit(ctx._body) as es.BlockStatement
 
-    return{
+    return {
       type: 'FunctionDeclaration',
       id,
       params,
@@ -238,14 +238,15 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
-  visitVariableDeclaration(ctx: VariableDeclarationContext) : es.Statement{
-    const generator:DeclarationGenerator = new DeclarationGenerator()
+  visitVariableDeclaration(ctx: VariableDeclarationContext): es.Statement {
+    console.log('visitVariableDeclaration!!!!!!!!!!')
+    const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
   }
 
-  visitLocalValAssignment(ctx: LocalValAssignmentContext) : es.LocalDeclaration{
+  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.LocalDeclaration {
     const generator: ExpressionGenerator = new ExpressionGenerator()
-    return{
+    return {
       type: 'LocalDeclaration',
       kind: 'local',
       declarations: [
@@ -256,8 +257,9 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
             name: ctx._left.text as string
           },
           init: ctx._right.accept(generator)
-        }]
-      }
+        }
+      ]
+    }
   }
 
   visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
@@ -293,13 +295,11 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
-
-  visitVariableDeclaration?: ((ctx: VariableDeclarationContext) => es.Declaration) | undefined;
-
-  visitLetAssignment(ctx: LetAssignmentContext) : es.VariableDeclaration{
   
+  visitLetAssignment(ctx: LetAssignmentContext): es.VariableDeclaration {
+    console.log("visitLetAssignment!!!!!!!!")
     const generator: ExpressionGenerator = new ExpressionGenerator()
-    return{
+    return {
       type: 'VariableDeclaration',
       kind: 'let',
       declarations: [
@@ -310,13 +310,14 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
             name: ctx._left.text as string
           },
           init: ctx._right.accept(generator)
-        }]
+        }
+      ]
     }
   }
-  
-  visitValAssignment(ctx: ValAssignmentContext) : es.VariableDeclaration{
+
+  visitValAssignment(ctx: ValAssignmentContext): es.VariableDeclaration {
     const generator: ExpressionGenerator = new ExpressionGenerator()
-    return{
+    return {
       type: 'VariableDeclaration',
       kind: 'val',
       declarations: [
@@ -327,7 +328,8 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
             name: ctx._left.text as string
           },
           init: ctx._right.accept(generator)
-        }]
+        }
+      ]
     }
   }
 
@@ -336,7 +338,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   }
 
   visitChildren(node: RuleNode): es.Declaration {
-    throw new Error('Method not implemented.')
+    return this.visit(node.getChild(0))
   }
 
   visitTerminal(node: TerminalNode): es.Declaration {
@@ -484,8 +486,13 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   //   }
   // }
 
+  visitIdentifiers(ctx: IdentifiersContext) : es.Expression{
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return ctx.identifier().accept(generator)
+  }
+
   visitString(ctx: StringContext): es.Expression {
-    console.log("string: ",ctx.text)
+    console.log('string: ', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
@@ -493,9 +500,9 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
-  
+
   visitNumber(ctx: NumberContext): es.Expression {
-    console.log(ctx.text)
+    console.log("number: ",ctx.text)
 
     return {
       type: 'Literal',
@@ -506,7 +513,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitReal(ctx: RealContext): es.Expression {
-    console.log(ctx.text)
+    console.log("real: ", ctx.text)
 
     return {
       type: 'Literal',

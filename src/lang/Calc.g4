@@ -30,26 +30,19 @@ CPAR : ')';
 OBRACE : '{';
 CBRACE : '}';
 DOUBLEQUOTE: '"' ;
-
-Stringliteral: [a-zA-Z0-9]*;
-
 assignmentoperator: '=' | ':=';
-
 emptydeclaration: ';';
-
 IF: 'if';
 THEN: 'then';
 ELSE: 'else';
 WHILE: 'while';
 DO: 'do';
-
 CHAR: 'char';
 STRING: 'string';
 INT: 'int';
 BOOL: 'bool';
 REALNUM: 'real';
-
-
+Stringliteral: [a-zA-Z] [a-zA-Z0-9]*;
 
 /*
  * Productions
@@ -66,7 +59,7 @@ statement:
 	| block;
 
 ifThenElseStatement:
-	IF test = expression THEN consequent = statement ELSE alternate = statement #IfThenElseCondition;
+	IF OPAR test = expression CPAR THEN consequent = statement ELSE alternate = statement #IfThenElseCondition;
 
 whileStatement:
 	WHILE test = expression DO body = statement #WhileCondition; 
@@ -82,11 +75,11 @@ declaration:
 	t = type id = Stringliteral;
 
 variableDeclaration:
-	LET left = expression operator = EQUAL right = expression 			# LetAssignment
-	| VAL left = expression operator = EQUAL right = expression 		# ValAssignment;
+	LET left = Stringliteral operator = EQUAL right = expression 			# LetAssignment
+	| VAL left = Stringliteral operator = EQUAL right = expression 		# ValAssignment;
 
 localValDeclaration:
- 	LOCAL left = expression operator = EQUAL right = expression    	# LocalValAssignment;
+ 	LOCAL left = Stringliteral operator = EQUAL right = expression    	# LocalValAssignment;
 
 block: 
 	OBRACE stmts = statement* CBRACE ;
@@ -101,13 +94,16 @@ function:
 	t=type id=Stringliteral OPAR params = parameters CPAR body = block ; 
 
 
+identifier: 
+	Stringliteral #String 
+	| NUMBER # Number
+	| REAL   # Real
+	| BOOLEAN #Boolean;
+
 expressionStatement: expression ';' ;
 
 expression:
-	NUMBER																# Number
-	| REAL																# Real
-	| BOOLEAN															# Boolean
-	| Stringliteral														# String
+	identifier                                               			# Identifiers
 	| OPAR inner = expression CPAR 									 	# Parentheses
 	| left = expression operator = POW right = expression 				# Power
 	| left = expression operator = MUL right = expression 				# Multiplication

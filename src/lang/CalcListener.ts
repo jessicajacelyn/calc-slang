@@ -3,10 +3,11 @@
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
+import { StringContext } from "./CalcParser";
 import { NumberContext } from "./CalcParser";
 import { RealContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
-import { StringContext } from "./CalcParser";
+import { IdentifiersContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
@@ -41,6 +42,7 @@ import { BlockContext } from "./CalcParser";
 import { PrintContext } from "./CalcParser";
 import { ParametersContext } from "./CalcParser";
 import { FunctionContext } from "./CalcParser";
+import { IdentifierContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -51,56 +53,69 @@ import { ExpressionContext } from "./CalcParser";
  */
 export interface CalcListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 */
+	enterString?: (ctx: StringContext) => void;
+	/**
+	 * Exit a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 */
+	exitString?: (ctx: StringContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `Number`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
 	enterNumber?: (ctx: NumberContext) => void;
 	/**
 	 * Exit a parse tree produced by the `Number`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
 	exitNumber?: (ctx: NumberContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Real`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
 	enterReal?: (ctx: RealContext) => void;
 	/**
 	 * Exit a parse tree produced by the `Real`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
 	exitReal?: (ctx: RealContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Boolean`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
 	enterBoolean?: (ctx: BooleanContext) => void;
 	/**
 	 * Exit a parse tree produced by the `Boolean`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
 	exitBoolean?: (ctx: BooleanContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `String`
+	 * Enter a parse tree produced by the `Identifiers`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterString?: (ctx: StringContext) => void;
+	enterIdentifiers?: (ctx: IdentifiersContext) => void;
 	/**
-	 * Exit a parse tree produced by the `String`
+	 * Exit a parse tree produced by the `Identifiers`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitString?: (ctx: StringContext) => void;
+	exitIdentifiers?: (ctx: IdentifiersContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Parentheses`
@@ -515,6 +530,17 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFunction?: (ctx: FunctionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 */
+	enterIdentifier?: (ctx: IdentifierContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 */
+	exitIdentifier?: (ctx: IdentifierContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.expressionStatement`.
