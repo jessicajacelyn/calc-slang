@@ -127,7 +127,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   UnaryExpression: function* (node: es.UnaryExpression, context: Context) {
-    const value = yield* actualValue(node.argument, context)
+    let value = yield* actualValue(node.argument, context)
+    const frame = context.runtime.environments[0].head
+
+    if (!(typeof value === 'boolean')) {
+      // console.log('left str: ', left)
+      if (frame[value] !== undefined && (typeof frame[value] === 'boolean')) {
+        value = frame[value]
+      } else {
+        throw new Error(`left is not a boolean: ${value}`)
+      }
+    }
 
     const error = rttc.checkUnaryExpression(node, node.operator, value)
     if (error) {
