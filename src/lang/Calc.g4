@@ -31,15 +31,15 @@ OBRACE : '{';
 CBRACE : '}';
 DOUBLEQUOTE: '"' ;
 
-Stringliteral: [a-zA-Z0-9];
+Stringliteral: [a-zA-Z0-9]*;
 
 assignmentoperator: '=' | ':=';
 
 emptydeclaration: ';';
 
-IF : 'if';
+IF: 'if';
 THEN: 'then';
-ELSE : 'else';
+ELSE: 'else';
 WHILE: 'while';
 DO: 'do';
 
@@ -57,10 +57,12 @@ REALNUM: 'real';
 start: (statement| function)*;
 
 statement:
-	expressionStatement
-	| ifThenElseStatement
+	ifThenElseStatement
 	| whileStatement
+	| variableDeclaration
+	| localValDeclaration
 	| declaration
+	| expressionStatement
 	| block;
 
 ifThenElseStatement:
@@ -79,6 +81,13 @@ type:
 declaration:
 	t = type id = Stringliteral;
 
+variableDeclaration:
+	LET left = expression operator = EQUAL right = expression 			# LetAssignment
+	| VAL left = expression operator = EQUAL right = expression 		# ValAssignment;
+
+localValDeclaration:
+ 	LOCAL left = expression operator = EQUAL right = expression    	# LocalValAssignment;
+
 block: 
 	OBRACE stmts = statement* CBRACE ;
 
@@ -95,8 +104,10 @@ function:
 expressionStatement: expression ';' ;
 
 expression:
-	NUMBER																                        # Number
+	NUMBER																# Number
 	| REAL																# Real
+	| BOOLEAN															# Boolean
+	| Stringliteral														# String
 	| OPAR inner = expression CPAR 									 	# Parentheses
 	| left = expression operator = POW right = expression 				# Power
 	| left = expression operator = MUL right = expression 				# Multiplication
@@ -104,9 +115,6 @@ expression:
 	| left = expression operator = ADD right = expression 				# Addition
 	| left = expression operator = SUB right = expression 				# Subtraction
 	| left = expression operator = MOD right = expression 				# Modulus
-	| LET left = expression operator = EQUAL right = expression 		# LetAssignment
-	| VAL left = expression operator = EQUAL right = expression 		# ValAssignment
-	| LOCAL left = expression operator = EQUAL right = expression    	# LocalValAssignment
 	| left = expression operator = EQUAL right = expression             # EqualComparator
 	| left = expression operator = GT right = expression				# GreaterComparator
 	| left = expression operator = LT right = expression				# LesserComparator
@@ -114,6 +122,5 @@ expression:
 	| left = expression operator = LE right = expression				# LesserEqualComparator
 	| left = expression operator = AND right = expression				# AndLogical
 	| left = expression operator = OR right = expression				# OrLogical
-	| NOT left = expression                   							# NotLogical
-	| Stringliteral														# String
-	| BOOLEAN															# Boolean;
+	| NOT left = expression                   							# NotLogical;
+	
