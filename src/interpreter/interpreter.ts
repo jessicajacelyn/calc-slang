@@ -142,7 +142,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const frame = context.runtime.environments[0].head
 
     if (isNaN(Number(left))) {
-      console.log('left str: ', left)
+      // console.log('left str: ', left)
       if (frame[left] !== undefined && !isNaN(Number(frame[left]))) {
         left = frame[left]
       } else {
@@ -151,7 +151,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     if (isNaN(Number(right))) {
-      console.log('right str: ', right)
+      // console.log('right str: ', right)
       if (frame[right] !== undefined && !isNaN(Number(frame[right]))) {
         right = frame[right]
       } else {
@@ -191,8 +191,28 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   LogicalExpression: function* (node: es.LogicalExpression, context: Context) {
-    const left = yield* actualValue(node.left, context)
-    const right = yield* actualValue(node.right, context)
+    let left = yield* actualValue(node.left, context)
+    let right = yield* actualValue(node.right, context)
+    const frame = context.runtime.environments[0].head
+
+    if (!(typeof left === 'boolean')) {
+      // console.log('left str: ', left)
+      if (frame[left] !== undefined && (typeof frame[left] === 'boolean')) {
+        left = frame[left]
+      } else {
+        throw new Error(`left is not a boolean: ${left}`)
+      }
+    }
+
+    if (!(typeof right === 'boolean')) {
+      // console.log('right str: ', right)
+      if (frame[right] !== undefined && (typeof frame[right] === 'boolean')) {
+        right = frame[right]
+      } else {
+        throw new Error(`right is not a boolean: ${right}`)
+      }
+    }
+
     const error = rttc.checkLogicalExpression(node, node.operator, left, right)
     if (error) {
       return handleRuntimeError(context, error)
@@ -300,8 +320,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     console.log('env ', context)
 
     // TODO: remove this when var declarations are implemented
-    context.runtime.environments[0].head['temp'] = 2
-    context.runtime.environments[0].head['test'] = 5
+    context.runtime.environments[0].head['temp'] = true
+    context.runtime.environments[0].head['test'] = false
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
