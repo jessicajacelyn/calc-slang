@@ -12,8 +12,9 @@ import { DivisionContext } from "./CalcParser";
 import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
-import { LetAssignmentContext } from "./CalcParser";
-import { ValAssignmentContext } from "./CalcParser";
+import { LetDeclarationContext } from "./CalcParser";
+import { ValDeclarationContext } from "./CalcParser";
+import { AssignmentContext } from "./CalcParser";
 import { LocalValAssignmentContext } from "./CalcParser";
 import { EqualComparatorContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
@@ -124,20 +125,28 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitModulus?: (ctx: ModulusContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `LetAssignment`
+	 * Visit a parse tree produced by the `LetDeclaration`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitLetAssignment?: (ctx: LetAssignmentContext) => Result;
+	visitLetDeclaration?: (ctx: LetDeclarationContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `ValAssignment`
+	 * Visit a parse tree produced by the `ValDeclaration`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitValAssignment?: (ctx: ValAssignmentContext) => Result;
+	visitValDeclaration?: (ctx: ValDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `Assignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitAssignment?: (ctx: AssignmentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `LocalValAssignment`

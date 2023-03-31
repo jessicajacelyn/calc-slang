@@ -196,24 +196,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
-// TODO: Implement assignment expression
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
-    console.log('assignment expression')
-    // const left = yield* actualValue(node.left, context)
+    console.log('assignment expr')
+    
     const right = yield* actualValue(node.right, context)
-    // if(typeof left.value === 'string') {
-    //   console.log('its a string', left.value)
-    // } else {
-    //   console.log('idk')
-    // }
     if(node.left.type === 'Identifier') {
-      // console.log('its an identifier', node.left.name)
-      // const environment = context.runtime.environments[0]
-      // const variable = environment.head.get(node.left.name)
-      // variable.value = right
-      // return right
       const value = yield* evaluate(node.right, context)
-      context.runtime.environments[0].head[node.left.name] = value
+      console.log('identifier assignment')
+      
+      // TODO: this is for declarations, not assignments
+      // context.runtime.environments[0].head[node.left.name] = value
+      
+      if(context.runtime.environments[0].head[node.left.name] === undefined) {
+        throw new Error(`variable ${node.left.name} is not defined`)
+      } else {
+        context.runtime.environments[0].head[node.left.name] = value
+      }
       console.log('assign environment: ', context)
       return value
     } else if(node.left.type === 'MemberExpression') {
@@ -281,6 +279,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       console.log('pushing env ', context)
     }
     console.log('env ', context)
+    context.runtime.environments[0].head['temp'] = 2
+    context.runtime.environments[0].head['test'] = 5
     
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;

@@ -10,6 +10,7 @@ import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
   AndLogicalContext,
+  AssignmentContext,
   BooleanContext,
   CalcParser,
   DeclarationContext,
@@ -23,7 +24,7 @@ import {
   IfThenElseConditionContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
-  LetAssignmentContext,
+  LetDeclarationContext,
   LocalValAssignmentContext,
   ModulusContext,
   MultiplicationContext,
@@ -38,7 +39,7 @@ import {
   StatementContext,
   StringContext,
   SubtractionContext,
-  ValAssignmentContext,
+  ValDeclarationContext,
   WhileConditionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
@@ -183,9 +184,8 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
-
-  visitFunction(ctx: FunctionContext) : es.Statement{
-    const functionType = ctx._t;
+  visitFunction(ctx: FunctionContext): es.Statement {
+    const functionType = ctx._t
 
     const id: es.Identifier = {
       type: 'Identifier',
@@ -193,7 +193,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
 
     const params: es.Pattern[] = []
-    const paramList = ctx._params 
+    const paramList = ctx._params
     for (let i = 0; i < paramList.childCount; i++) {
       const param = paramList.getChild(i) as DeclarationContext
       const paramID: es.Identifier = {
@@ -205,7 +205,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
     const body: es.BlockStatement = this.visit(ctx._body) as es.BlockStatement
 
-    return{
+    return {
       type: 'FunctionDeclaration',
       id,
       params,
@@ -310,7 +310,7 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
-  visitValAssignment(ctx: ValAssignmentContext): es.Expression {
+  visitAssignment(ctx: AssignmentContext): es.Expression {
     return {
       type: 'AssignmentExpression',
       operator: '=',
@@ -321,17 +321,34 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       right: this.visit(ctx._right)
     }
   }
-  visitLetAssignment(ctx: LetAssignmentContext): es.Expression {
-    return {
-      type: 'AssignmentExpression',
-      operator: '=',
-      left: {
-        type: 'Identifier',
-        name: ctx._left.text as string
-      },
-      right: this.visit(ctx._right)
-    }
-  }
+  // visitValDeclaration(ctx: LetAssignmentContext): es.Declaration {
+  //   return {
+  //     type: 'VariableDeclaration',
+  //     kind: 'var',
+  //     declarations: [
+  //       {
+  //         type: 'VariableDeclarator',
+  //         id: {
+  //           type: 'Identifier',
+  //           name: ctx._left.text as string
+  //         },
+  //         init: this.visit(ctx._right)
+  //       }
+  //     ]
+  //   }
+  // }
+
+  // visitLetDeclaration(ctx: LetDeclarationContext): es.Expression {
+  //   return {
+  //     type: 'AssignmentExpression',
+  //     operator: '=',
+  //     left: {
+  //       type: 'Identifier',
+  //       name: ctx._left.text as string
+  //     },
+  //     right: this.visit(ctx._right)
+  //   }
+  // }
 
   visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression {
     return {
@@ -346,6 +363,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
+    console.log(ctx.text)
+
     return {
       type: 'Literal',
       value: ctx.text,
