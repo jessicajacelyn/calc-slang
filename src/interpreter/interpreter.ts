@@ -1,6 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
 
+import createContext, { createGlobalEnvironment } from '../createContext'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Value } from '../types'
 import {
@@ -9,7 +10,6 @@ import {
   evaluateUnaryExpression
 } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-import createContext, { createGlobalEnvironment } from '../createContext'
 class Thunk {
   public value: Value
   public isMemoized: boolean
@@ -198,6 +198,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 // TODO: Implement assignment expression
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
+    console.log('assignment expression')
     // const left = yield* actualValue(node.left, context)
     const right = yield* actualValue(node.right, context)
     // if(typeof left.value === 'string') {
@@ -212,6 +213,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       // variable.value = right
       // return right
       const value = yield* evaluate(node.right, context)
+      context.runtime.environments[0].head[node.left.name] = value
+      console.log('assign environment: ', context)
       return value
     } else if(node.left.type === 'MemberExpression') {
       console.log('its a member expression')
@@ -274,6 +277,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   Program: function* (node: es.BlockStatement, context: Context) {
     const env = createGlobalEnvironment()
     pushEnvironment(context, env)
+    if (context.runtime.environments.length === 0) {
+      console.log('pushing env ', context)
+    }
+    console.log('env ', context)
+    
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
   }
