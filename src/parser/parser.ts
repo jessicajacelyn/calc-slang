@@ -10,6 +10,7 @@ import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
   AndLogicalContext,
+  AssignmentContext,
   BooleanContext,
   CalcParser,
   DeclarationContext,
@@ -300,7 +301,6 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
-    console.log('visitLetAssignment!!!!!!!!')
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -456,40 +456,17 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
-  // visitValAssignment(ctx: ValAssignmentContext): es.Expression {
-  //   return {
-  //     type: 'AssignmentExpression',
-  //     operator: '=',
-  //     left: {
-  //       type: 'Identifier',
-  //       name: ctx._left.text as string
-  //     },
-  //     right: this.visit(ctx._right)
-  //   }
-  // }
-  // visitLetAssignment(ctx: LetAssignmentContext): es.Expression {
-  //   return {
-  //     type: 'AssignmentExpression',
-  //     operator: '=',
-  //     left: {
-  //       type: 'Identifier',
-  //       name: ctx._left.text as string
-  //     },
-  //     right: this.visit(ctx._right)
-  //   }
-  // }
-
-  // visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression {
-  //   return {
-  //     type: 'AssignmentExpression',
-  //     operator: '=',
-  //     left: {
-  //       type: 'Identifier',
-  //       name: ctx._left.text as string
-  //     },
-  //     right: this.visit(ctx._right)
-  //   }
-  // }
+  visitAssignment(ctx: AssignmentContext): es.Expression {
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text as string
+      },
+      right: this.visit(ctx._right)
+    }
+  }
 
   visitIdentifiers(ctx: IdentifiersContext): es.Expression {
     const generator: ExpressionGenerator = new ExpressionGenerator()

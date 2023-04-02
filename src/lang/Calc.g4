@@ -30,7 +30,7 @@ CPAR: ')';
 OBRACE: '{';
 CBRACE: '}';
 DOUBLEQUOTE: '"';
-assignmentoperator: '=' | ':=';
+ASSIGNMEMT: ':=';
 emptydeclaration: ';';
 IF: 'if';
 THEN: 'then';
@@ -94,19 +94,20 @@ identifier:
 expressionStatement: expression ';';
 
 expression:
-	identifier												# Identifiers
-	| OPAR inner = expression CPAR							# Parentheses
-	| left = expression operator = POW right = expression	# Power
-	| left = expression operator = MUL right = expression	# Multiplication
-	| left = expression operator = DIV right = expression	# Division
-	| left = expression operator = ADD right = expression	# Addition
-	| left = expression operator = SUB right = expression	# Subtraction
-	| left = expression operator = MOD right = expression	# Modulus
-	| left = expression operator = EQUAL right = expression	# EqualComparator
-	| left = expression operator = GT right = expression	# GreaterComparator
-	| left = expression operator = LT right = expression	# LesserComparator
-	| left = expression operator = GE right = expression	# GreaterEqualComparator
-	| left = expression operator = LE right = expression	# LesserEqualComparator
-	| left = expression operator = AND right = expression	# AndLogical
-	| left = expression operator = OR right = expression	# OrLogical
-	| NOT left = expression									# NotLogical;
+	identifier														# Identifiers
+	| OPAR inner = expression CPAR									# Parentheses
+	| left = expression operator = POW right = expression			# Power
+	| left = expression operator = MUL right = expression			# Multiplication
+	| left = expression operator = DIV right = expression			# Division
+	| left = expression operator = ADD right = expression			# Addition
+	| left = expression operator = SUB right = expression			# Subtraction
+	| left = expression operator = MOD right = expression			# Modulus
+	| left = expression operator = EQUAL right = expression			# EqualComparator
+	| left = expression operator = GT right = expression			# GreaterComparator
+	| left = expression operator = LT right = expression			# LesserComparator
+	| left = expression operator = GE right = expression			# GreaterEqualComparator
+	| left = expression operator = LE right = expression			# LesserEqualComparator
+	| left = expression operator = AND right = expression			# AndLogical
+	| left = expression operator = OR right = expression			# OrLogical
+	| NOT left = expression											# NotLogical
+	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment;

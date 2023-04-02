@@ -240,6 +240,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
+    console.log('assignment evaluating')
     const right = yield* actualValue(node.right, context)
     if (node.left.type === 'Identifier') {
       const value = yield* evaluate(node.right, context)
@@ -317,6 +318,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     // TODO: remove this when var declarations are implemented
     context.runtime.environments[0].head['temp'] = true
     context.runtime.environments[0].head['test'] = false
+    context.runtime.environments[0].head['num'] = 5
+    context.runtime.environments[0].head['num1'] = 8
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
