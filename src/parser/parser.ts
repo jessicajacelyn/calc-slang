@@ -10,7 +10,6 @@ import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
   AndLogicalContext,
-  AssignmentContext,
   BooleanContext,
   CalcParser,
   DeclarationContext,
