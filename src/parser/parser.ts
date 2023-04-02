@@ -24,14 +24,13 @@ import {
   IfThenElseConditionContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
-  LetAssignmentContext,
+  LetDeclarationContext,
   LocalValAssignmentContext,
   ModulusContext,
   MultiplicationContext,
   NotLogicalContext,
   NumberContext,
   OrLogicalContext,
-  ParametersContext,
   ParenthesesContext,
   PowerContext,
   RealContext,
@@ -39,7 +38,7 @@ import {
   StatementContext,
   StringContext,
   SubtractionContext,
-  ValAssignmentContext,
+  ValDeclarationContext,
   VariableDeclarationContext,
   WhileConditionContext
 } from '../lang/CalcParser'
@@ -95,7 +94,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) {}
+  public constructor(public location: es.SourceLocation, public message: string) { }
 
   public explain() {
     return this.message
@@ -109,7 +108,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -123,7 +122,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Trailing comma'
@@ -238,8 +237,13 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
-  visitVariableDeclaration(ctx: VariableDeclarationContext): es.Statement {
-    console.log('visitVariableDeclaration!!!!!!!!!!')
+  visitValDeclaration(ctx: VariableDeclarationContext): es.Statement {
+    // console.log('visitVariableDeclaration!!!!!!!!!!')
+    const generator: DeclarationGenerator = new DeclarationGenerator()
+    return ctx.accept(generator)
+  }
+
+  visitLetDeclaration(ctx: VariableDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
   }
@@ -295,8 +299,8 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
-  
-  visitLetAssignment(ctx: LetAssignmentContext): es.VariableDeclaration {
+
+  visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
     console.log("visitLetAssignment!!!!!!!!")
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
@@ -315,7 +319,8 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
     }
   }
 
-  visitValAssignment(ctx: ValAssignmentContext): es.VariableDeclaration {
+  visitValDeclaration(ctx: ValDeclarationContext): es.VariableDeclaration {
+
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -332,6 +337,9 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       ]
     }
   }
+
+  visitDeclaration?: ((ctx: VariableDeclarationContext) => es.Declaration) | undefined
+
 
   visit(tree: ParseTree): es.Declaration {
     return tree.accept(this)
@@ -486,7 +494,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   //   }
   // }
 
-  visitIdentifiers(ctx: IdentifiersContext) : es.Expression{
+  visitIdentifiers(ctx: IdentifiersContext): es.Expression {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return ctx.identifier().accept(generator)
   }
@@ -502,7 +510,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitNumber(ctx: NumberContext): es.Expression {
-    console.log("number: ",ctx.text)
+    console.log("number: ", ctx.text)
 
     return {
       type: 'Literal',

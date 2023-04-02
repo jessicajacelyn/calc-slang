@@ -475,31 +475,31 @@ export class CalcParser extends Parser {
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CalcParser.LET:
-				_localctx = new LetAssignmentContext(_localctx);
+				_localctx = new LetDeclarationContext(_localctx);
 				this.enterOuterAlt(_localctx, 1);
 				{
 				this.state = 73;
 				this.match(CalcParser.LET);
 				this.state = 74;
-				(_localctx as LetAssignmentContext)._left = this.match(CalcParser.Stringliteral);
+				(_localctx as LetDeclarationContext)._left = this.match(CalcParser.Stringliteral);
 				this.state = 75;
-				(_localctx as LetAssignmentContext)._operator = this.match(CalcParser.EQUAL);
+				(_localctx as LetDeclarationContext)._operator = this.match(CalcParser.EQUAL);
 				this.state = 76;
-				(_localctx as LetAssignmentContext)._right = this.expression(0);
+				(_localctx as LetDeclarationContext)._right = this.expression(0);
 				}
 				break;
 			case CalcParser.VAL:
-				_localctx = new ValAssignmentContext(_localctx);
+				_localctx = new ValDeclarationContext(_localctx);
 				this.enterOuterAlt(_localctx, 2);
 				{
 				this.state = 77;
 				this.match(CalcParser.VAL);
 				this.state = 78;
-				(_localctx as ValAssignmentContext)._left = this.match(CalcParser.Stringliteral);
+				(_localctx as ValDeclarationContext)._left = this.match(CalcParser.Stringliteral);
 				this.state = 79;
-				(_localctx as ValAssignmentContext)._operator = this.match(CalcParser.EQUAL);
+				(_localctx as ValDeclarationContext)._operator = this.match(CalcParser.EQUAL);
 				this.state = 80;
-				(_localctx as ValAssignmentContext)._right = this.expression(0);
+				(_localctx as ValDeclarationContext)._right = this.expression(0);
 				}
 				break;
 			default:
@@ -1577,7 +1577,7 @@ export class VariableDeclarationContext extends ParserRuleContext {
 		super.copyFrom(ctx);
 	}
 }
-export class LetAssignmentContext extends VariableDeclarationContext {
+export class LetDeclarationContext extends VariableDeclarationContext {
 	public _left!: Token;
 	public _operator!: Token;
 	public _right!: ExpressionContext;
@@ -1593,26 +1593,26 @@ export class LetAssignmentContext extends VariableDeclarationContext {
 	}
 	// @Override
 	public enterRule(listener: CalcListener): void {
-		if (listener.enterLetAssignment) {
-			listener.enterLetAssignment(this);
+		if (listener.enterLetDeclaration) {
+			listener.enterLetDeclaration(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: CalcListener): void {
-		if (listener.exitLetAssignment) {
-			listener.exitLetAssignment(this);
+		if (listener.exitLetDeclaration) {
+			listener.exitLetDeclaration(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: CalcVisitor<Result>): Result {
-		if (visitor.visitLetAssignment) {
-			return visitor.visitLetAssignment(this);
+		if (visitor.visitLetDeclaration) {
+			return visitor.visitLetDeclaration(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
 	}
 }
-export class ValAssignmentContext extends VariableDeclarationContext {
+export class ValDeclarationContext extends VariableDeclarationContext {
 	public _left!: Token;
 	public _operator!: Token;
 	public _right!: ExpressionContext;
@@ -1628,20 +1628,20 @@ export class ValAssignmentContext extends VariableDeclarationContext {
 	}
 	// @Override
 	public enterRule(listener: CalcListener): void {
-		if (listener.enterValAssignment) {
-			listener.enterValAssignment(this);
+		if (listener.enterValDeclaration) {
+			listener.enterValDeclaration(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: CalcListener): void {
-		if (listener.exitValAssignment) {
-			listener.exitValAssignment(this);
+		if (listener.exitValDeclaration) {
+			listener.exitValDeclaration(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: CalcVisitor<Result>): Result {
-		if (visitor.visitValAssignment) {
-			return visitor.visitValAssignment(this);
+		if (visitor.visitValDeclaration) {
+			return visitor.visitValDeclaration(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

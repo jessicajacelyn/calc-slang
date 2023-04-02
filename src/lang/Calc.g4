@@ -12,7 +12,7 @@ SUB: '-';
 EQUAL: '=';
 AND: '&&' | 'and' | 'andalso';
 OR: '||' | 'or' | 'orelse';
-NOT: 'not' ;
+NOT: 'not';
 BOOLEAN: 'true' | 'false';
 GT: '>';
 LT: '<';
@@ -25,11 +25,11 @@ LETTER: [a-zA-Z];
 LET: 'let';
 VAL: 'val';
 LOCAL: 'local val';
-OPAR : '(';
-CPAR : ')';
-OBRACE : '{';
-CBRACE : '}';
-DOUBLEQUOTE: '"' ;
+OPAR: '(';
+CPAR: ')';
+OBRACE: '{';
+CBRACE: '}';
+DOUBLEQUOTE: '"';
 assignmentoperator: '=' | ':=';
 emptydeclaration: ';';
 IF: 'if';
@@ -47,7 +47,7 @@ Stringliteral: [a-zA-Z] [a-zA-Z0-9]*;
 /*
  * Productions
  */
-start: (statement| function)*;
+start: (statement | function)*;
 
 statement:
 	ifThenElseStatement
@@ -59,64 +59,54 @@ statement:
 	| block;
 
 ifThenElseStatement:
-	IF OPAR test = expression CPAR THEN consequent = statement ELSE alternate = statement #IfThenElseCondition;
+	IF OPAR test = expression CPAR THEN consequent = statement ELSE alternate = statement #
+		IfThenElseCondition;
 
 whileStatement:
-	WHILE test = expression DO body = statement #WhileCondition; 
+	WHILE test = expression DO body = statement # WhileCondition;
 
-type: 
-	CHAR
-	| STRING
-	| INT
-	| BOOL
-	| REALNUM;
+type: CHAR | STRING | INT | BOOL | REALNUM;
 
-declaration:
-	t = type id = Stringliteral;
+declaration: t = type id = Stringliteral;
 
 variableDeclaration:
-	LET left = Stringliteral operator = EQUAL right = expression 			# LetAssignment
-	| VAL left = Stringliteral operator = EQUAL right = expression 		# ValAssignment;
+	LET left = Stringliteral operator = EQUAL right = expression	# LetDeclaration
+	| VAL left = Stringliteral operator = EQUAL right = expression	# ValDeclaration;
 
 localValDeclaration:
- 	LOCAL left = Stringliteral operator = EQUAL right = expression    	# LocalValAssignment;
+	LOCAL left = Stringliteral operator = EQUAL right = expression # LocalValAssignment;
 
-block: 
-	OBRACE stmts = statement* CBRACE ;
+block: OBRACE stmts = statement* CBRACE;
 
-print:
-	OPAR DOUBLEQUOTE expr = Stringliteral DOUBLEQUOTE CPAR;
+print: OPAR DOUBLEQUOTE expr = Stringliteral DOUBLEQUOTE CPAR;
 
-parameters:
-	declaration (',' declaration)* ;
+parameters: declaration (',' declaration)*;
 
-function: 
-	t=type id=Stringliteral OPAR params = parameters CPAR body = block ; 
+function:
+	t = type id = Stringliteral OPAR params = parameters CPAR body = block;
 
+identifier:
+	Stringliteral	# String
+	| NUMBER		# Number
+	| REAL			# Real
+	| BOOLEAN		# Boolean;
 
-identifier: 
-	Stringliteral #String 
-	| NUMBER # Number
-	| REAL   # Real
-	| BOOLEAN #Boolean;
-
-expressionStatement: expression ';' ;
+expressionStatement: expression ';';
 
 expression:
-	identifier                                               			# Identifiers
-	| OPAR inner = expression CPAR 									 	# Parentheses
-	| left = expression operator = POW right = expression 				# Power
-	| left = expression operator = MUL right = expression 				# Multiplication
-	| left = expression operator = DIV right = expression 				# Division
-	| left = expression operator = ADD right = expression 				# Addition
-	| left = expression operator = SUB right = expression 				# Subtraction
-	| left = expression operator = MOD right = expression 				# Modulus
-	| left = expression operator = EQUAL right = expression             # EqualComparator
-	| left = expression operator = GT right = expression				# GreaterComparator
-	| left = expression operator = LT right = expression				# LesserComparator
-	| left = expression operator = GE right = expression				# GreaterEqualComparator
-	| left = expression operator = LE right = expression				# LesserEqualComparator
-	| left = expression operator = AND right = expression				# AndLogical
-	| left = expression operator = OR right = expression				# OrLogical
-	| NOT left = expression                   							# NotLogical;
-	
+	identifier												# Identifiers
+	| OPAR inner = expression CPAR							# Parentheses
+	| left = expression operator = POW right = expression	# Power
+	| left = expression operator = MUL right = expression	# Multiplication
+	| left = expression operator = DIV right = expression	# Division
+	| left = expression operator = ADD right = expression	# Addition
+	| left = expression operator = SUB right = expression	# Subtraction
+	| left = expression operator = MOD right = expression	# Modulus
+	| left = expression operator = EQUAL right = expression	# EqualComparator
+	| left = expression operator = GT right = expression	# GreaterComparator
+	| left = expression operator = LT right = expression	# LesserComparator
+	| left = expression operator = GE right = expression	# GreaterEqualComparator
+	| left = expression operator = LE right = expression	# LesserEqualComparator
+	| left = expression operator = AND right = expression	# AndLogical
+	| left = expression operator = OR right = expression	# OrLogical
+	| NOT left = expression									# NotLogical;

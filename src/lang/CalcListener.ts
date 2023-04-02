@@ -24,8 +24,8 @@ import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
 import { LocalValAssignmentContext } from "./CalcParser";
-import { LetAssignmentContext } from "./CalcParser";
-import { ValAssignmentContext } from "./CalcParser";
+import { LetDeclarationContext } from "./CalcParser";
+import { ValDeclarationContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
@@ -326,30 +326,30 @@ export interface CalcListener extends ParseTreeListener {
 	exitLocalValAssignment?: (ctx: LocalValAssignmentContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `LetAssignment`
+	 * Enter a parse tree produced by the `LetDeclaration`
 	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	enterLetAssignment?: (ctx: LetAssignmentContext) => void;
+	enterLetDeclaration?: (ctx: LetDeclarationContext) => void;
 	/**
-	 * Exit a parse tree produced by the `LetAssignment`
+	 * Exit a parse tree produced by the `LetDeclaration`
 	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	exitLetAssignment?: (ctx: LetAssignmentContext) => void;
+	exitLetDeclaration?: (ctx: LetDeclarationContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `ValAssignment`
+	 * Enter a parse tree produced by the `ValDeclaration`
 	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	enterValAssignment?: (ctx: ValAssignmentContext) => void;
+	enterValDeclaration?: (ctx: ValDeclarationContext) => void;
 	/**
-	 * Exit a parse tree produced by the `ValAssignment`
+	 * Exit a parse tree produced by the `ValDeclaration`
 	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	exitValAssignment?: (ctx: ValAssignmentContext) => void;
+	exitValDeclaration?: (ctx: ValDeclarationContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `WhileCondition`

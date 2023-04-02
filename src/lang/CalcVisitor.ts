@@ -24,8 +24,8 @@ import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
 import { LocalValAssignmentContext } from "./CalcParser";
-import { LetAssignmentContext } from "./CalcParser";
-import { ValAssignmentContext } from "./CalcParser";
+import { LetDeclarationContext } from "./CalcParser";
+import { ValDeclarationContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
@@ -224,20 +224,20 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitLocalValAssignment?: (ctx: LocalValAssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `LetAssignment`
+	 * Visit a parse tree produced by the `LetDeclaration`
 	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitLetAssignment?: (ctx: LetAssignmentContext) => Result;
+	visitLetDeclaration?: (ctx: LetDeclarationContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `ValAssignment`
+	 * Visit a parse tree produced by the `ValDeclaration`
 	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitValAssignment?: (ctx: ValAssignmentContext) => Result;
+	visitValDeclaration?: (ctx: ValDeclarationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `WhileCondition`
