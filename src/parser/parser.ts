@@ -94,7 +94,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) { }
+  public constructor(public location: es.SourceLocation, public message: string) {}
 
   public explain() {
     return this.message
@@ -108,7 +108,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -122,7 +122,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Trailing comma'
@@ -299,9 +299,8 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
-
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
-    console.log("visitLetAssignment!!!!!!!!")
+    console.log('visitLetAssignment!!!!!!!!')
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -320,7 +319,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   }
 
   visitValDeclaration(ctx: ValDeclarationContext): es.VariableDeclaration {
-
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -339,7 +337,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   }
 
   visitDeclaration?: ((ctx: VariableDeclarationContext) => es.Declaration) | undefined
-
 
   visit(tree: ParseTree): es.Declaration {
     return tree.accept(this)
@@ -510,7 +507,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitNumber(ctx: NumberContext): es.Expression {
-    console.log("number: ", ctx.text)
+    console.log('number: ', ctx.text)
 
     return {
       type: 'Literal',
@@ -521,7 +518,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitReal(ctx: RealContext): es.Expression {
-    console.log("real: ", ctx.text)
+    console.log('real: ', ctx.text)
 
     return {
       type: 'Literal',
