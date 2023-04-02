@@ -3,8 +3,11 @@
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
+import { StringContext } from "./CalcParser";
 import { NumberContext } from "./CalcParser";
 import { RealContext } from "./CalcParser";
+import { BooleanContext } from "./CalcParser";
+import { IdentifiersContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
@@ -12,9 +15,6 @@ import { DivisionContext } from "./CalcParser";
 import { AdditionContext } from "./CalcParser";
 import { SubtractionContext } from "./CalcParser";
 import { ModulusContext } from "./CalcParser";
-import { LetAssignmentContext } from "./CalcParser";
-import { ValAssignmentContext } from "./CalcParser";
-import { LocalValAssignmentContext } from "./CalcParser";
 import { EqualComparatorContext } from "./CalcParser";
 import { GreaterComparatorContext } from "./CalcParser";
 import { LesserComparatorContext } from "./CalcParser";
@@ -23,8 +23,9 @@ import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
-import { StringContext } from "./CalcParser";
-import { BooleanContext } from "./CalcParser";
+import { LocalValAssignmentContext } from "./CalcParser";
+import { LetDeclarationContext } from "./CalcParser";
+import { ValDeclarationContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { AssignmentoperatorContext } from "./CalcParser";
@@ -35,10 +36,13 @@ import { IfThenElseStatementContext } from "./CalcParser";
 import { WhileStatementContext } from "./CalcParser";
 import { TypeContext } from "./CalcParser";
 import { DeclarationContext } from "./CalcParser";
+import { VariableDeclarationContext } from "./CalcParser";
+import { LocalValDeclarationContext } from "./CalcParser";
 import { BlockContext } from "./CalcParser";
 import { PrintContext } from "./CalcParser";
 import { ParametersContext } from "./CalcParser";
 import { FunctionContext } from "./CalcParser";
+import { IdentifierContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -52,8 +56,16 @@ import { ExpressionContext } from "./CalcParser";
  */
 export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
+	 * Visit a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitString?: (ctx: StringContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `Number`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -61,11 +73,27 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 
 	/**
 	 * Visit a parse tree produced by the `Real`
-	 * labeled alternative in `CalcParser.expression`.
+	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitReal?: (ctx: RealContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `Boolean`
+	 * labeled alternative in `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitBoolean?: (ctx: BooleanContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `Identifiers`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIdentifiers?: (ctx: IdentifiersContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `Parentheses`
@@ -122,30 +150,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitModulus?: (ctx: ModulusContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `LetAssignment`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitLetAssignment?: (ctx: LetAssignmentContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `ValAssignment`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitValAssignment?: (ctx: ValAssignmentContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `LocalValAssignment`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitLocalValAssignment?: (ctx: LocalValAssignmentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `EqualComparator`
@@ -212,20 +216,28 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitNotLogical?: (ctx: NotLogicalContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `String`
-	 * labeled alternative in `CalcParser.expression`.
+	 * Visit a parse tree produced by the `LocalValAssignment`
+	 * labeled alternative in `CalcParser.localValDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitString?: (ctx: StringContext) => Result;
+	visitLocalValAssignment?: (ctx: LocalValAssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `Boolean`
-	 * labeled alternative in `CalcParser.expression`.
+	 * Visit a parse tree produced by the `LetDeclaration`
+	 * labeled alternative in `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitBoolean?: (ctx: BooleanContext) => Result;
+	visitLetDeclaration?: (ctx: LetDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `ValDeclaration`
+	 * labeled alternative in `CalcParser.variableDeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitValDeclaration?: (ctx: ValDeclarationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `WhileCondition`
@@ -300,6 +312,20 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitDeclaration?: (ctx: DeclarationContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `CalcParser.variableDeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitVariableDeclaration?: (ctx: VariableDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.localValDeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLocalValDeclaration?: (ctx: LocalValDeclarationContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `CalcParser.block`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -326,6 +352,13 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitFunction?: (ctx: FunctionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.identifier`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIdentifier?: (ctx: IdentifierContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.expressionStatement`.

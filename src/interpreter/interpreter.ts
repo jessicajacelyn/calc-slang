@@ -1,6 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
 
+import createContext, { createGlobalEnvironment } from '../createContext'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Value } from '../types'
 import {
@@ -9,7 +10,6 @@ import {
   evaluateUnaryExpression
 } from '../utils/operators'
 import * as rttc from '../utils/rttc'
-
 class Thunk {
   public value: Value
   public isMemoized: boolean
@@ -57,6 +57,7 @@ function* leave(context: Context) {
   yield context
 }
 
+const currentEnvironment = (context: Context) => context.runtime.environments[0]
 const popEnvironment = (context: Context) => context.runtime.environments.shift()
 export const pushEnvironment = (context: Context, environment: Environment) => {
   context.runtime.environments.unshift(environment)
@@ -146,26 +147,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ConditionalExpression: function* (node: es.ConditionalExpression, context: Context) {
-    // console.log('ConditionalExpression NOT IMPLEMENTED YET!!!!!!!!')
-    //throw new Error(`not supported yet: ${node.type}`)
-    // console.log('Context: ', context)
     console.log('IF statement evaluating')
-    // const test = yield* actualValue(node.test, context)
-    // console.log('test: ', test) 
-    // const error  = rttc.checkIfStatement(node, test)
-    // if(error) {
-    //   console.log('there is error!!!!!!')
-    //   return handleRuntimeError(context, error)
-    // }
-
-    // if(test){
-    //   console.log('test is true')
-    //   return yield* actualValue(node.consequent, context)
-    // } else{
-    //   console.log('test is false')
-    //   return yield* actualValue(node.alternate, context)
-    // }
-
     return yield* this.IfStatement(node, context)
   },
 
@@ -180,6 +162,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
+    console.log('Variable declaration evaluating')
     throw new Error(`not supported yet: ${node.type}`)
   },
 
@@ -205,11 +188,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     //   console.log('idk')
     // }
     if(node.left.type === 'Identifier') {
-      console.log('its an identifier', node.left.name)
-      const environment = context.runtime.environments[0]
-      const variable = environment.head.get(node.left.name)
-      variable.value = right
-      return right
+      // console.log('its an identifier', node.left.name)
+      // const environment = context.runtime.environments[0]
+      // const variable = environment.head.get(node.left.name)
+      // variable.value = right
+      // return right
+      const value = yield* evaluate(node.right, context)
+      return value
     } else if(node.left.type === 'MemberExpression') {
       console.log('its a member expression')
       const object = yield* actualValue(node.left.object, context)
@@ -223,8 +208,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     } else {
       throw new Error(`not supported yet: ${node.type}`)
     }
-    
-    return node.left
   },
 
   FunctionDeclaration: function* (node: es.FunctionDeclaration, context: Context) {
@@ -271,6 +254,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   Program: function* (node: es.BlockStatement, context: Context) {
+    const env = createGlobalEnvironment()
+    pushEnvironment(context, env)
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
   }
