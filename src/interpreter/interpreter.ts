@@ -177,26 +177,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ConditionalExpression: function* (node: es.ConditionalExpression, context: Context) {
-    // console.log('ConditionalExpression NOT IMPLEMENTED YET!!!!!!!!')
-    //throw new Error(`not supported yet: ${node.type}`)
-    // console.log('Context: ', context)
     console.log('IF statement evaluating')
-    // const test = yield* actualValue(node.test, context)
-    // console.log('test: ', test) 
-    // const error  = rttc.checkIfStatement(node, test)
-    // if(error) {
-    //   console.log('there is error!!!!!!')
-    //   return handleRuntimeError(context, error)
-    // }
-
-    // if(test){
-    //   console.log('test is true')
-    //   return yield* actualValue(node.consequent, context)
-    // } else{
-    //   console.log('test is false')
-    //   return yield* actualValue(node.alternate, context)
-    // }
-
     return yield* this.IfStatement(node, context)
   },
 
@@ -231,6 +212,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
+    console.log('Variable declaration evaluating')
     throw new Error(`not supported yet: ${node.type}`)
   },
 

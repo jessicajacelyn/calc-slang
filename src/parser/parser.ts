@@ -21,6 +21,7 @@ import {
   FunctionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
+  IdentifiersContext,
   IfThenElseConditionContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
@@ -31,7 +32,6 @@ import {
   NotLogicalContext,
   NumberContext,
   OrLogicalContext,
-  ParametersContext,
   ParenthesesContext,
   PowerContext,
   RealContext,
@@ -40,6 +40,7 @@ import {
   StringContext,
   SubtractionContext,
   ValDeclarationContext,
+  VariableDeclarationContext,
   WhileConditionContext
 } from '../lang/CalcParser'
 import { CalcVisitor } from '../lang/CalcVisitor'
@@ -94,7 +95,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) {}
+  public constructor(public location: es.SourceLocation, public message: string) { }
 
   public explain() {
     return this.message
@@ -108,7 +109,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -122,7 +123,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Trailing comma'
@@ -237,6 +238,35 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
+  visitValDeclaration(ctx: VariableDeclarationContext): es.Statement {
+    // console.log('visitVariableDeclaration!!!!!!!!!!')
+    const generator: DeclarationGenerator = new DeclarationGenerator()
+    return ctx.accept(generator)
+  }
+
+  visitLetDeclaration(ctx: VariableDeclarationContext): es.Statement {
+    const generator: DeclarationGenerator = new DeclarationGenerator()
+    return ctx.accept(generator)
+  }
+
+  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.LocalDeclaration {
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return {
+      type: 'LocalDeclaration',
+      kind: 'local',
+      declarations: [
+        {
+          type: 'VariableDeclarator',
+          id: {
+            type: 'Identifier',
+            name: ctx._left.text as string
+          },
+          init: ctx._right.accept(generator)
+        }
+      ]
+    }
+  }
+
   visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
 
   visit(tree: ParseTree): es.Statement {
@@ -268,6 +298,123 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     )
   }
 }
+
+class DeclarationGenerator implements CalcVisitor<es.Declaration> {
+  visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
+    console.log('visitLetAssignment!!!!!!!!')
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return {
+      type: 'VariableDeclaration',
+      kind: 'let',
+      declarations: [
+        {
+          type: 'VariableDeclarator',
+          id: {
+            type: 'Identifier',
+            name: ctx._left.text as string
+          },
+          init: ctx._right.accept(generator)
+        }
+      ]
+    }
+  }
+
+  visitValDeclaration(ctx: ValDeclarationContext): es.VariableDeclaration {
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return {
+      type: 'VariableDeclaration',
+      kind: 'val',
+      declarations: [
+        {
+          type: 'VariableDeclarator',
+          id: {
+            type: 'Identifier',
+            name: ctx._left.text as string
+          },
+          init: ctx._right.accept(generator)
+        }
+      ]
+    }
+  }
+
+  visitDeclaration?: ((ctx: VariableDeclarationContext) => es.Declaration) | undefined
+
+  visit(tree: ParseTree): es.Declaration {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.Declaration {
+    return this.visit(node.getChild(0))
+  }
+
+  visitTerminal(node: TerminalNode): es.Declaration {
+    return node.accept(this)
+  }
+
+  visitErrorNode(node: ErrorNode): es.Declaration {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
+
+// class LocalValGenerator implements CalcVisitor<es.LocalDeclaration> {
+
+//   visitLocalValAssignment(ctx: LocalValAssignmentContext) : es.LocalDeclaration{
+//     const generator: ExpressionGenerator = new ExpressionGenerator()
+//     return{
+//       type: 'LocalDeclaration',
+//       kind: 'local',
+//       declarations: [
+//         {
+//           type: 'VariableDeclarator',
+//           id: {
+//             type: 'Identifier',
+//             name: ctx._left.text as string
+//           },
+//           init: ctx._right.accept(generator)
+//         }]
+//       }
+//   }
+
+//   visit(tree: ParseTree): es.LocalDeclaration {
+//     return tree.accept(this)
+//   }
+
+//   visitChildren(node: RuleNode): es.LocalDeclaration {
+//     throw new Error('Method not implemented.')
+//   }
+
+//   visitTerminal(node: TerminalNode): es.LocalDeclaration {
+//     return node.accept(this)
+//   }
+
+//   visitErrorNode(node: ErrorNode): es.LocalDeclaration {
+//     throw new FatalSyntaxError(
+//       {
+//         start: {
+//           line: node.symbol.line,
+//           column: node.symbol.charPositionInLine
+//         },
+//         end: {
+//           line: node.symbol.line,
+//           column: node.symbol.charPositionInLine + 1
+//         }
+//       },
+//       `invalid syntax ${node.text}`
+//     )
+//   }
+// }
 
 class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement> {
   visitExpressioStatement?:
@@ -310,35 +457,18 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
-  visitAssignment(ctx: AssignmentContext): es.Expression {
-    return {
-      type: 'AssignmentExpression',
-      operator: '=',
-      left: {
-        type: 'Identifier',
-        name: ctx._left.text as string
-      },
-      right: this.visit(ctx._right)
-    }
-  }
-  // visitValDeclaration(ctx: LetAssignmentContext): es.Declaration {
+  // visitValAssignment(ctx: ValAssignmentContext): es.Expression {
   //   return {
-  //     type: 'VariableDeclaration',
-  //     kind: 'var',
-  //     declarations: [
-  //       {
-  //         type: 'VariableDeclarator',
-  //         id: {
-  //           type: 'Identifier',
-  //           name: ctx._left.text as string
-  //         },
-  //         init: this.visit(ctx._right)
-  //       }
-  //     ]
+  //     type: 'AssignmentExpression',
+  //     operator: '=',
+  //     left: {
+  //       type: 'Identifier',
+  //       name: ctx._left.text as string
+  //     },
+  //     right: this.visit(ctx._right)
   //   }
   // }
-
-  // visitLetDeclaration(ctx: LetDeclarationContext): es.Expression {
+  // visitLetAssignment(ctx: LetAssignmentContext): es.Expression {
   //   return {
   //     type: 'AssignmentExpression',
   //     operator: '=',
@@ -350,21 +480,25 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   //   }
   // }
 
-  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression {
-    return {
-      type: 'AssignmentExpression',
-      operator: '=',
-      left: {
-        type: 'Identifier',
-        name: ctx._left.text as string
-      },
-      right: this.visit(ctx._right)
-    }
+  // visitLocalValAssignment(ctx: LocalValAssignmentContext): es.Expression {
+  //   return {
+  //     type: 'AssignmentExpression',
+  //     operator: '=',
+  //     left: {
+  //       type: 'Identifier',
+  //       name: ctx._left.text as string
+  //     },
+  //     right: this.visit(ctx._right)
+  //   }
+  // }
+
+  visitIdentifiers(ctx: IdentifiersContext): es.Expression {
+    const generator: ExpressionGenerator = new ExpressionGenerator()
+    return ctx.identifier().accept(generator)
   }
 
   visitString(ctx: StringContext): es.Expression {
-    console.log(ctx.text)
-
+    console.log('string: ', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
@@ -372,8 +506,9 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
+
   visitNumber(ctx: NumberContext): es.Expression {
-    console.log(ctx.text)
+    console.log('number: ', ctx.text)
 
     return {
       type: 'Literal',
@@ -384,7 +519,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitReal(ctx: RealContext): es.Expression {
-    console.log(ctx.text)
+    console.log('real: ', ctx.text)
 
     return {
       type: 'Literal',
@@ -523,16 +658,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       loc: contextToLocation(ctx)
     }
   }
-
-  // visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Expression {
-  //   return {
-  //     type: 'ConditionalExpression',
-  //     test: this.visit(ctx._test),
-  //     consequent: this.visit(ctx._consequent),
-  //     alternate: this.visit(ctx._alternate),
-  //     loc: contextToLocation(ctx)
-  //   }
-  // }
 
   visitAndLogical(ctx: AndLogicalContext): es.Expression {
     return {
