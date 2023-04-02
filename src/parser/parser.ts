@@ -587,8 +587,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitAddition(ctx: AdditionContext): es.Expression {
-    console.log('LEFT: ', this.visit(ctx._left))
-    console.log('RIGHT: ', this.visit(ctx._right))
     return {
       type: 'BinaryExpression',
       operator: '+',
