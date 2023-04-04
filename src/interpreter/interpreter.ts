@@ -163,7 +163,48 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
     console.log('Variable declaration evaluating')
-    throw new Error(`not supported yet: ${node.type}`)
+    let name
+
+    if (node.declarations[0].id.type !== 'Identifier') {
+      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+    } else {
+      name = node.declarations[0].id.name
+    }
+
+    if (node.declarations[0].init === null || node.declarations[0].init === undefined) {
+      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+    }
+
+    const value = yield* evaluate(node.declarations[0].init, context)
+    context.runtime.environments[0].head[name] = value
+
+    console.log('after var declaration: ', context.runtime.environments)
+    return value
+    
+  },
+
+  LocalDeclaration: function* (node: es.LocalDeclaration, context: Context) {
+    console.log('Local Variable declaration evaluating')
+    let name
+
+    if (node.declarations[0].id.type !== 'Identifier') {
+      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+    } else {
+      name = node.declarations[0].id.name
+    }
+
+    if (node.declarations[0].init === null || node.declarations[0].init === undefined) {
+      // context.runtime.environments[0].head[name] = null
+      // console.log('after var declaration with no value: ', context.runtime.environments)
+      // return undefined
+      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+    }
+
+    const value = yield* evaluate(node.declarations[0].init, context)
+    context.runtime.environments[0].head[name] = value
+
+    console.log('after var declaration: ', context.runtime.environments)
+    return value
   },
 
   ContinueStatement: function* (_node: es.ContinueStatement, _context: Context) {
@@ -180,19 +221,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
 // TODO: Implement assignment expression
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
-    // const left = yield* actualValue(node.left, context)
     const right = yield* actualValue(node.right, context)
-    // if(typeof left.value === 'string') {
-    //   console.log('its a string', left.value)
-    // } else {
-    //   console.log('idk')
-    // }
     if(node.left.type === 'Identifier') {
-      // console.log('its an identifier', node.left.name)
-      // const environment = context.runtime.environments[0]
-      // const variable = environment.head.get(node.left.name)
-      // variable.value = right
-      // return right
       const value = yield* evaluate(node.right, context)
       return value
     } else if(node.left.type === 'MemberExpression') {
