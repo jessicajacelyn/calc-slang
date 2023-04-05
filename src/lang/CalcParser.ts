@@ -82,19 +82,21 @@ export class CalcParser extends Parser {
 	public static readonly RULE_variableDeclaration = 8;
 	public static readonly RULE_localValDeclaration = 9;
 	public static readonly RULE_letDeclaration = 10;
-	public static readonly RULE_block = 11;
-	public static readonly RULE_print = 12;
-	public static readonly RULE_parameters = 13;
-	public static readonly RULE_function = 14;
-	public static readonly RULE_identifier = 15;
-	public static readonly RULE_expressionStatement = 16;
-	public static readonly RULE_expression = 17;
+	public static readonly RULE_declarationType = 11;
+	public static readonly RULE_declarationlist = 12;
+	public static readonly RULE_block = 13;
+	public static readonly RULE_print = 14;
+	public static readonly RULE_parameters = 15;
+	public static readonly RULE_function = 16;
+	public static readonly RULE_identifier = 17;
+	public static readonly RULE_expressionStatement = 18;
+	public static readonly RULE_expression = 19;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
 		"assignmentoperator", "emptydeclaration", "start", "statement", "ifThenElseStatement", 
 		"whileStatement", "type", "declaration", "variableDeclaration", "localValDeclaration", 
-		"letDeclaration", "block", "print", "parameters", "function", "identifier", 
-		"expressionStatement", "expression",
+		"letDeclaration", "declarationType", "declarationlist", "block", "print", 
+		"parameters", "function", "identifier", "expressionStatement", "expression",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
@@ -146,7 +148,7 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 36;
+			this.state = 40;
 			_la = this._input.LA(1);
 			if (!(_la === CalcParser.T__0 || _la === CalcParser.EQUAL)) {
 			this._errHandler.recoverInline(this);
@@ -181,7 +183,7 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 38;
+			this.state = 42;
 			this.match(CalcParser.T__1);
 			}
 		}
@@ -207,30 +209,30 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 44;
+			this.state = 48;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (((((_la - 13)) & ~0x1F) === 0 && ((1 << (_la - 13)) & ((1 << (CalcParser.NOT - 13)) | (1 << (CalcParser.BOOLEAN - 13)) | (1 << (CalcParser.NUMBER - 13)) | (1 << (CalcParser.REAL - 13)) | (1 << (CalcParser.LET - 13)) | (1 << (CalcParser.VAL - 13)) | (1 << (CalcParser.LOCAL - 13)) | (1 << (CalcParser.OPAR - 13)) | (1 << (CalcParser.OBRACE - 13)) | (1 << (CalcParser.IF - 13)) | (1 << (CalcParser.WHILE - 13)) | (1 << (CalcParser.CHAR - 13)) | (1 << (CalcParser.STRING - 13)) | (1 << (CalcParser.INT - 13)) | (1 << (CalcParser.BOOL - 13)) | (1 << (CalcParser.REALNUM - 13)) | (1 << (CalcParser.Stringliteral - 13)))) !== 0)) {
 				{
-				this.state = 42;
+				this.state = 46;
 				this._errHandler.sync(this);
 				switch ( this.interpreter.adaptivePredict(this._input, 0, this._ctx) ) {
 				case 1:
 					{
-					this.state = 40;
+					this.state = 44;
 					this.statement();
 					}
 					break;
 
 				case 2:
 					{
-					this.state = 41;
+					this.state = 45;
 					this.function();
 					}
 					break;
 				}
 				}
-				this.state = 46;
+				this.state = 50;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -255,72 +257,76 @@ export class CalcParser extends Parser {
 		let _localctx: StatementContext = new StatementContext(this._ctx, this.state);
 		this.enterRule(_localctx, 6, CalcParser.RULE_statement);
 		try {
-			this.state = 55;
+			this.state = 59;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 2, this._ctx) ) {
-			case 1:
+			switch (this._input.LA(1)) {
+			case CalcParser.IF:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 47;
+				this.state = 51;
 				this.ifThenElseStatement();
 				}
 				break;
-
-			case 2:
+			case CalcParser.WHILE:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 48;
+				this.state = 52;
 				this.whileStatement();
 				}
 				break;
-
-			case 3:
+			case CalcParser.VAL:
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 49;
+				this.state = 53;
 				this.variableDeclaration();
 				}
 				break;
-
-			case 4:
+			case CalcParser.LOCAL:
 				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 50;
+				this.state = 54;
 				this.localValDeclaration();
 				}
 				break;
-
-			case 5:
+			case CalcParser.LET:
 				this.enterOuterAlt(_localctx, 5);
 				{
-				this.state = 51;
+				this.state = 55;
 				this.letDeclaration();
 				}
 				break;
-
-			case 6:
+			case CalcParser.CHAR:
+			case CalcParser.STRING:
+			case CalcParser.INT:
+			case CalcParser.BOOL:
+			case CalcParser.REALNUM:
 				this.enterOuterAlt(_localctx, 6);
 				{
-				this.state = 52;
+				this.state = 56;
 				this.declaration();
 				}
 				break;
-
-			case 7:
+			case CalcParser.NOT:
+			case CalcParser.BOOLEAN:
+			case CalcParser.NUMBER:
+			case CalcParser.REAL:
+			case CalcParser.OPAR:
+			case CalcParser.Stringliteral:
 				this.enterOuterAlt(_localctx, 7);
 				{
-				this.state = 53;
+				this.state = 57;
 				this.expressionStatement();
 				}
 				break;
-
-			case 8:
+			case CalcParser.OBRACE:
 				this.enterOuterAlt(_localctx, 8);
 				{
-				this.state = 54;
+				this.state = 58;
 				this.block();
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (re) {
@@ -345,21 +351,21 @@ export class CalcParser extends Parser {
 			_localctx = new IfThenElseConditionContext(_localctx);
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 57;
-			this.match(CalcParser.IF);
-			this.state = 58;
-			this.match(CalcParser.OPAR);
-			this.state = 59;
-			(_localctx as IfThenElseConditionContext)._test = this.expression(0);
-			this.state = 60;
-			this.match(CalcParser.CPAR);
 			this.state = 61;
-			this.match(CalcParser.THEN);
+			this.match(CalcParser.IF);
 			this.state = 62;
-			(_localctx as IfThenElseConditionContext)._consequent = this.statement();
+			this.match(CalcParser.OPAR);
 			this.state = 63;
-			this.match(CalcParser.ELSE);
+			(_localctx as IfThenElseConditionContext)._test = this.expression(0);
 			this.state = 64;
+			this.match(CalcParser.CPAR);
+			this.state = 65;
+			this.match(CalcParser.THEN);
+			this.state = 66;
+			(_localctx as IfThenElseConditionContext)._consequent = this.statement();
+			this.state = 67;
+			this.match(CalcParser.ELSE);
+			this.state = 68;
 			(_localctx as IfThenElseConditionContext)._alternate = this.statement();
 			}
 		}
@@ -385,13 +391,13 @@ export class CalcParser extends Parser {
 			_localctx = new WhileConditionContext(_localctx);
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 66;
+			this.state = 70;
 			this.match(CalcParser.WHILE);
-			this.state = 67;
+			this.state = 71;
 			(_localctx as WhileConditionContext)._test = this.expression(0);
-			this.state = 68;
+			this.state = 72;
 			this.match(CalcParser.DO);
-			this.state = 69;
+			this.state = 73;
 			(_localctx as WhileConditionContext)._body = this.statement();
 			}
 		}
@@ -417,7 +423,7 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 71;
+			this.state = 75;
 			_la = this._input.LA(1);
 			if (!(((((_la - 38)) & ~0x1F) === 0 && ((1 << (_la - 38)) & ((1 << (CalcParser.CHAR - 38)) | (1 << (CalcParser.STRING - 38)) | (1 << (CalcParser.INT - 38)) | (1 << (CalcParser.BOOL - 38)) | (1 << (CalcParser.REALNUM - 38)))) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -452,9 +458,9 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 73;
+			this.state = 77;
 			_localctx._t = this.type();
-			this.state = 74;
+			this.state = 78;
 			_localctx._id = this.match(CalcParser.Stringliteral);
 			}
 		}
@@ -479,13 +485,13 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 76;
+			this.state = 80;
 			this.match(CalcParser.VAL);
-			this.state = 77;
+			this.state = 81;
 			_localctx._left = this.match(CalcParser.Stringliteral);
-			this.state = 78;
+			this.state = 82;
 			_localctx._operator = this.match(CalcParser.EQUAL);
-			this.state = 79;
+			this.state = 83;
 			_localctx._right = this.expression(0);
 			}
 		}
@@ -510,13 +516,13 @@ export class CalcParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 81;
+			this.state = 85;
 			this.match(CalcParser.LOCAL);
-			this.state = 82;
+			this.state = 86;
 			_localctx._left = this.match(CalcParser.Stringliteral);
-			this.state = 83;
+			this.state = 87;
 			_localctx._operator = this.match(CalcParser.EQUAL);
-			this.state = 84;
+			this.state = 88;
 			_localctx._right = this.expression(0);
 			}
 		}
@@ -539,29 +545,54 @@ export class CalcParser extends Parser {
 		let _localctx: LetDeclarationContext = new LetDeclarationContext(this._ctx, this.state);
 		this.enterRule(_localctx, 20, CalcParser.RULE_letDeclaration);
 		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 90;
+			this.match(CalcParser.LET);
+			this.state = 91;
+			_localctx._del = this.declarationType();
+			this.state = 92;
+			this.match(CalcParser.IN);
+			this.state = 93;
+			_localctx._delist = this.declarationlist();
 			this.state = 94;
+			this.match(CalcParser.END);
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public declarationType(): DeclarationTypeContext {
+		let _localctx: DeclarationTypeContext = new DeclarationTypeContext(this._ctx, this.state);
+		this.enterRule(_localctx, 22, CalcParser.RULE_declarationType);
+		try {
+			this.state = 98;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case CalcParser.LET:
+			case CalcParser.VAL:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 86;
-				this.match(CalcParser.LET);
-				this.state = 87;
-				_localctx._del = this.variableDeclaration();
-				this.state = 88;
-				this.match(CalcParser.IN);
-				this.state = 89;
-				_localctx._declarationlist = this.variableDeclaration();
+				this.state = 96;
+				this.variableDeclaration();
 				}
 				break;
 			case CalcParser.LOCAL:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 91;
+				this.state = 97;
 				this.localValDeclaration();
-				this.state = 92;
-				this.match(CalcParser.END);
 				}
 				break;
 			default:
@@ -583,30 +614,68 @@ export class CalcParser extends Parser {
 		return _localctx;
 	}
 	// @RuleVersion(0)
-	public block(): BlockContext {
-		let _localctx: BlockContext = new BlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 22, CalcParser.RULE_block);
+	public declarationlist(): DeclarationlistContext {
+		let _localctx: DeclarationlistContext = new DeclarationlistContext(this._ctx, this.state);
+		this.enterRule(_localctx, 24, CalcParser.RULE_declarationlist);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 96;
+			this.state = 103;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			while (_la === CalcParser.VAL || _la === CalcParser.LOCAL) {
+				{
+				{
+				this.state = 100;
+				this.declarationType();
+				}
+				}
+				this.state = 105;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			}
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public block(): BlockContext {
+		let _localctx: BlockContext = new BlockContext(this._ctx, this.state);
+		this.enterRule(_localctx, 26, CalcParser.RULE_block);
+		let _la: number;
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 106;
 			this.match(CalcParser.OBRACE);
-			this.state = 100;
+			this.state = 110;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (((((_la - 13)) & ~0x1F) === 0 && ((1 << (_la - 13)) & ((1 << (CalcParser.NOT - 13)) | (1 << (CalcParser.BOOLEAN - 13)) | (1 << (CalcParser.NUMBER - 13)) | (1 << (CalcParser.REAL - 13)) | (1 << (CalcParser.LET - 13)) | (1 << (CalcParser.VAL - 13)) | (1 << (CalcParser.LOCAL - 13)) | (1 << (CalcParser.OPAR - 13)) | (1 << (CalcParser.OBRACE - 13)) | (1 << (CalcParser.IF - 13)) | (1 << (CalcParser.WHILE - 13)) | (1 << (CalcParser.CHAR - 13)) | (1 << (CalcParser.STRING - 13)) | (1 << (CalcParser.INT - 13)) | (1 << (CalcParser.BOOL - 13)) | (1 << (CalcParser.REALNUM - 13)) | (1 << (CalcParser.Stringliteral - 13)))) !== 0)) {
 				{
 				{
-				this.state = 97;
+				this.state = 107;
 				_localctx._stmts = this.statement();
 				}
 				}
-				this.state = 102;
+				this.state = 112;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 103;
+			this.state = 113;
 			this.match(CalcParser.CBRACE);
 			}
 		}
@@ -627,19 +696,19 @@ export class CalcParser extends Parser {
 	// @RuleVersion(0)
 	public print(): PrintContext {
 		let _localctx: PrintContext = new PrintContext(this._ctx, this.state);
-		this.enterRule(_localctx, 24, CalcParser.RULE_print);
+		this.enterRule(_localctx, 28, CalcParser.RULE_print);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 105;
+			this.state = 115;
 			this.match(CalcParser.OPAR);
-			this.state = 106;
+			this.state = 116;
 			this.match(CalcParser.DOUBLEQUOTE);
-			this.state = 107;
+			this.state = 117;
 			_localctx._expr = this.match(CalcParser.Stringliteral);
-			this.state = 108;
+			this.state = 118;
 			this.match(CalcParser.DOUBLEQUOTE);
-			this.state = 109;
+			this.state = 119;
 			this.match(CalcParser.CPAR);
 			}
 		}
@@ -660,26 +729,26 @@ export class CalcParser extends Parser {
 	// @RuleVersion(0)
 	public parameters(): ParametersContext {
 		let _localctx: ParametersContext = new ParametersContext(this._ctx, this.state);
-		this.enterRule(_localctx, 26, CalcParser.RULE_parameters);
+		this.enterRule(_localctx, 30, CalcParser.RULE_parameters);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 111;
+			this.state = 121;
 			this.declaration();
-			this.state = 116;
+			this.state = 126;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === CalcParser.T__2) {
 				{
 				{
-				this.state = 112;
+				this.state = 122;
 				this.match(CalcParser.T__2);
-				this.state = 113;
+				this.state = 123;
 				this.declaration();
 				}
 				}
-				this.state = 118;
+				this.state = 128;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -702,21 +771,21 @@ export class CalcParser extends Parser {
 	// @RuleVersion(0)
 	public function(): FunctionContext {
 		let _localctx: FunctionContext = new FunctionContext(this._ctx, this.state);
-		this.enterRule(_localctx, 28, CalcParser.RULE_function);
+		this.enterRule(_localctx, 32, CalcParser.RULE_function);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 119;
+			this.state = 129;
 			_localctx._t = this.type();
-			this.state = 120;
+			this.state = 130;
 			_localctx._id = this.match(CalcParser.Stringliteral);
-			this.state = 121;
+			this.state = 131;
 			this.match(CalcParser.OPAR);
-			this.state = 122;
+			this.state = 132;
 			_localctx._params = this.parameters();
-			this.state = 123;
+			this.state = 133;
 			this.match(CalcParser.CPAR);
-			this.state = 124;
+			this.state = 134;
 			_localctx._body = this.block();
 			}
 		}
@@ -737,16 +806,16 @@ export class CalcParser extends Parser {
 	// @RuleVersion(0)
 	public identifier(): IdentifierContext {
 		let _localctx: IdentifierContext = new IdentifierContext(this._ctx, this.state);
-		this.enterRule(_localctx, 30, CalcParser.RULE_identifier);
+		this.enterRule(_localctx, 34, CalcParser.RULE_identifier);
 		try {
-			this.state = 130;
+			this.state = 140;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CalcParser.Stringliteral:
 				_localctx = new StringContext(_localctx);
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 126;
+				this.state = 136;
 				this.match(CalcParser.Stringliteral);
 				}
 				break;
@@ -754,7 +823,7 @@ export class CalcParser extends Parser {
 				_localctx = new NumberContext(_localctx);
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 127;
+				this.state = 137;
 				this.match(CalcParser.NUMBER);
 				}
 				break;
@@ -762,7 +831,7 @@ export class CalcParser extends Parser {
 				_localctx = new RealContext(_localctx);
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 128;
+				this.state = 138;
 				this.match(CalcParser.REAL);
 				}
 				break;
@@ -770,7 +839,7 @@ export class CalcParser extends Parser {
 				_localctx = new BooleanContext(_localctx);
 				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 129;
+				this.state = 139;
 				this.match(CalcParser.BOOLEAN);
 				}
 				break;
@@ -795,13 +864,13 @@ export class CalcParser extends Parser {
 	// @RuleVersion(0)
 	public expressionStatement(): ExpressionStatementContext {
 		let _localctx: ExpressionStatementContext = new ExpressionStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 32, CalcParser.RULE_expressionStatement);
+		this.enterRule(_localctx, 36, CalcParser.RULE_expressionStatement);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 132;
+			this.state = 142;
 			this.expression(0);
-			this.state = 133;
+			this.state = 143;
 			this.match(CalcParser.T__1);
 			}
 		}
@@ -832,13 +901,13 @@ export class CalcParser extends Parser {
 		let _parentState: number = this.state;
 		let _localctx: ExpressionContext = new ExpressionContext(this._ctx, _parentState);
 		let _prevctx: ExpressionContext = _localctx;
-		let _startState: number = 34;
-		this.enterRecursionRule(_localctx, 34, CalcParser.RULE_expression, _p);
+		let _startState: number = 38;
+		this.enterRecursionRule(_localctx, 38, CalcParser.RULE_expression, _p);
 		try {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 143;
+			this.state = 153;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case CalcParser.BOOLEAN:
@@ -850,7 +919,7 @@ export class CalcParser extends Parser {
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 
-				this.state = 136;
+				this.state = 146;
 				this.identifier();
 				}
 				break;
@@ -859,11 +928,11 @@ export class CalcParser extends Parser {
 				_localctx = new ParenthesesContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 137;
+				this.state = 147;
 				this.match(CalcParser.OPAR);
-				this.state = 138;
+				this.state = 148;
 				(_localctx as ParenthesesContext)._inner = this.expression(0);
-				this.state = 139;
+				this.state = 149;
 				this.match(CalcParser.CPAR);
 				}
 				break;
@@ -872,9 +941,9 @@ export class CalcParser extends Parser {
 				_localctx = new NotLogicalContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 141;
+				this.state = 151;
 				this.match(CalcParser.NOT);
-				this.state = 142;
+				this.state = 152;
 				(_localctx as NotLogicalContext)._left = this.expression(1);
 				}
 				break;
@@ -882,9 +951,9 @@ export class CalcParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 186;
+			this.state = 196;
 			this._errHandler.sync(this);
-			_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
+			_alt = this.interpreter.adaptivePredict(this._input, 10, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					if (this._parseListeners != null) {
@@ -892,21 +961,21 @@ export class CalcParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 184;
+					this.state = 194;
 					this._errHandler.sync(this);
-					switch ( this.interpreter.adaptivePredict(this._input, 8, this._ctx) ) {
+					switch ( this.interpreter.adaptivePredict(this._input, 9, this._ctx) ) {
 					case 1:
 						{
 						_localctx = new PowerContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as PowerContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 145;
+						this.state = 155;
 						if (!(this.precpred(this._ctx, 14))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 14)");
 						}
-						this.state = 146;
+						this.state = 156;
 						(_localctx as PowerContext)._operator = this.match(CalcParser.POW);
-						this.state = 147;
+						this.state = 157;
 						(_localctx as PowerContext)._right = this.expression(15);
 						}
 						break;
@@ -916,13 +985,13 @@ export class CalcParser extends Parser {
 						_localctx = new MultiplicationContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as MultiplicationContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 148;
+						this.state = 158;
 						if (!(this.precpred(this._ctx, 13))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 13)");
 						}
-						this.state = 149;
+						this.state = 159;
 						(_localctx as MultiplicationContext)._operator = this.match(CalcParser.MUL);
-						this.state = 150;
+						this.state = 160;
 						(_localctx as MultiplicationContext)._right = this.expression(14);
 						}
 						break;
@@ -932,13 +1001,13 @@ export class CalcParser extends Parser {
 						_localctx = new DivisionContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as DivisionContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 151;
+						this.state = 161;
 						if (!(this.precpred(this._ctx, 12))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 12)");
 						}
-						this.state = 152;
+						this.state = 162;
 						(_localctx as DivisionContext)._operator = this.match(CalcParser.DIV);
-						this.state = 153;
+						this.state = 163;
 						(_localctx as DivisionContext)._right = this.expression(13);
 						}
 						break;
@@ -948,13 +1017,13 @@ export class CalcParser extends Parser {
 						_localctx = new AdditionContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as AdditionContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 154;
+						this.state = 164;
 						if (!(this.precpred(this._ctx, 11))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 11)");
 						}
-						this.state = 155;
+						this.state = 165;
 						(_localctx as AdditionContext)._operator = this.match(CalcParser.ADD);
-						this.state = 156;
+						this.state = 166;
 						(_localctx as AdditionContext)._right = this.expression(12);
 						}
 						break;
@@ -964,13 +1033,13 @@ export class CalcParser extends Parser {
 						_localctx = new SubtractionContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as SubtractionContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 157;
+						this.state = 167;
 						if (!(this.precpred(this._ctx, 10))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 10)");
 						}
-						this.state = 158;
+						this.state = 168;
 						(_localctx as SubtractionContext)._operator = this.match(CalcParser.SUB);
-						this.state = 159;
+						this.state = 169;
 						(_localctx as SubtractionContext)._right = this.expression(11);
 						}
 						break;
@@ -980,13 +1049,13 @@ export class CalcParser extends Parser {
 						_localctx = new ModulusContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as ModulusContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 160;
+						this.state = 170;
 						if (!(this.precpred(this._ctx, 9))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
-						this.state = 161;
+						this.state = 171;
 						(_localctx as ModulusContext)._operator = this.match(CalcParser.MOD);
-						this.state = 162;
+						this.state = 172;
 						(_localctx as ModulusContext)._right = this.expression(10);
 						}
 						break;
@@ -996,13 +1065,13 @@ export class CalcParser extends Parser {
 						_localctx = new EqualComparatorContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as EqualComparatorContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 163;
+						this.state = 173;
 						if (!(this.precpred(this._ctx, 8))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
-						this.state = 164;
+						this.state = 174;
 						(_localctx as EqualComparatorContext)._operator = this.match(CalcParser.EQUAL);
-						this.state = 165;
+						this.state = 175;
 						(_localctx as EqualComparatorContext)._right = this.expression(9);
 						}
 						break;
@@ -1012,13 +1081,13 @@ export class CalcParser extends Parser {
 						_localctx = new GreaterComparatorContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as GreaterComparatorContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 166;
+						this.state = 176;
 						if (!(this.precpred(this._ctx, 7))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
-						this.state = 167;
+						this.state = 177;
 						(_localctx as GreaterComparatorContext)._operator = this.match(CalcParser.GT);
-						this.state = 168;
+						this.state = 178;
 						(_localctx as GreaterComparatorContext)._right = this.expression(8);
 						}
 						break;
@@ -1028,13 +1097,13 @@ export class CalcParser extends Parser {
 						_localctx = new LesserComparatorContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as LesserComparatorContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 169;
+						this.state = 179;
 						if (!(this.precpred(this._ctx, 6))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
 						}
-						this.state = 170;
+						this.state = 180;
 						(_localctx as LesserComparatorContext)._operator = this.match(CalcParser.LT);
-						this.state = 171;
+						this.state = 181;
 						(_localctx as LesserComparatorContext)._right = this.expression(7);
 						}
 						break;
@@ -1044,13 +1113,13 @@ export class CalcParser extends Parser {
 						_localctx = new GreaterEqualComparatorContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as GreaterEqualComparatorContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 172;
+						this.state = 182;
 						if (!(this.precpred(this._ctx, 5))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
 						}
-						this.state = 173;
+						this.state = 183;
 						(_localctx as GreaterEqualComparatorContext)._operator = this.match(CalcParser.GE);
-						this.state = 174;
+						this.state = 184;
 						(_localctx as GreaterEqualComparatorContext)._right = this.expression(6);
 						}
 						break;
@@ -1060,13 +1129,13 @@ export class CalcParser extends Parser {
 						_localctx = new LesserEqualComparatorContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as LesserEqualComparatorContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 175;
+						this.state = 185;
 						if (!(this.precpred(this._ctx, 4))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
 						}
-						this.state = 176;
+						this.state = 186;
 						(_localctx as LesserEqualComparatorContext)._operator = this.match(CalcParser.LE);
-						this.state = 177;
+						this.state = 187;
 						(_localctx as LesserEqualComparatorContext)._right = this.expression(5);
 						}
 						break;
@@ -1076,13 +1145,13 @@ export class CalcParser extends Parser {
 						_localctx = new AndLogicalContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as AndLogicalContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 178;
+						this.state = 188;
 						if (!(this.precpred(this._ctx, 3))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
 						}
-						this.state = 179;
+						this.state = 189;
 						(_localctx as AndLogicalContext)._operator = this.match(CalcParser.AND);
-						this.state = 180;
+						this.state = 190;
 						(_localctx as AndLogicalContext)._right = this.expression(4);
 						}
 						break;
@@ -1092,22 +1161,22 @@ export class CalcParser extends Parser {
 						_localctx = new OrLogicalContext(new ExpressionContext(_parentctx, _parentState));
 						(_localctx as OrLogicalContext)._left = _prevctx;
 						this.pushNewRecursionContext(_localctx, _startState, CalcParser.RULE_expression);
-						this.state = 181;
+						this.state = 191;
 						if (!(this.precpred(this._ctx, 2))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
-						this.state = 182;
+						this.state = 192;
 						(_localctx as OrLogicalContext)._operator = this.match(CalcParser.OR);
-						this.state = 183;
+						this.state = 193;
 						(_localctx as OrLogicalContext)._right = this.expression(3);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 188;
+				this.state = 198;
 				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
+				_alt = this.interpreter.adaptivePredict(this._input, 10, this._ctx);
 			}
 			}
 		}
@@ -1128,7 +1197,7 @@ export class CalcParser extends Parser {
 
 	public sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean {
 		switch (ruleIndex) {
-		case 17:
+		case 19:
 			return this.expression_sempred(_localctx as ExpressionContext, predIndex);
 		}
 		return true;
@@ -1178,86 +1247,91 @@ export class CalcParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03-\xC0\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03-\xCA\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
-		"\x13\t\x13\x03\x02\x03\x02\x03\x03\x03\x03\x03\x04\x03\x04\x07\x04-\n" +
-		"\x04\f\x04\x0E\x040\v\x04\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03" +
-		"\x05\x03\x05\x03\x05\x05\x05:\n\x05\x03\x06\x03\x06\x03\x06\x03\x06\x03" +
-		"\x06\x03\x06\x03\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03" +
-		"\x07\x03\b\x03\b\x03\t\x03\t\x03\t\x03\n\x03\n\x03\n\x03\n\x03\n\x03\v" +
-		"\x03\v\x03\v\x03\v\x03\v\x03\f\x03\f\x03\f\x03\f\x03\f\x03\f\x03\f\x03" +
-		"\f\x05\fa\n\f\x03\r\x03\r\x07\re\n\r\f\r\x0E\rh\v\r\x03\r\x03\r\x03\x0E" +
-		"\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0F\x03\x0F\x03\x0F\x07\x0F" +
-		"u\n\x0F\f\x0F\x0E\x0Fx\v\x0F\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03" +
-		"\x10\x03\x10\x03\x11\x03\x11\x03\x11\x03\x11\x05\x11\x85\n\x11\x03\x12" +
-		"\x03\x12\x03\x12\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13" +
-		"\x03\x13\x05\x13\x92\n\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03" +
-		"\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03" +
-		"\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03" +
-		"\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03" +
-		"\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x03\x13\x07\x13\xBB\n\x13" +
-		"\f\x13\x0E\x13\xBE\v\x13\x03\x13\x02\x02\x03$\x14\x02\x02\x04\x02\x06" +
-		"\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02" +
-		"\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02\x02\x04\x04\x02\x03\x03\f\f\x03" +
-		"\x02(,\x02\xCB\x02&\x03\x02\x02\x02\x04(\x03\x02\x02\x02\x06.\x03\x02" +
-		"\x02\x02\b9\x03\x02\x02\x02\n;\x03\x02\x02\x02\fD\x03\x02\x02\x02\x0E" +
-		"I\x03\x02\x02\x02\x10K\x03\x02\x02\x02\x12N\x03\x02\x02\x02\x14S\x03\x02" +
-		"\x02\x02\x16`\x03\x02\x02\x02\x18b\x03\x02\x02\x02\x1Ak\x03\x02\x02\x02" +
-		"\x1Cq\x03\x02\x02\x02\x1Ey\x03\x02\x02\x02 \x84\x03\x02\x02\x02\"\x86" +
-		"\x03\x02\x02\x02$\x91\x03\x02\x02\x02&\'\t\x02\x02\x02\'\x03\x03\x02\x02" +
-		"\x02()\x07\x04\x02\x02)\x05\x03\x02\x02\x02*-\x05\b\x05\x02+-\x05\x1E" +
-		"\x10\x02,*\x03\x02\x02\x02,+\x03\x02\x02\x02-0\x03\x02\x02\x02.,\x03\x02" +
-		"\x02\x02./\x03\x02\x02\x02/\x07\x03\x02\x02\x020.\x03\x02\x02\x021:\x05" +
-		"\n\x06\x022:\x05\f\x07\x023:\x05\x12\n\x024:\x05\x14\v\x025:\x05\x16\f" +
-		"\x026:\x05\x10\t\x027:\x05\"\x12\x028:\x05\x18\r\x0291\x03\x02\x02\x02" +
-		"92\x03\x02\x02\x0293\x03\x02\x02\x0294\x03\x02\x02\x0295\x03\x02\x02\x02" +
-		"96\x03\x02\x02\x0297\x03\x02\x02\x0298\x03\x02\x02\x02:\t\x03\x02\x02" +
-		"\x02;<\x07#\x02\x02<=\x07\x1E\x02\x02=>\x05$\x13\x02>?\x07\x1F\x02\x02" +
-		"?@\x07$\x02\x02@A\x05\b\x05\x02AB\x07%\x02\x02BC\x05\b\x05\x02C\v\x03" +
-		"\x02\x02\x02DE\x07&\x02\x02EF\x05$\x13\x02FG\x07\'\x02\x02GH\x05\b\x05" +
-		"\x02H\r\x03\x02\x02\x02IJ\t\x03\x02\x02J\x0F\x03\x02\x02\x02KL\x05\x0E" +
-		"\b\x02LM\x07-\x02\x02M\x11\x03\x02\x02\x02NO\x07\x1C\x02\x02OP\x07-\x02" +
-		"\x02PQ\x07\f\x02\x02QR\x05$\x13\x02R\x13\x03\x02\x02\x02ST\x07\x1D\x02" +
-		"\x02TU\x07-\x02\x02UV\x07\f\x02\x02VW\x05$\x13\x02W\x15\x03\x02\x02\x02" +
-		"XY\x07\x19\x02\x02YZ\x05\x12\n\x02Z[\x07\x1A\x02\x02[\\\x05\x12\n\x02" +
-		"\\a\x03\x02\x02\x02]^\x05\x14\v\x02^_\x07\x1B\x02\x02_a\x03\x02\x02\x02" +
-		"`X\x03\x02\x02\x02`]\x03\x02\x02\x02a\x17\x03\x02\x02\x02bf\x07 \x02\x02" +
-		"ce\x05\b\x05\x02dc\x03\x02\x02\x02eh\x03\x02\x02\x02fd\x03\x02\x02\x02" +
-		"fg\x03\x02\x02\x02gi\x03\x02\x02\x02hf\x03\x02\x02\x02ij\x07!\x02\x02" +
-		"j\x19\x03\x02\x02\x02kl\x07\x1E\x02\x02lm\x07\"\x02\x02mn\x07-\x02\x02" +
-		"no\x07\"\x02\x02op\x07\x1F\x02\x02p\x1B\x03\x02\x02\x02qv\x05\x10\t\x02" +
-		"rs\x07\x05\x02\x02su\x05\x10\t\x02tr\x03\x02\x02\x02ux\x03\x02\x02\x02" +
-		"vt\x03\x02\x02\x02vw\x03\x02\x02\x02w\x1D\x03\x02\x02\x02xv\x03\x02\x02" +
-		"\x02yz\x05\x0E\b\x02z{\x07-\x02\x02{|\x07\x1E\x02\x02|}\x05\x1C\x0F\x02" +
-		"}~\x07\x1F\x02\x02~\x7F\x05\x18\r\x02\x7F\x1F\x03\x02\x02\x02\x80\x85" +
-		"\x07-\x02\x02\x81\x85\x07\x15\x02\x02\x82\x85\x07\x16\x02\x02\x83\x85" +
-		"\x07\x10\x02\x02\x84\x80\x03\x02\x02\x02\x84\x81\x03\x02\x02\x02\x84\x82" +
-		"\x03\x02\x02\x02\x84\x83\x03\x02\x02\x02\x85!\x03\x02\x02\x02\x86\x87" +
-		"\x05$\x13\x02\x87\x88\x07\x04\x02\x02\x88#\x03\x02\x02\x02\x89\x8A\b\x13" +
-		"\x01\x02\x8A\x92\x05 \x11\x02\x8B\x8C\x07\x1E\x02\x02\x8C\x8D\x05$\x13" +
-		"\x02\x8D\x8E\x07\x1F\x02\x02\x8E\x92\x03\x02\x02\x02\x8F\x90\x07\x0F\x02" +
-		"\x02\x90\x92\x05$\x13\x03\x91\x89\x03\x02\x02\x02\x91\x8B\x03\x02\x02" +
-		"\x02\x91\x8F\x03\x02\x02\x02\x92\xBC\x03\x02\x02\x02\x93\x94\f\x10\x02" +
-		"\x02\x94\x95\x07\x06\x02\x02\x95\xBB\x05$\x13\x11\x96\x97\f\x0F\x02\x02" +
-		"\x97\x98\x07\x07\x02\x02\x98\xBB\x05$\x13\x10\x99\x9A\f\x0E\x02\x02\x9A" +
-		"\x9B\x07\b\x02\x02\x9B\xBB\x05$\x13\x0F\x9C\x9D\f\r\x02\x02\x9D\x9E\x07" +
-		"\n\x02\x02\x9E\xBB\x05$\x13\x0E\x9F\xA0\f\f\x02\x02\xA0\xA1\x07\v\x02" +
-		"\x02\xA1\xBB\x05$\x13\r\xA2\xA3\f\v\x02\x02\xA3\xA4\x07\t\x02\x02\xA4" +
-		"\xBB\x05$\x13\f\xA5\xA6\f\n\x02\x02\xA6\xA7\x07\f\x02\x02\xA7\xBB\x05" +
-		"$\x13\v\xA8\xA9\f\t\x02\x02\xA9\xAA\x07\x11\x02\x02\xAA\xBB\x05$\x13\n" +
-		"\xAB\xAC\f\b\x02\x02\xAC\xAD\x07\x12\x02\x02\xAD\xBB\x05$\x13\t\xAE\xAF" +
-		"\f\x07\x02\x02\xAF\xB0\x07\x13\x02\x02\xB0\xBB\x05$\x13\b\xB1\xB2\f\x06" +
-		"\x02\x02\xB2\xB3\x07\x14\x02\x02\xB3\xBB\x05$\x13\x07\xB4\xB5\f\x05\x02" +
-		"\x02\xB5\xB6\x07\r\x02\x02\xB6\xBB\x05$\x13\x06\xB7\xB8\f\x04\x02\x02" +
-		"\xB8\xB9\x07\x0E\x02\x02\xB9\xBB\x05$\x13\x05\xBA\x93\x03\x02\x02\x02" +
-		"\xBA\x96\x03\x02\x02\x02\xBA\x99\x03\x02\x02\x02\xBA\x9C\x03\x02\x02\x02" +
-		"\xBA\x9F\x03\x02\x02\x02\xBA\xA2\x03\x02\x02\x02\xBA\xA5\x03\x02\x02\x02" +
-		"\xBA\xA8\x03\x02\x02\x02\xBA\xAB\x03\x02\x02\x02\xBA\xAE\x03\x02\x02\x02" +
-		"\xBA\xB1\x03\x02\x02\x02\xBA\xB4\x03\x02\x02\x02\xBA\xB7\x03\x02\x02\x02" +
-		"\xBB\xBE\x03\x02\x02\x02\xBC\xBA\x03\x02\x02\x02\xBC\xBD\x03\x02\x02\x02" +
-		"\xBD%\x03\x02\x02\x02\xBE\xBC\x03\x02\x02\x02\f,.9`fv\x84\x91\xBA\xBC";
+		"\x13\t\x13\x04\x14\t\x14\x04\x15\t\x15\x03\x02\x03\x02\x03\x03\x03\x03" +
+		"\x03\x04\x03\x04\x07\x041\n\x04\f\x04\x0E\x044\v\x04\x03\x05\x03\x05\x03" +
+		"\x05\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05\x05\x05>\n\x05\x03\x06\x03" +
+		"\x06\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x03\x07\x03" +
+		"\x07\x03\x07\x03\x07\x03\x07\x03\b\x03\b\x03\t\x03\t\x03\t\x03\n\x03\n" +
+		"\x03\n\x03\n\x03\n\x03\v\x03\v\x03\v\x03\v\x03\v\x03\f\x03\f\x03\f\x03" +
+		"\f\x03\f\x03\f\x03\r\x03\r\x05\re\n\r\x03\x0E\x07\x0Eh\n\x0E\f\x0E\x0E" +
+		"\x0Ek\v\x0E\x03\x0F\x03\x0F\x07\x0Fo\n\x0F\f\x0F\x0E\x0Fr\v\x0F\x03\x0F" +
+		"\x03\x0F\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x11\x03\x11" +
+		"\x03\x11\x07\x11\x7F\n\x11\f\x11\x0E\x11\x82\v\x11\x03\x12\x03\x12\x03" +
+		"\x12\x03\x12\x03\x12\x03\x12\x03\x12\x03\x13\x03\x13\x03\x13\x03\x13\x05" +
+		"\x13\x8F\n\x13\x03\x14\x03\x14\x03\x14\x03\x15\x03\x15\x03\x15\x03\x15" +
+		"\x03\x15\x03\x15\x03\x15\x03\x15\x05\x15\x9C\n\x15\x03\x15\x03\x15\x03" +
+		"\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03" +
+		"\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03" +
+		"\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03" +
+		"\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\x03" +
+		"\x15\x07\x15\xC5\n\x15\f\x15\x0E\x15\xC8\v\x15\x03\x15\x02\x02\x03(\x16" +
+		"\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14" +
+		"\x02\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02" +
+		"\x02\x04\x04\x02\x03\x03\f\f\x03\x02(,\x02\xD4\x02*\x03\x02\x02\x02\x04" +
+		",\x03\x02\x02\x02\x062\x03\x02\x02\x02\b=\x03\x02\x02\x02\n?\x03\x02\x02" +
+		"\x02\fH\x03\x02\x02\x02\x0EM\x03\x02\x02\x02\x10O\x03\x02\x02\x02\x12" +
+		"R\x03\x02\x02\x02\x14W\x03\x02\x02\x02\x16\\\x03\x02\x02\x02\x18d\x03" +
+		"\x02\x02\x02\x1Ai\x03\x02\x02\x02\x1Cl\x03\x02\x02\x02\x1Eu\x03\x02\x02" +
+		"\x02 {\x03\x02\x02\x02\"\x83\x03\x02\x02\x02$\x8E\x03\x02\x02\x02&\x90" +
+		"\x03\x02\x02\x02(\x9B\x03\x02\x02\x02*+\t\x02\x02\x02+\x03\x03\x02\x02" +
+		"\x02,-\x07\x04\x02\x02-\x05\x03\x02\x02\x02.1\x05\b\x05\x02/1\x05\"\x12" +
+		"\x020.\x03\x02\x02\x020/\x03\x02\x02\x0214\x03\x02\x02\x0220\x03\x02\x02" +
+		"\x0223\x03\x02\x02\x023\x07\x03\x02\x02\x0242\x03\x02\x02\x025>\x05\n" +
+		"\x06\x026>\x05\f\x07\x027>\x05\x12\n\x028>\x05\x14\v\x029>\x05\x16\f\x02" +
+		":>\x05\x10\t\x02;>\x05&\x14\x02<>\x05\x1C\x0F\x02=5\x03\x02\x02\x02=6" +
+		"\x03\x02\x02\x02=7\x03\x02\x02\x02=8\x03\x02\x02\x02=9\x03\x02\x02\x02" +
+		"=:\x03\x02\x02\x02=;\x03\x02\x02\x02=<\x03\x02\x02\x02>\t\x03\x02\x02" +
+		"\x02?@\x07#\x02\x02@A\x07\x1E\x02\x02AB\x05(\x15\x02BC\x07\x1F\x02\x02" +
+		"CD\x07$\x02\x02DE\x05\b\x05\x02EF\x07%\x02\x02FG\x05\b\x05\x02G\v\x03" +
+		"\x02\x02\x02HI\x07&\x02\x02IJ\x05(\x15\x02JK\x07\'\x02\x02KL\x05\b\x05" +
+		"\x02L\r\x03\x02\x02\x02MN\t\x03\x02\x02N\x0F\x03\x02\x02\x02OP\x05\x0E" +
+		"\b\x02PQ\x07-\x02\x02Q\x11\x03\x02\x02\x02RS\x07\x1C\x02\x02ST\x07-\x02" +
+		"\x02TU\x07\f\x02\x02UV\x05(\x15\x02V\x13\x03\x02\x02\x02WX\x07\x1D\x02" +
+		"\x02XY\x07-\x02\x02YZ\x07\f\x02\x02Z[\x05(\x15\x02[\x15\x03\x02\x02\x02" +
+		"\\]\x07\x19\x02\x02]^\x05\x18\r\x02^_\x07\x1A\x02\x02_`\x05\x1A\x0E\x02" +
+		"`a\x07\x1B\x02\x02a\x17\x03\x02\x02\x02be\x05\x12\n\x02ce\x05\x14\v\x02" +
+		"db\x03\x02\x02\x02dc\x03\x02\x02\x02e\x19\x03\x02\x02\x02fh\x05\x18\r" +
+		"\x02gf\x03\x02\x02\x02hk\x03\x02\x02\x02ig\x03\x02\x02\x02ij\x03\x02\x02" +
+		"\x02j\x1B\x03\x02\x02\x02ki\x03\x02\x02\x02lp\x07 \x02\x02mo\x05\b\x05" +
+		"\x02nm\x03\x02\x02\x02or\x03\x02\x02\x02pn\x03\x02\x02\x02pq\x03\x02\x02" +
+		"\x02qs\x03\x02\x02\x02rp\x03\x02\x02\x02st\x07!\x02\x02t\x1D\x03\x02\x02" +
+		"\x02uv\x07\x1E\x02\x02vw\x07\"\x02\x02wx\x07-\x02\x02xy\x07\"\x02\x02" +
+		"yz\x07\x1F\x02\x02z\x1F\x03\x02\x02\x02{\x80\x05\x10\t\x02|}\x07\x05\x02" +
+		"\x02}\x7F\x05\x10\t\x02~|\x03\x02\x02\x02\x7F\x82\x03\x02\x02\x02\x80" +
+		"~\x03\x02\x02\x02\x80\x81\x03\x02\x02\x02\x81!\x03\x02\x02\x02\x82\x80" +
+		"\x03\x02\x02\x02\x83\x84\x05\x0E\b\x02\x84\x85\x07-\x02\x02\x85\x86\x07" +
+		"\x1E\x02\x02\x86\x87\x05 \x11\x02\x87\x88\x07\x1F\x02\x02\x88\x89\x05" +
+		"\x1C\x0F\x02\x89#\x03\x02\x02\x02\x8A\x8F\x07-\x02\x02\x8B\x8F\x07\x15" +
+		"\x02\x02\x8C\x8F\x07\x16\x02\x02\x8D\x8F\x07\x10\x02\x02\x8E\x8A\x03\x02" +
+		"\x02\x02\x8E\x8B\x03\x02\x02\x02\x8E\x8C\x03\x02\x02\x02\x8E\x8D\x03\x02" +
+		"\x02\x02\x8F%\x03\x02\x02\x02\x90\x91\x05(\x15\x02\x91\x92\x07\x04\x02" +
+		"\x02\x92\'\x03\x02\x02\x02\x93\x94\b\x15\x01\x02\x94\x9C\x05$\x13\x02" +
+		"\x95\x96\x07\x1E\x02\x02\x96\x97\x05(\x15\x02\x97\x98\x07\x1F\x02\x02" +
+		"\x98\x9C\x03\x02\x02\x02\x99\x9A\x07\x0F\x02\x02\x9A\x9C\x05(\x15\x03" +
+		"\x9B\x93\x03\x02\x02\x02\x9B\x95\x03\x02\x02\x02\x9B\x99\x03\x02\x02\x02" +
+		"\x9C\xC6\x03\x02\x02\x02\x9D\x9E\f\x10\x02\x02\x9E\x9F\x07\x06\x02\x02" +
+		"\x9F\xC5\x05(\x15\x11\xA0\xA1\f\x0F\x02\x02\xA1\xA2\x07\x07\x02\x02\xA2" +
+		"\xC5\x05(\x15\x10\xA3\xA4\f\x0E\x02\x02\xA4\xA5\x07\b\x02\x02\xA5\xC5" +
+		"\x05(\x15\x0F\xA6\xA7\f\r\x02\x02\xA7\xA8\x07\n\x02\x02\xA8\xC5\x05(\x15" +
+		"\x0E\xA9\xAA\f\f\x02\x02\xAA\xAB\x07\v\x02\x02\xAB\xC5\x05(\x15\r\xAC" +
+		"\xAD\f\v\x02\x02\xAD\xAE\x07\t\x02\x02\xAE\xC5\x05(\x15\f\xAF\xB0\f\n" +
+		"\x02\x02\xB0\xB1\x07\f\x02\x02\xB1\xC5\x05(\x15\v\xB2\xB3\f\t\x02\x02" +
+		"\xB3\xB4\x07\x11\x02\x02\xB4\xC5\x05(\x15\n\xB5\xB6\f\b\x02\x02\xB6\xB7" +
+		"\x07\x12\x02\x02\xB7\xC5\x05(\x15\t\xB8\xB9\f\x07\x02\x02\xB9\xBA\x07" +
+		"\x13\x02\x02\xBA\xC5\x05(\x15\b\xBB\xBC\f\x06\x02\x02\xBC\xBD\x07\x14" +
+		"\x02\x02\xBD\xC5\x05(\x15\x07\xBE\xBF\f\x05\x02\x02\xBF\xC0\x07\r\x02" +
+		"\x02\xC0\xC5\x05(\x15\x06\xC1\xC2\f\x04\x02\x02\xC2\xC3\x07\x0E\x02\x02" +
+		"\xC3\xC5\x05(\x15\x05\xC4\x9D\x03\x02\x02\x02\xC4\xA0\x03\x02\x02\x02" +
+		"\xC4\xA3\x03\x02\x02\x02\xC4\xA6\x03\x02\x02\x02\xC4\xA9\x03\x02\x02\x02" +
+		"\xC4\xAC\x03\x02\x02\x02\xC4\xAF\x03\x02\x02\x02\xC4\xB2\x03\x02\x02\x02" +
+		"\xC4\xB5\x03\x02\x02\x02\xC4\xB8\x03\x02\x02\x02\xC4\xBB\x03\x02\x02\x02" +
+		"\xC4\xBE\x03\x02\x02\x02\xC4\xC1\x03\x02\x02\x02\xC5\xC8\x03\x02\x02\x02" +
+		"\xC6\xC4\x03\x02\x02\x02\xC6\xC7\x03\x02\x02\x02\xC7)\x03\x02\x02\x02" +
+		"\xC8\xC6\x03\x02\x02\x02\r02=dip\x80\x8E\x9B\xC4\xC6";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!CalcParser.__ATN) {
@@ -1680,23 +1754,17 @@ export class LocalValDeclarationContext extends ParserRuleContext {
 
 
 export class LetDeclarationContext extends ParserRuleContext {
-	public _del!: VariableDeclarationContext;
-	public _declarationlist!: VariableDeclarationContext;
-	public LET(): TerminalNode | undefined { return this.tryGetToken(CalcParser.LET, 0); }
-	public IN(): TerminalNode | undefined { return this.tryGetToken(CalcParser.IN, 0); }
-	public variableDeclaration(): VariableDeclarationContext[];
-	public variableDeclaration(i: number): VariableDeclarationContext;
-	public variableDeclaration(i?: number): VariableDeclarationContext | VariableDeclarationContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(VariableDeclarationContext);
-		} else {
-			return this.getRuleContext(i, VariableDeclarationContext);
-		}
+	public _del!: DeclarationTypeContext;
+	public _delist!: DeclarationlistContext;
+	public LET(): TerminalNode { return this.getToken(CalcParser.LET, 0); }
+	public IN(): TerminalNode { return this.getToken(CalcParser.IN, 0); }
+	public END(): TerminalNode { return this.getToken(CalcParser.END, 0); }
+	public declarationType(): DeclarationTypeContext {
+		return this.getRuleContext(0, DeclarationTypeContext);
 	}
-	public localValDeclaration(): LocalValDeclarationContext | undefined {
-		return this.tryGetRuleContext(0, LocalValDeclarationContext);
+	public declarationlist(): DeclarationlistContext {
+		return this.getRuleContext(0, DeclarationlistContext);
 	}
-	public END(): TerminalNode | undefined { return this.tryGetToken(CalcParser.END, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -1718,6 +1786,79 @@ export class LetDeclarationContext extends ParserRuleContext {
 	public accept<Result>(visitor: CalcVisitor<Result>): Result {
 		if (visitor.visitLetDeclaration) {
 			return visitor.visitLetDeclaration(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class DeclarationTypeContext extends ParserRuleContext {
+	public variableDeclaration(): VariableDeclarationContext | undefined {
+		return this.tryGetRuleContext(0, VariableDeclarationContext);
+	}
+	public localValDeclaration(): LocalValDeclarationContext | undefined {
+		return this.tryGetRuleContext(0, LocalValDeclarationContext);
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return CalcParser.RULE_declarationType; }
+	// @Override
+	public enterRule(listener: CalcListener): void {
+		if (listener.enterDeclarationType) {
+			listener.enterDeclarationType(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: CalcListener): void {
+		if (listener.exitDeclarationType) {
+			listener.exitDeclarationType(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: CalcVisitor<Result>): Result {
+		if (visitor.visitDeclarationType) {
+			return visitor.visitDeclarationType(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class DeclarationlistContext extends ParserRuleContext {
+	public declarationType(): DeclarationTypeContext[];
+	public declarationType(i: number): DeclarationTypeContext;
+	public declarationType(i?: number): DeclarationTypeContext | DeclarationTypeContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(DeclarationTypeContext);
+		} else {
+			return this.getRuleContext(i, DeclarationTypeContext);
+		}
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return CalcParser.RULE_declarationlist; }
+	// @Override
+	public enterRule(listener: CalcListener): void {
+		if (listener.enterDeclarationlist) {
+			listener.enterDeclarationlist(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: CalcListener): void {
+		if (listener.exitDeclarationlist) {
+			listener.exitDeclarationlist(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: CalcVisitor<Result>): Result {
+		if (visitor.visitDeclarationlist) {
+			return visitor.visitDeclarationlist(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

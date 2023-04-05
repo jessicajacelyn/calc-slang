@@ -36,6 +36,8 @@ import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
 import { LocalValDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
+import { DeclarationTypeContext } from "./CalcParser";
+import { DeclarationlistContext } from "./CalcParser";
 import { BlockContext } from "./CalcParser";
 import { PrintContext } from "./CalcParser";
 import { ParametersContext } from "./CalcParser";
@@ -456,6 +458,28 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitLetDeclaration?: (ctx: LetDeclarationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.declarationType`.
+	 * @param ctx the parse tree
+	 */
+	enterDeclarationType?: (ctx: DeclarationTypeContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.declarationType`.
+	 * @param ctx the parse tree
+	 */
+	exitDeclarationType?: (ctx: DeclarationTypeContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.declarationlist`.
+	 * @param ctx the parse tree
+	 */
+	enterDeclarationlist?: (ctx: DeclarationlistContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.declarationlist`.
+	 * @param ctx the parse tree
+	 */
+	exitDeclarationlist?: (ctx: DeclarationlistContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.block`.

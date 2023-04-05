@@ -299,37 +299,42 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
-
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
-    console.log('visitLetAssignment!!!!!!!!')
-    const generator: ExpressionGenerator = new ExpressionGenerator()
-    const varDeclarators: es.VariableDeclarator[] = []
-    varDeclarators.push(
-      {
-        type: 'VariableDeclarator',
-        id: {
-          type: 'Identifier',
-          name: ctx._del._left.text as string
-        },
-        init: ctx._del._right.accept(generator)
-      }
-    )
-    
-    varDeclarators.push({
-      type: 'VariableDeclarator',
-      id: {
-        type: 'Identifier',
-        name: ctx._declarationlist._left.text as string
-      },
-      init: ctx._declarationlist._right.accept(generator)
 
-    })
-    
-    return{
-    type: 'VariableDeclaration',
-    kind: 'let',
-    declarations: varDeclarators
+    const stmtGenerator: StatementGenerator = new StatementGenerator()
+    const varDeclarators: es.VariableDeclarator[] = []
+    const del = ctx._del.accept(stmtGenerator)
+    if(del.type === 'VariableDeclaration') {
+      const newdel = del as es.VariableDeclaration
+      varDeclarators.push(...newdel.declarations)
     }
+    if(del.type === 'LocalDeclaration') {
+      const newdel = del as es.LocalDeclaration
+      varDeclarators.push(...newdel.declarations)
+    }
+    //console.log("del type is:", del.type)
+  
+    for(let i = 0; i < ctx._delist.childCount; i++) {
+      const del = ctx._delist.getChild(i).accept(stmtGenerator)
+      if(del.type === 'VariableDeclaration') {
+        const newdel = del as es.VariableDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+      if(del.type === 'LocalDeclaration') {
+        const newdel = del as es.LocalDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+      //console.log("delist del type is:", del.type)
+    }
+    
+    //console.log("varDeclarators after pushing is: ", varDeclarators)
+
+    return {
+      type: 'VariableDeclaration',
+      kind: 'let',
+      declarations: varDeclarators
+    }
+
   }
 
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
@@ -420,7 +425,6 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
-
   visitIdentifiers(ctx: IdentifiersContext): es.Expression {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return ctx.identifier().accept(generator)

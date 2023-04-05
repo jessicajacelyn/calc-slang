@@ -79,7 +79,13 @@ localValDeclaration:
 	LOCAL left = Stringliteral operator = EQUAL right = expression;
 
 letDeclaration:
-	LET del = variableDeclaration IN declarationlist = variableDeclaration | localValDeclaration END;
+	LET del = declarationType IN delist = declarationlist END;
+
+declarationType:
+	variableDeclaration 
+	| localValDeclaration;
+
+declarationlist: declarationType*;
 
 block: OBRACE stmts = statement* CBRACE;
 

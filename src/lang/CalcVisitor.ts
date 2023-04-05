@@ -36,6 +36,8 @@ import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
 import { LocalValDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
+import { DeclarationTypeContext } from "./CalcParser";
+import { DeclarationlistContext } from "./CalcParser";
 import { BlockContext } from "./CalcParser";
 import { PrintContext } from "./CalcParser";
 import { ParametersContext } from "./CalcParser";
@@ -305,6 +307,20 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLetDeclaration?: (ctx: LetDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.declarationType`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDeclarationType?: (ctx: DeclarationTypeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.declarationlist`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDeclarationlist?: (ctx: DeclarationlistContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.block`.
