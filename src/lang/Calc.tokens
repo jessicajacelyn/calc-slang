@@ -56,10 +56,10 @@ Stringliteral=43
 '>='=16
 '<='=17
 'let'=22
-'in'=23
+'inn'=23
 'end'=24
 'val'=25
-'local val'=26
+'local'=26
 '('=27
 ')'=28
 '{'=29

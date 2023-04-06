@@ -26,7 +26,7 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
-  LocalValDeclarationContext,
+  LocalDeclarationContext,
   ModulusContext,
   MultiplicationContext,
   NotLogicalContext,
@@ -248,23 +248,9 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     return ctx.accept(generator)
   }
 
-  visitLocalValDeclaration(ctx: LocalValDeclarationContext): es.LocalDeclaration {
-    console.log('visitLocalValDeclaration!!!!!!!!!!')
-    const generator: ExpressionGenerator = new ExpressionGenerator()
-    return {
-      type: 'LocalDeclaration',
-      kind: 'local',
-      declarations: [
-        {
-          type: 'VariableDeclarator',
-          id: {
-            type: 'Identifier',
-            name: ctx._left.text as string
-          },
-          init: ctx._right.accept(generator)
-        }
-      ]
-    }
+  visitLocalDeclaration(ctx: LocalDeclarationContext): es.Statement {
+    const generator: DeclarationGenerator = new DeclarationGenerator()
+    return ctx.accept(generator)
   }
 
   visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
@@ -312,7 +298,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       const newdel = del as es.LocalDeclaration
       varDeclarators.push(...newdel.declarations)
     }
-    //console.log("del type is:", del.type)
+    console.log("del type is:", ctx._delist)
 
     for (let i = 0; i < ctx._delist.childCount; i++) {
       const del = ctx._delist.getChild(i).accept(stmtGenerator)
@@ -336,7 +322,38 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
     }
   }
 
+  visitLocalDeclaration(ctx: LocalDeclarationContext): es.VariableDeclaration {
+    const stmtGenerator: StatementGenerator = new StatementGenerator()
+    const varDeclarators: es.VariableDeclarator[] = []
+
+    console.log('ctx._delist:', ctx._delist)
+    console.log('del raw:', ctx._del)
+    for (let i = 0; i < ctx._del.childCount; i++) {
+      // console.log('del child', i, ':', ctx._del.getChild(i))
+      const del = ctx._del.getChild(i).accept(stmtGenerator)
+      if (del.type === 'VariableDeclaration') {
+        const newdel = del as es.VariableDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+    }
+
+    for (let i = 0; i < ctx._delist.childCount; i++) {
+      const del = ctx._delist.getChild(i).accept(stmtGenerator)
+      if (del.type === 'VariableDeclaration') {
+        const newdel = del as es.VariableDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+    }
+
+    return {
+      type: 'VariableDeclaration',
+      kind: 'let',
+      declarations: varDeclarators
+    }
+  }
+
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
+    console.log('var declaration', ctx._left.text)
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',

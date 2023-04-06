@@ -207,25 +207,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
-    console.log('Variable declaration evaluating')
+    console.log('Variable declaration evaluating', node.declarations)
     let name
 
-    if (node.declarations[0].id.type !== 'Identifier') {
-      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
-    } else {
-      name = node.declarations[0].id.name
+    for (const dec of node.declarations) {
+      if (dec.id.type !== 'Identifier') {
+        throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+      } else {
+        name = dec.id.name
+      }
+
+      if (dec.init === null || dec.init === undefined) {
+        throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+      }
+
+      const value = yield* evaluate(dec.init, context)
+      context.runtime.environments[0].head[name] = value
+
     }
-
-    if (node.declarations[0].init === null || node.declarations[0].init === undefined) {
-      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
-    }
-
-    const value = yield* evaluate(node.declarations[0].init, context)
-    context.runtime.environments[0].head[name] = value
-
     console.log('after var declaration: ', context.runtime.environments)
-    return value
-
+    return null
   },
 
   LocalDeclaration: function* (node: es.LocalDeclaration, context: Context) {

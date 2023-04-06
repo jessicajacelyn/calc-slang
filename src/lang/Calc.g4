@@ -23,10 +23,10 @@ REAL: [0-9]+ '.' [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
 LET: 'let';
-IN: 'in';
+IN: 'inn';
 END: 'end';
 VAL: 'val';
-LOCAL: 'local val';
+LOCAL: 'local';
 OPAR: '(';
 CPAR: ')';
 OBRACE: '{';
@@ -55,7 +55,7 @@ statement:
 	ifThenElseStatement
 	| whileStatement
 	| variableDeclaration
-	| localValDeclaration
+	| localDeclaration
 	| letDeclaration
 	| declaration
 	| expressionStatement
@@ -75,15 +75,13 @@ declaration: t = type id = Stringliteral;
 variableDeclaration:
 	VAL left = Stringliteral operator = EQUAL right = expression;
 
-localValDeclaration:
-	LOCAL left = Stringliteral operator = EQUAL right = expression;
+localDeclaration:
+	LOCAL del = declarationlist 'inn' delist = declarationlist END;
 
 letDeclaration:
 	LET del = declarationType IN delist = declarationlist END;
 
-declarationType:
-	variableDeclaration 
-	| localValDeclaration;
+declarationType: variableDeclaration | localDeclaration;
 
 declarationlist: declarationType*;
 
