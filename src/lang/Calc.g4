@@ -23,6 +23,8 @@ REAL: [0-9]+ '.' [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
 LET: 'let';
+IN: 'in';
+END: 'end';
 VAL: 'val';
 LOCAL: 'local val';
 OPAR: '(';
@@ -54,6 +56,7 @@ statement:
 	| whileStatement
 	| variableDeclaration
 	| localValDeclaration
+	| letDeclaration
 	| declaration
 	| expressionStatement
 	| block;
@@ -70,11 +73,19 @@ type: CHAR | STRING | INT | BOOL | REALNUM;
 declaration: t = type id = Stringliteral;
 
 variableDeclaration:
-	LET left = Stringliteral operator = EQUAL right = expression	# LetDeclaration
-	| VAL left = Stringliteral operator = EQUAL right = expression	# ValDeclaration;
+	VAL left = Stringliteral operator = EQUAL right = expression;
 
 localValDeclaration:
-	LOCAL left = Stringliteral operator = EQUAL right = expression # LocalValAssignment;
+	LOCAL left = Stringliteral operator = EQUAL right = expression;
+
+letDeclaration:
+	LET del = declarationType IN delist = declarationlist END;
+
+declarationType:
+	variableDeclaration 
+	| localValDeclaration;
+
+declarationlist: declarationType*;
 
 block: OBRACE stmts = statement* CBRACE;
 

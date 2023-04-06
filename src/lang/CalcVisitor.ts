@@ -24,9 +24,6 @@ import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
 import { AssignmentContext } from "./CalcParser";
-import { LocalValAssignmentContext } from "./CalcParser";
-import { LetDeclarationContext } from "./CalcParser";
-import { ValDeclarationContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
@@ -38,6 +35,9 @@ import { TypeContext } from "./CalcParser";
 import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
 import { LocalValDeclarationContext } from "./CalcParser";
+import { LetDeclarationContext } from "./CalcParser";
+import { DeclarationTypeContext } from "./CalcParser";
+import { DeclarationlistContext } from "./CalcParser";
 import { BlockContext } from "./CalcParser";
 import { PrintContext } from "./CalcParser";
 import { ParametersContext } from "./CalcParser";
@@ -224,30 +224,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitAssignment?: (ctx: AssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `LocalValAssignment`
-	 * labeled alternative in `CalcParser.localValDeclaration`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitLocalValAssignment?: (ctx: LocalValAssignmentContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `LetDeclaration`
-	 * labeled alternative in `CalcParser.variableDeclaration`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitLetDeclaration?: (ctx: LetDeclarationContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `ValDeclaration`
-	 * labeled alternative in `CalcParser.variableDeclaration`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitValDeclaration?: (ctx: ValDeclarationContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `WhileCondition`
 	 * labeled alternative in `CalcParser.whileStatement`.
 	 * @param ctx the parse tree
@@ -325,6 +301,27 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLocalValDeclaration?: (ctx: LocalValDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.letDeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLetDeclaration?: (ctx: LetDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.declarationType`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDeclarationType?: (ctx: DeclarationTypeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.declarationlist`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDeclarationlist?: (ctx: DeclarationlistContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.block`.

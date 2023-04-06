@@ -26,7 +26,7 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
-  LocalValAssignmentContext,
+  LocalValDeclarationContext,
   ModulusContext,
   MultiplicationContext,
   NotLogicalContext,
@@ -39,7 +39,6 @@ import {
   StatementContext,
   StringContext,
   SubtractionContext,
-  ValDeclarationContext,
   VariableDeclarationContext,
   WhileConditionContext
 } from '../lang/CalcParser'
@@ -238,18 +237,19 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
-  visitValDeclaration(ctx: VariableDeclarationContext): es.Statement {
+  visitVariableDeclaration(ctx: VariableDeclarationContext): es.Statement {
     // console.log('visitVariableDeclaration!!!!!!!!!!')
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
   }
 
-  visitLetDeclaration(ctx: VariableDeclarationContext): es.Statement {
+  visitLetDeclaration(ctx: LetDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
   }
 
-  visitLocalValAssignment(ctx: LocalValAssignmentContext): es.LocalDeclaration {
+  visitLocalValDeclaration(ctx: LocalValDeclarationContext): es.LocalDeclaration {
+    console.log('visitLocalValDeclaration!!!!!!!!!!')
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'LocalDeclaration',
@@ -301,24 +301,44 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
-    const generator: ExpressionGenerator = new ExpressionGenerator()
+
+    const stmtGenerator: StatementGenerator = new StatementGenerator()
+    const varDeclarators: es.VariableDeclarator[] = []
+    const del = ctx._del.accept(stmtGenerator)
+    if (del.type === 'VariableDeclaration') {
+      const newdel = del as es.VariableDeclaration
+      varDeclarators.push(...newdel.declarations)
+    }
+    if (del.type === 'LocalDeclaration') {
+      const newdel = del as es.LocalDeclaration
+      varDeclarators.push(...newdel.declarations)
+    }
+    //console.log("del type is:", del.type)
+
+    for (let i = 0; i < ctx._delist.childCount; i++) {
+      const del = ctx._delist.getChild(i).accept(stmtGenerator)
+      if (del.type === 'VariableDeclaration') {
+        const newdel = del as es.VariableDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+      if (del.type === 'LocalDeclaration') {
+        const newdel = del as es.LocalDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+      //console.log("delist del type is:", del.type)
+    }
+
+    //console.log("varDeclarators after pushing is: ", varDeclarators)
+
     return {
       type: 'VariableDeclaration',
       kind: 'let',
-      declarations: [
-        {
-          type: 'VariableDeclarator',
-          id: {
-            type: 'Identifier',
-            name: ctx._left.text as string
-          },
-          init: ctx._right.accept(generator)
-        }
-      ]
+      declarations: varDeclarators
     }
+
   }
 
-  visitValDeclaration(ctx: ValDeclarationContext): es.VariableDeclaration {
+  visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -335,8 +355,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       ]
     }
   }
-
-  visitDeclaration?: ((ctx: VariableDeclarationContext) => es.Declaration) | undefined
 
   visit(tree: ParseTree): es.Declaration {
     return tree.accept(this)
@@ -366,54 +384,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
     )
   }
 }
-
-// class LocalValGenerator implements CalcVisitor<es.LocalDeclaration> {
-
-//   visitLocalValAssignment(ctx: LocalValAssignmentContext) : es.LocalDeclaration{
-//     const generator: ExpressionGenerator = new ExpressionGenerator()
-//     return{
-//       type: 'LocalDeclaration',
-//       kind: 'local',
-//       declarations: [
-//         {
-//           type: 'VariableDeclarator',
-//           id: {
-//             type: 'Identifier',
-//             name: ctx._left.text as string
-//           },
-//           init: ctx._right.accept(generator)
-//         }]
-//       }
-//   }
-
-//   visit(tree: ParseTree): es.LocalDeclaration {
-//     return tree.accept(this)
-//   }
-
-//   visitChildren(node: RuleNode): es.LocalDeclaration {
-//     throw new Error('Method not implemented.')
-//   }
-
-//   visitTerminal(node: TerminalNode): es.LocalDeclaration {
-//     return node.accept(this)
-//   }
-
-//   visitErrorNode(node: ErrorNode): es.LocalDeclaration {
-//     throw new FatalSyntaxError(
-//       {
-//         start: {
-//           line: node.symbol.line,
-//           column: node.symbol.charPositionInLine
-//         },
-//         end: {
-//           line: node.symbol.line,
-//           column: node.symbol.charPositionInLine + 1
-//         }
-//       },
-//       `invalid syntax ${node.text}`
-//     )
-//   }
-// }
 
 class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement> {
   visitExpressioStatement?:
