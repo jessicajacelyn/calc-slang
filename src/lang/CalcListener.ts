@@ -23,9 +23,9 @@ import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
+import { AssignmentContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
-import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { StatementContext } from "./CalcParser";
@@ -34,7 +34,7 @@ import { WhileStatementContext } from "./CalcParser";
 import { TypeContext } from "./CalcParser";
 import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
-import { LocalValDeclarationContext } from "./CalcParser";
+import { LocalDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
 import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
@@ -313,6 +313,19 @@ export interface CalcListener extends ParseTreeListener {
 	exitNotLogical?: (ctx: NotLogicalContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `Assignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterAssignment?: (ctx: AssignmentContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Assignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitAssignment?: (ctx: AssignmentContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `WhileCondition`
 	 * labeled alternative in `CalcParser.whileStatement`.
 	 * @param ctx the parse tree
@@ -337,17 +350,6 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `CalcParser.assignmentoperator`.
-	 * @param ctx the parse tree
-	 */
-	enterAssignmentoperator?: (ctx: AssignmentoperatorContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.assignmentoperator`.
-	 * @param ctx the parse tree
-	 */
-	exitAssignmentoperator?: (ctx: AssignmentoperatorContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.emptydeclaration`.
@@ -438,15 +440,15 @@ export interface CalcListener extends ParseTreeListener {
 	exitVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `CalcParser.localValDeclaration`.
+	 * Enter a parse tree produced by `CalcParser.localDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	enterLocalValDeclaration?: (ctx: LocalValDeclarationContext) => void;
+	enterLocalDeclaration?: (ctx: LocalDeclarationContext) => void;
 	/**
-	 * Exit a parse tree produced by `CalcParser.localValDeclaration`.
+	 * Exit a parse tree produced by `CalcParser.localDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	exitLocalValDeclaration?: (ctx: LocalValDeclarationContext) => void;
+	exitLocalDeclaration?: (ctx: LocalDeclarationContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.letDeclaration`.

@@ -23,16 +23,16 @@ REAL: [0-9]+ '.' [0-9]+;
 WHITESPACE: [ \r\n\t]+ -> skip;
 LETTER: [a-zA-Z];
 LET: 'let';
-IN: 'in';
+IN: 'inn';
 END: 'end';
 VAL: 'val';
-LOCAL: 'local val';
+LOCAL: 'local';
 OPAR: '(';
 CPAR: ')';
 OBRACE: '{';
 CBRACE: '}';
 DOUBLEQUOTE: '"';
-assignmentoperator: '=' | ':=';
+ASSIGNMEMT: ':=';
 emptydeclaration: ';';
 IF: 'if';
 THEN: 'then';
@@ -55,7 +55,7 @@ statement:
 	ifThenElseStatement
 	| whileStatement
 	| variableDeclaration
-	| localValDeclaration
+	| localDeclaration
 	| letDeclaration
 	| declaration
 	| expressionStatement
@@ -75,15 +75,13 @@ declaration: t = type id = Stringliteral;
 variableDeclaration:
 	VAL left = Stringliteral operator = EQUAL right = expression;
 
-localValDeclaration:
-	LOCAL left = Stringliteral operator = EQUAL right = expression;
+localDeclaration:
+	LOCAL del = declarationlist 'inn' delist = declarationlist END;
 
 letDeclaration:
 	LET del = declarationType IN delist = declarationlist END;
 
-declarationType:
-	variableDeclaration 
-	| localValDeclaration;
+declarationType: variableDeclaration | localDeclaration;
 
 declarationlist: declarationType*;
 
@@ -105,19 +103,20 @@ identifier:
 expressionStatement: expression ';';
 
 expression:
-	identifier												# Identifiers
-	| OPAR inner = expression CPAR							# Parentheses
-	| left = expression operator = POW right = expression	# Power
-	| left = expression operator = MUL right = expression	# Multiplication
-	| left = expression operator = DIV right = expression	# Division
-	| left = expression operator = ADD right = expression	# Addition
-	| left = expression operator = SUB right = expression	# Subtraction
-	| left = expression operator = MOD right = expression	# Modulus
-	| left = expression operator = EQUAL right = expression	# EqualComparator
-	| left = expression operator = GT right = expression	# GreaterComparator
-	| left = expression operator = LT right = expression	# LesserComparator
-	| left = expression operator = GE right = expression	# GreaterEqualComparator
-	| left = expression operator = LE right = expression	# LesserEqualComparator
-	| left = expression operator = AND right = expression	# AndLogical
-	| left = expression operator = OR right = expression	# OrLogical
-	| NOT left = expression									# NotLogical;
+	identifier														# Identifiers
+	| OPAR inner = expression CPAR									# Parentheses
+	| left = expression operator = POW right = expression			# Power
+	| left = expression operator = MUL right = expression			# Multiplication
+	| left = expression operator = DIV right = expression			# Division
+	| left = expression operator = ADD right = expression			# Addition
+	| left = expression operator = SUB right = expression			# Subtraction
+	| left = expression operator = MOD right = expression			# Modulus
+	| left = expression operator = EQUAL right = expression			# EqualComparator
+	| left = expression operator = GT right = expression			# GreaterComparator
+	| left = expression operator = LT right = expression			# LesserComparator
+	| left = expression operator = GE right = expression			# GreaterEqualComparator
+	| left = expression operator = LE right = expression			# LesserEqualComparator
+	| left = expression operator = AND right = expression			# AndLogical
+	| left = expression operator = OR right = expression			# OrLogical
+	| NOT left = expression											# NotLogical
+	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment;

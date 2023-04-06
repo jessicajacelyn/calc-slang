@@ -127,7 +127,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   UnaryExpression: function* (node: es.UnaryExpression, context: Context) {
-    const value = yield* actualValue(node.argument, context)
+    let value = yield* actualValue(node.argument, context)
+    const frame = context.runtime.environments[0].head
+
+    if (!(typeof value === 'boolean')) {
+      if (frame[value] !== undefined && (typeof frame[value] === 'boolean')) {
+        value = frame[value]
+      } else {
+        throw new Error(`left is not a boolean: ${value}`)
+      }
+    }
 
     const error = rttc.checkUnaryExpression(node, node.operator, value)
     if (error) {
@@ -137,8 +146,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   BinaryExpression: function* (node: es.BinaryExpression, context: Context) {
-    const left = yield* actualValue(node.left, context)
-    const right = yield* actualValue(node.right, context)
+    let left = yield* actualValue(node.left, context)
+    let right = yield* actualValue(node.right, context)
+    const frame = context.runtime.environments[0].head
+
+    if (isNaN(Number(left))) {
+      if (frame[left] !== undefined && !isNaN(Number(frame[left]))) {
+        left = frame[left]
+      } else {
+        throw new Error(`left is not a number: ${left}`)
+      }
+    }
+
+    if (isNaN(Number(right))) {
+      if (frame[right] !== undefined && !isNaN(Number(frame[right]))) {
+        right = frame[right]
+      } else {
+        throw new Error(`right is not a number: ${right}`)
+      }
+    }
+
     const error = rttc.checkBinaryExpression(node, node.operator, left, right)
     if (error) {
       return handleRuntimeError(context, error)
@@ -152,8 +179,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   LogicalExpression: function* (node: es.LogicalExpression, context: Context) {
-    const left = yield* actualValue(node.left, context)
-    const right = yield* actualValue(node.right, context)
+    let left = yield* actualValue(node.left, context)
+    let right = yield* actualValue(node.right, context)
+    const frame = context.runtime.environments[0].head
+
+    if (!(typeof left === 'boolean')) {
+      if (frame[left] !== undefined && (typeof frame[left] === 'boolean')) {
+        left = frame[left]
+      } else {
+        throw new Error(`left is not a boolean: ${left}`)
+      }
+    }
+
+    if (!(typeof right === 'boolean')) {
+      if (frame[right] !== undefined && (typeof frame[right] === 'boolean')) {
+        right = frame[right]
+      } else {
+        throw new Error(`right is not a boolean: ${right}`)
+      }
+    }
+
     const error = rttc.checkLogicalExpression(node, node.operator, left, right)
     if (error) {
       return handleRuntimeError(context, error)
@@ -162,25 +207,26 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
-    console.log('Variable declaration evaluating')
+    console.log('Variable declaration evaluating', node.declarations)
     let name
 
-    if (node.declarations[0].id.type !== 'Identifier') {
-      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
-    } else {
-      name = node.declarations[0].id.name
+    for (const dec of node.declarations) {
+      if (dec.id.type !== 'Identifier') {
+        throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+      } else {
+        name = dec.id.name
+      }
+
+      if (dec.init === null || dec.init === undefined) {
+        throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
+      }
+
+      const value = yield* evaluate(dec.init, context)
+      context.runtime.environments[0].head[name] = value
+
     }
-
-    if (node.declarations[0].init === null || node.declarations[0].init === undefined) {
-      throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
-    }
-
-    const value = yield* evaluate(node.declarations[0].init, context)
-    context.runtime.environments[0].head[name] = value
-
     console.log('after var declaration: ', context.runtime.environments)
-    return value
-    
+    return null
   },
 
   LocalDeclaration: function* (node: es.LocalDeclaration, context: Context) {
@@ -219,17 +265,23 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
-// TODO: Implement assignment expression
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
     const right = yield* actualValue(node.right, context)
-    if(node.left.type === 'Identifier') {
+    if (node.left.type === 'Identifier') {
       const value = yield* evaluate(node.right, context)
+
+      if (context.runtime.environments[0].head[node.left.name] === undefined) {
+        throw new Error(`variable ${node.left.name} is not defined`)
+      } else {
+        context.runtime.environments[0].head[node.left.name] = value
+      }
+      console.log('assign environment: ', context.runtime.environments)
       return value
-    } else if(node.left.type === 'MemberExpression') {
+    } else if (node.left.type === 'MemberExpression') {
       console.log('its a member expression')
       const object = yield* actualValue(node.left.object, context)
       const property = yield* actualValue(node.left.property, context)
-      if(object.type === 'object') {
+      if (object.type === 'object') {
         object.value[property.value] = right
         return right
       } else {
@@ -248,16 +300,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     //throw new Error(`not supported yet: ${node.type}`)
     const test = yield* actualValue(node.test, context)
 
-    if(test === null){
-      console.log('test is null')
+    if (test === null) {
       return undefined
     }
 
-    if(test === false){
-      console.log('test is false')
+    if (test === false) {
       return yield* actualValue(node.alternate, context)
-    } else{
-      console.log('test is true')
+    } else {
       return yield* actualValue(node.consequent, context)
     }
   },
@@ -272,7 +321,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   WhileStatement: function* (node: es.WhileStatement, context: Context) {
     let result
-    while((yield* actualValue(node.test, context)) !== 0) {
+    while ((yield* actualValue(node.test, context)) !== 0) {
       result = yield* evaluate(node.body, context)
     }
     return result
@@ -286,6 +335,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   Program: function* (node: es.BlockStatement, context: Context) {
     const env = createGlobalEnvironment()
     pushEnvironment(context, env)
+    // if (context.runtime.environments.length === 0) {
+    //   console.log('pushing env ', context)
+    // }
+    console.log('env ', context.runtime.environments)
+
+    // TODO: remove this when var declarations are implemented
+    context.runtime.environments[0].head['temp'] = true
+    context.runtime.environments[0].head['test'] = false
+    context.runtime.environments[0].head['num'] = 5
+    context.runtime.environments[0].head['num1'] = 8
+
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
   }

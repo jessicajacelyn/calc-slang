@@ -23,9 +23,9 @@ import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
+import { AssignmentContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
-import { AssignmentoperatorContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
 import { StartContext } from "./CalcParser";
 import { StatementContext } from "./CalcParser";
@@ -34,7 +34,7 @@ import { WhileStatementContext } from "./CalcParser";
 import { TypeContext } from "./CalcParser";
 import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
-import { LocalValDeclarationContext } from "./CalcParser";
+import { LocalDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
 import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
@@ -216,6 +216,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitNotLogical?: (ctx: NotLogicalContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `Assignment`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitAssignment?: (ctx: AssignmentContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `WhileCondition`
 	 * labeled alternative in `CalcParser.whileStatement`.
 	 * @param ctx the parse tree
@@ -230,13 +238,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIfThenElseCondition?: (ctx: IfThenElseConditionContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `CalcParser.assignmentoperator`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitAssignmentoperator?: (ctx: AssignmentoperatorContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.emptydeclaration`.
@@ -295,11 +296,11 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitVariableDeclaration?: (ctx: VariableDeclarationContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `CalcParser.localValDeclaration`.
+	 * Visit a parse tree produced by `CalcParser.localDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitLocalValDeclaration?: (ctx: LocalValDeclarationContext) => Result;
+	visitLocalDeclaration?: (ctx: LocalDeclarationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.letDeclaration`.

@@ -10,6 +10,7 @@ import { CalcLexer } from '../lang/CalcLexer'
 import {
   AdditionContext,
   AndLogicalContext,
+  AssignmentContext,
   BooleanContext,
   CalcParser,
   DeclarationContext,
@@ -25,7 +26,7 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
-  LocalValDeclarationContext,
+  LocalDeclarationContext,
   ModulusContext,
   MultiplicationContext,
   NotLogicalContext,
@@ -93,7 +94,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) {}
+  public constructor(public location: es.SourceLocation, public message: string) { }
 
   public explain() {
     return this.message
@@ -107,7 +108,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -121,7 +122,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Trailing comma'
@@ -247,23 +248,9 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     return ctx.accept(generator)
   }
 
-  visitLocalValDeclaration(ctx: LocalValDeclarationContext): es.LocalDeclaration {
-    console.log('visitLocalValDeclaration!!!!!!!!!!')
-    const generator: ExpressionGenerator = new ExpressionGenerator()
-    return {
-      type: 'LocalDeclaration',
-      kind: 'local',
-      declarations: [
-        {
-          type: 'VariableDeclarator',
-          id: {
-            type: 'Identifier',
-            name: ctx._left.text as string
-          },
-          init: ctx._right.accept(generator)
-        }
-      ]
-    }
+  visitLocalDeclaration(ctx: LocalDeclarationContext): es.Statement {
+    const generator: DeclarationGenerator = new DeclarationGenerator()
+    return ctx.accept(generator)
   }
 
   visitStatement?: ((ctx: StatementContext) => es.Statement) | undefined
@@ -300,33 +287,32 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
-
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
     const del = ctx._del.accept(stmtGenerator)
-    if(del.type === 'VariableDeclaration') {
+    if (del.type === 'VariableDeclaration') {
       const newdel = del as es.VariableDeclaration
       varDeclarators.push(...newdel.declarations)
     }
-    if(del.type === 'LocalDeclaration') {
+    if (del.type === 'LocalDeclaration') {
       const newdel = del as es.LocalDeclaration
       varDeclarators.push(...newdel.declarations)
     }
-    //console.log("del type is:", del.type)
-  
-    for(let i = 0; i < ctx._delist.childCount; i++) {
+    console.log("del type is:", ctx._delist)
+
+    for (let i = 0; i < ctx._delist.childCount; i++) {
       const del = ctx._delist.getChild(i).accept(stmtGenerator)
-      if(del.type === 'VariableDeclaration') {
+      if (del.type === 'VariableDeclaration') {
         const newdel = del as es.VariableDeclaration
         varDeclarators.push(...newdel.declarations)
       }
-      if(del.type === 'LocalDeclaration') {
+      if (del.type === 'LocalDeclaration') {
         const newdel = del as es.LocalDeclaration
         varDeclarators.push(...newdel.declarations)
       }
       //console.log("delist del type is:", del.type)
     }
-    
+
     //console.log("varDeclarators after pushing is: ", varDeclarators)
 
     return {
@@ -334,10 +320,40 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       kind: 'let',
       declarations: varDeclarators
     }
+  }
 
+  visitLocalDeclaration(ctx: LocalDeclarationContext): es.VariableDeclaration {
+    const stmtGenerator: StatementGenerator = new StatementGenerator()
+    const varDeclarators: es.VariableDeclarator[] = []
+
+    console.log('ctx._delist:', ctx._delist)
+    console.log('del raw:', ctx._del)
+    for (let i = 0; i < ctx._del.childCount; i++) {
+      // console.log('del child', i, ':', ctx._del.getChild(i))
+      const del = ctx._del.getChild(i).accept(stmtGenerator)
+      if (del.type === 'VariableDeclaration') {
+        const newdel = del as es.VariableDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+    }
+
+    for (let i = 0; i < ctx._delist.childCount; i++) {
+      const del = ctx._delist.getChild(i).accept(stmtGenerator)
+      if (del.type === 'VariableDeclaration') {
+        const newdel = del as es.VariableDeclaration
+        varDeclarators.push(...newdel.declarations)
+      }
+    }
+
+    return {
+      type: 'VariableDeclaration',
+      kind: 'let',
+      declarations: varDeclarators
+    }
   }
 
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
+    console.log('var declaration', ctx._left.text)
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -425,13 +441,25 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
+  visitAssignment(ctx: AssignmentContext): es.Expression {
+    return {
+      type: 'AssignmentExpression',
+      operator: '=',
+      left: {
+        type: 'Identifier',
+        name: ctx._left.text as string
+      },
+      right: this.visit(ctx._right)
+    }
+  }
+
   visitIdentifiers(ctx: IdentifiersContext): es.Expression {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return ctx.identifier().accept(generator)
   }
 
   visitString(ctx: StringContext): es.Expression {
-    console.log('string: ', ctx.text)
+    // console.log('string: ', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
@@ -441,8 +469,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitNumber(ctx: NumberContext): es.Expression {
-    console.log('number: ', ctx.text)
-
+    // console.log('number: ', ctx.text)
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
@@ -521,8 +548,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitAddition(ctx: AdditionContext): es.Expression {
-    console.log('LEFT: ', this.visit(ctx._left))
-    console.log('RIGHT: ', this.visit(ctx._right))
     return {
       type: 'BinaryExpression',
       operator: '+',
