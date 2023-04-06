@@ -301,7 +301,6 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
-
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
     const del = ctx._del.accept(stmtGenerator)
@@ -335,7 +334,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       kind: 'let',
       declarations: varDeclarators
     }
-
   }
 
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
@@ -444,7 +442,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
-    console.log('string: ', ctx.text)
+    // console.log('string: ', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
@@ -454,8 +452,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitNumber(ctx: NumberContext): es.Expression {
-    console.log('number: ', ctx.text)
-
+    // console.log('number: ', ctx.text)
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
