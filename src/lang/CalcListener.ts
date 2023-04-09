@@ -10,7 +10,6 @@ import { BooleanContext } from "./CalcParser";
 import { IdentifiersContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
 import { FunctionCallContext } from "./CalcParser";
-import { LambdaContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
 import { DivisionContext } from "./CalcParser";
@@ -25,7 +24,9 @@ import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
+import { ListContext } from "./CalcParser";
 import { AssignmentContext } from "./CalcParser";
+import { LambdaContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
@@ -40,6 +41,7 @@ import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
 import { FunctionContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
+import { ElementsContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -139,19 +141,6 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFunctionCall?: (ctx: FunctionCallContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `Lambda`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterLambda?: (ctx: LambdaContext) => void;
-	/**
-	 * Exit a parse tree produced by the `Lambda`
-	 * labeled alternative in `CalcParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitLambda?: (ctx: LambdaContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Power`
@@ -336,6 +325,19 @@ export interface CalcListener extends ParseTreeListener {
 	exitNotLogical?: (ctx: NotLogicalContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `List`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterList?: (ctx: ListContext) => void;
+	/**
+	 * Exit a parse tree produced by the `List`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitList?: (ctx: ListContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `Assignment`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -347,6 +349,19 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitAssignment?: (ctx: AssignmentContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `Lambda`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterLambda?: (ctx: LambdaContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Lambda`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitLambda?: (ctx: LambdaContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `WhileCondition`
@@ -505,6 +520,17 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIdentifier?: (ctx: IdentifierContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.elements`.
+	 * @param ctx the parse tree
+	 */
+	enterElements?: (ctx: ElementsContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.elements`.
+	 * @param ctx the parse tree
+	 */
+	exitElements?: (ctx: ElementsContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.expressionStatement`.
