@@ -13,16 +13,17 @@ import {
   AssignmentContext,
   BooleanContext,
   CalcParser,
-  DeclarationContext,
   DivisionContext,
   EqualComparatorContext,
   ExpressionContext,
   ExpressionStatementContext,
+  FunctionCallContext,
   FunctionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
   IdentifiersContext,
   IfThenElseConditionContext,
+  LambdaContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
@@ -185,20 +186,19 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
   visitFunction(ctx: FunctionContext): es.Statement {
-    const functionType = ctx._t
-
+  
     const id: es.Identifier = {
       type: 'Identifier',
-      name: ctx._id.text as string
+      name: ctx._name.text as string
     }
 
     const params: es.Pattern[] = []
     const paramList = ctx._params
     for (let i = 0; i < paramList.childCount; i++) {
-      const param = paramList.getChild(i) as DeclarationContext
+      const param = paramList.getChild(i) as VariableDeclarationContext
       const paramID: es.Identifier = {
         type: 'Identifier',
-        name: param._id.text as string
+        name: param._left.text as string
       }
       params.push(paramID)
     }
@@ -212,7 +212,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
       body
     }
   }
-
+  
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
@@ -286,6 +286,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
+
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
@@ -298,8 +299,8 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       const newdel = del as es.LocalDeclaration
       varDeclarators.push(...newdel.declarations)
     }
-    console.log("del type is:", ctx._delist)
-
+    //console.log("del type is:", ctx._delist)
+    
     for (let i = 0; i < ctx._delist.childCount; i++) {
       const del = ctx._delist.getChild(i).accept(stmtGenerator)
       if (del.type === 'VariableDeclaration') {
@@ -310,7 +311,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
         const newdel = del as es.LocalDeclaration
         varDeclarators.push(...newdel.declarations)
       }
-      //console.log("delist del type is:", del.type)
+      console.log("delist del type is:", del.type)
     }
 
     //console.log("varDeclarators after pushing is: ", varDeclarators)
@@ -453,6 +454,20 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  visitLambda(ctx: LambdaContext) : es.Expression{
+    console.log("lamda detected at parser!")
+    return {
+      type: 'LambdaFunctionExpression',
+      id: {
+        type: 'Identifier',
+        name: ctx._name.text as string
+      },
+      operator: "=>",
+      body: this.visit(ctx._right),
+      value: this.visit(ctx._right)
+    }
+  }
+
   visitIdentifiers(ctx: IdentifiersContext): es.Expression {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return ctx.identifier().accept(generator)
@@ -508,6 +523,25 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitParentheses(ctx: ParenthesesContext): es.Expression {
     return this.visit(ctx.expression())
   }
+
+  visitFunctionCall(ctx: FunctionCallContext) : es.Expression{
+
+    const callee: es.Identifier = {
+      type: 'Identifier',
+      name: ctx._name.text as string
+    }
+
+    const args: es.Expression[] = []
+    args.push(this.visit(ctx._params))
+
+    return {
+      type: 'CallExpression',
+      optional: false,
+      callee,
+      arguments: args
+    }
+  }
+
   visitPower(ctx: PowerContext): es.Expression {
     return {
       type: 'BinaryExpression',

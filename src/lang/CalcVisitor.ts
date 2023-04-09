@@ -9,6 +9,8 @@ import { RealContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
 import { IdentifiersContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
+import { FunctionCallContext } from "./CalcParser";
+import { LambdaContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
 import { DivisionContext } from "./CalcParser";
@@ -31,16 +33,11 @@ import { StartContext } from "./CalcParser";
 import { StatementContext } from "./CalcParser";
 import { IfThenElseStatementContext } from "./CalcParser";
 import { WhileStatementContext } from "./CalcParser";
-import { TypeContext } from "./CalcParser";
-import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
 import { LocalDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
 import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
-import { BlockContext } from "./CalcParser";
-import { PrintContext } from "./CalcParser";
-import { ParametersContext } from "./CalcParser";
 import { FunctionContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
@@ -102,6 +99,22 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitParentheses?: (ctx: ParenthesesContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `FunctionCall`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunctionCall?: (ctx: FunctionCallContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `Lambda`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLambda?: (ctx: LambdaContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `Power`
@@ -275,20 +288,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitWhileStatement?: (ctx: WhileStatementContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `CalcParser.type`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitType?: (ctx: TypeContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `CalcParser.declaration`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitDeclaration?: (ctx: DeclarationContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -322,27 +321,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitDeclarationlist?: (ctx: DeclarationlistContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `CalcParser.block`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitBlock?: (ctx: BlockContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `CalcParser.print`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitPrint?: (ctx: PrintContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `CalcParser.parameters`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitParameters?: (ctx: ParametersContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.function`.
