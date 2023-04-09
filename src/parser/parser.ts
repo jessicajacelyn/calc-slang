@@ -186,7 +186,7 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
   visitFunction(ctx: FunctionContext): es.Statement {
-  
+
     const id: es.Identifier = {
       type: 'Identifier',
       name: ctx._name.text as string
@@ -212,7 +212,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
       body
     }
   }
-  
+
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
@@ -300,7 +300,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       varDeclarators.push(...newdel.declarations)
     }
     //console.log("del type is:", ctx._delist)
-    
+
     for (let i = 0; i < ctx._delist.childCount; i++) {
       const del = ctx._delist.getChild(i).accept(stmtGenerator)
       if (del.type === 'VariableDeclaration') {
@@ -454,17 +454,18 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitLambda(ctx: LambdaContext) : es.Expression{
+  visitLambda(ctx: LambdaContext): es.Expression {
     console.log("lamda detected at parser!")
     return {
-      type: 'LambdaFunctionExpression',
-      id: {
-        type: 'Identifier',
-        name: ctx._name.text as string
-      },
-      operator: "=>",
+      type: 'ArrowFunctionExpression',
+      params: [
+        {
+          type: 'Identifier',
+          name: ctx._name.text as string
+        }
+      ],
+      expression: true,
       body: this.visit(ctx._right),
-      value: this.visit(ctx._right)
     }
   }
 
@@ -474,7 +475,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
-    // console.log('string: ', ctx.text)
     return {
       type: 'Literal',
       value: ctx.text,
@@ -524,7 +524,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return this.visit(ctx.expression())
   }
 
-  visitFunctionCall(ctx: FunctionCallContext) : es.Expression{
+  visitFunctionCall(ctx: FunctionCallContext): es.Expression {
 
     const callee: es.Identifier = {
       type: 'Identifier',
