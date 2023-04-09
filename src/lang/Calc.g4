@@ -48,12 +48,11 @@ INT: 'int';
 BOOL: 'bool';
 REALNUM: 'real';
 Stringliteral: [a-zA-Z] [a-zA-Z0-9]+;
-ID : ('a'..'z' | 'A'..'Z' | '_' | '\'') ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '\'')*;
 
 /*
  * Productions
  */
-start: (statement | function)*;
+start: statement*;
 
 statement:
 	ifThenElseStatement
@@ -86,11 +85,8 @@ declarationType:
 
 declarationlist: declarationType*;
 
-function:
-	FUN name = identifier params = identifier operator = EQUAL body = statement;	
-
 identifier:
-	Stringliteral	# String
+	Stringliteral	# ID
 	| NUMBER		# Number
 	| REAL			# Real
 	| BOOLEAN		# Boolean;
@@ -102,6 +98,7 @@ expressionStatement: expression ';';
 
 expression:
 	identifier												# Identifiers
+	| '"' Stringliteral '"'									# String
 	| OPAR inner = expression CPAR							# Parentheses
 	| name = identifier params = identifier                 # FunctionCall
 	| left = expression operator = POW right = expression	# Power

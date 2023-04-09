@@ -124,6 +124,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   Identifier: function* (node: es.Identifier, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)
+    console.log('identifier at interpreter: ', node.name )
     const name = node.name
     const frame = context.runtime.environments[0].head[name];
     return frame;

@@ -46,7 +46,6 @@ INT=45
 BOOL=46
 REALNUM=47
 Stringliteral=48
-ID=49
 ';'=1
 ','=2
 '['=3

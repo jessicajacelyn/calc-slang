@@ -3,11 +3,12 @@
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
-import { StringContext } from "./CalcParser";
+import { IDContext } from "./CalcParser";
 import { NumberContext } from "./CalcParser";
 import { RealContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
 import { IdentifiersContext } from "./CalcParser";
+import { StringContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
 import { FunctionCallContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
@@ -39,7 +40,6 @@ import { LocalDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
 import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
-import { FunctionContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
 import { ElementsContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
@@ -55,12 +55,12 @@ import { ExpressionContext } from "./CalcParser";
  */
 export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
-	 * Visit a parse tree produced by the `String`
+	 * Visit a parse tree produced by the `ID`
 	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitString?: (ctx: StringContext) => Result;
+	visitID?: (ctx: IDContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `Number`
@@ -93,6 +93,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIdentifiers?: (ctx: IdentifiersContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitString?: (ctx: StringContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `Parentheses`
@@ -331,13 +339,6 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitDeclarationlist?: (ctx: DeclarationlistContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `CalcParser.function`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitFunction?: (ctx: FunctionContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.identifier`.

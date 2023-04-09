@@ -18,9 +18,9 @@ import {
   ExpressionContext,
   ExpressionStatementContext,
   FunctionCallContext,
-  FunctionContext,
   GreaterComparatorContext,
   GreaterEqualComparatorContext,
+  IDContext,
   IdentifiersContext,
   IfThenElseConditionContext,
   LambdaContext,
@@ -96,7 +96,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) { }
+  public constructor(public location: es.SourceLocation, public message: string) {}
 
   public explain() {
     return this.message
@@ -110,7 +110,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -124,7 +124,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Trailing comma'
@@ -186,34 +186,6 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
-  visitFunction(ctx: FunctionContext): es.Statement {
-  
-    const id: es.Identifier = {
-      type: 'Identifier',
-      name: ctx._name.text as string
-    }
-
-    const params: es.Pattern[] = []
-    const paramList = ctx._params
-    for (let i = 0; i < paramList.childCount; i++) {
-      const param = paramList.getChild(i) as VariableDeclarationContext
-      const paramID: es.Identifier = {
-        type: 'Identifier',
-        name: param._left.text as string
-      }
-      params.push(paramID)
-    }
-
-    const body: es.BlockStatement = this.visit(ctx._body) as es.BlockStatement
-
-    return {
-      type: 'FunctionDeclaration',
-      id,
-      params,
-      body
-    }
-  }
-  
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
@@ -287,7 +259,6 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
-
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
@@ -301,7 +272,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       varDeclarators.push(...newdel.declarations)
     }
     //console.log("del type is:", ctx._delist)
-    
+
     for (let i = 0; i < ctx._delist.childCount; i++) {
       const del = ctx._delist.getChild(i).accept(stmtGenerator)
       if (del.type === 'VariableDeclaration') {
@@ -312,7 +283,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
         const newdel = del as es.LocalDeclaration
         varDeclarators.push(...newdel.declarations)
       }
-      console.log("delist del type is:", del.type)
+      console.log('delist del type is:', del.type)
     }
 
     //console.log("varDeclarators after pushing is: ", varDeclarators)
@@ -442,6 +413,44 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
   }
 }
 
+class IdentifierGenerator implements CalcVisitor<es.Identifier> {
+
+  visitID(ctx: IDContext): es.Identifier {
+    console.log('visit Identifier in parser: ', ctx.text)
+    return {
+      type: 'Identifier',
+      name: ctx.text
+    }
+  }
+
+  visit(tree: ParseTree): es.Identifier {
+    return tree.accept(this)
+  }
+
+  visitChildren(node: RuleNode): es.Identifier {
+    return this.visit(node.getChild(0))
+  }
+
+  visitTerminal(node: TerminalNode): es.Identifier {
+    return node.accept(this)
+  }
+
+  visitErrorNode(node: ErrorNode): es.Identifier {
+    throw new FatalSyntaxError(
+      {
+        start: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine
+        },
+        end: {
+          line: node.symbol.line,
+          column: node.symbol.charPositionInLine + 1
+        }
+      },
+      `invalid syntax ${node.text}`
+    )
+  }
+}
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitAssignment(ctx: AssignmentContext): es.Expression {
     return {
@@ -455,8 +464,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitLambda(ctx: LambdaContext) : es.Expression{
-    console.log("lamda detected at parser!")
+  visitLambda(ctx: LambdaContext): es.Expression {
+    console.log('lamda detected at parser!')
     return {
       type: 'LambdaFunctionExpression',
       id: {
@@ -469,14 +478,14 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitList?(ctx: ListContext) : es.Expression{
+  visitList?(ctx: ListContext): es.Expression {
     const elements: es.Expression[] = []
     for (let i = 0; i < ctx._element.childCount; i++) {
-      if(ctx._element.getChild(i).text != ","){
+      if (ctx._element.getChild(i).text != ',') {
         elements.push(this.visit(ctx._element.getChild(i)))
       }
     }
-    console.log("list elements are: ", elements)
+    console.log('list elements are: ', elements)
     return {
       type: 'ArrayExpression',
       elements: elements
@@ -484,15 +493,20 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitIdentifiers(ctx: IdentifiersContext): es.Expression {
-    const generator: ExpressionGenerator = new ExpressionGenerator()
-    return ctx.identifier().accept(generator)
+    //const generator: ExpressionGenerator = new ExpressionGenerator()
+    return ctx.identifier().accept(this)
+  }
+
+  visitID(ctx: IDContext) : es.Expression{
+    const generator: IdentifierGenerator = new IdentifierGenerator()
+    return ctx.accept(generator)
   }
 
   visitString(ctx: StringContext): es.Expression {
-    // console.log('string: ', ctx.text)
+    console.log('string: ', ctx.text.replace(/"/g, ''))
     return {
       type: 'Literal',
-      value: ctx.text,
+      value: ctx.text.replace(/"/g, ''),
       raw: ctx.text,
       loc: contextToLocation(ctx)
     }
@@ -539,8 +553,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return this.visit(ctx.expression())
   }
 
-  visitFunctionCall(ctx: FunctionCallContext) : es.Expression{
-
+  visitFunctionCall(ctx: FunctionCallContext): es.Expression {
     const callee: es.Identifier = {
       type: 'Identifier',
       name: ctx._name.text as string
