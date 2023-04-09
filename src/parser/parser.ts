@@ -185,20 +185,20 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
   visitFunction(ctx: FunctionContext): es.Statement {
+
     const functionType = ctx._t
 
     const id: es.Identifier = {
       type: 'Identifier',
       name: ctx._id.text as string
     }
-
     const params: es.Pattern[] = []
     const paramList = ctx._params
     for (let i = 0; i < paramList.childCount; i++) {
-      const param = paramList.getChild(i) as DeclarationContext
+      const param = paramList.getChild(i) as VariableDeclarationContext
       const paramID: es.Identifier = {
         type: 'Identifier',
-        name: param._id.text as string
+        name: param._left.text as string
       }
       params.push(paramID)
     }
@@ -212,6 +212,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
       body
     }
   }
+
 
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
@@ -286,6 +287,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 }
 
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
+
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
@@ -298,6 +300,8 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       const newdel = del as es.LocalDeclaration
       varDeclarators.push(...newdel.declarations)
     }
+    //console.log("del type is:", ctx._delist)
+
     console.log("del type is:", ctx._delist)
 
     for (let i = 0; i < ctx._delist.childCount; i++) {
@@ -310,7 +314,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
         const newdel = del as es.LocalDeclaration
         varDeclarators.push(...newdel.declarations)
       }
-      //console.log("delist del type is:", del.type)
+      console.log("delist del type is:", del.type)
     }
 
     //console.log("varDeclarators after pushing is: ", varDeclarators)
@@ -508,6 +512,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitParentheses(ctx: ParenthesesContext): es.Expression {
     return this.visit(ctx.expression())
   }
+
   visitPower(ctx: PowerContext): es.Expression {
     return {
       type: 'BinaryExpression',
