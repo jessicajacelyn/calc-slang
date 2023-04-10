@@ -100,6 +100,7 @@ expression:
 	identifier												# Identifiers
 	| '"' Stringliteral '"'									# String
 	| OPAR inner = expression CPAR							# Parentheses
+	| OPAR expression (',' expression)* CPAR				# Tuple	
 	| name = identifier params = identifier                 # FunctionCall
 	| left = expression operator = POW right = expression	# Power
 	| left = expression operator = MUL right = expression	# Multiplication

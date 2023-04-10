@@ -41,6 +41,7 @@ import {
   StatementContext,
   StringContext,
   SubtractionContext,
+  TupleContext,
   VariableDeclarationContext,
   WhileConditionContext
 } from '../lang/CalcParser'
@@ -500,6 +501,19 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   visitID(ctx: IDContext) : es.Expression{
     const generator: IdentifierGenerator = new IdentifierGenerator()
     return ctx.accept(generator)
+  }
+
+  visitTuple(ctx: TupleContext) : es.Expression{
+    const elements: es.Expression[] = []
+    //console.log('tuple detected at parser!')
+    console.log('tuple elements: ', ctx.expression())
+    for (let i = 0; i < ctx.expression().length; i++) {
+      elements.push(this.visit(ctx.expression(i)))
+    }
+    return{
+      type: 'ArrayExpression',
+      elements: elements
+    }
   }
 
   visitString(ctx: StringContext): es.Expression {

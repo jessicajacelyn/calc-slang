@@ -10,6 +10,7 @@ import { BooleanContext } from "./CalcParser";
 import { IdentifiersContext } from "./CalcParser";
 import { StringContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
+import { TupleContext } from "./CalcParser";
 import { FunctionCallContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
@@ -141,6 +142,19 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitParentheses?: (ctx: ParenthesesContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `Tuple`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterTuple?: (ctx: TupleContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Tuple`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitTuple?: (ctx: TupleContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `FunctionCall`
