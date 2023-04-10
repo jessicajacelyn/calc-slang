@@ -102,7 +102,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrayExpression: function* (node: es.ArrayExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    //throw new Error(`not supported yet: ${node.type}`)
+    console.log('array expression at interpreter !!!!!!' )
+    return undefined
   },
 
 
@@ -114,8 +116,19 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
+  LambdaFunctionExpression: function* (node: es.LambdaFunctionExpression, context: Context) {
+    //throw new Error(`not supported yet: ${node.type}`)
+    console.log('lambda function expression at interpreter !!!!!!' )
+    return undefined
+  },
+
   Identifier: function* (node: es.Identifier, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    //throw new Error(`not supported yet: ${node.type}`)
+    console.log('identifier at interpreter: ', node.name )
+    const name = node.name
+    const frame = context.runtime.environments[0].head[name];
+    return frame;
+
   },
 
   CallExpression: function* (node: es.CallExpression, context: Context) {
@@ -225,7 +238,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       context.runtime.environments[0].head[name] = value
 
     }
-    console.log('after var declaration: ', context.runtime.environments)
+    console.log('after var declaration in interpreter: ', context.runtime.environments)
     return null
   },
 
@@ -293,7 +306,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   FunctionDeclaration: function* (node: es.FunctionDeclaration, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    //throw new Error(`not supported yet: ${node.type}`)
+    console.log('function declaration not done yet!!!!')
   },
 
   IfStatement: function* (node: es.IfStatement | es.ConditionalExpression, context: Context) {
@@ -341,10 +355,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     console.log('env ', context.runtime.environments)
 
     // TODO: remove this when var declarations are implemented
-    context.runtime.environments[0].head['temp'] = true
-    context.runtime.environments[0].head['test'] = false
-    context.runtime.environments[0].head['num'] = 5
-    context.runtime.environments[0].head['num1'] = 8
+    // context.runtime.environments[0].head['temp'] = true
+    // context.runtime.environments[0].head['test'] = false
+    // context.runtime.environments[0].head['num'] = 5
+    // context.runtime.environments[0].head['num1'] = 8
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;

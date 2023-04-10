@@ -3,12 +3,15 @@
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-import { StringContext } from "./CalcParser";
+import { IDContext } from "./CalcParser";
 import { NumberContext } from "./CalcParser";
 import { RealContext } from "./CalcParser";
 import { BooleanContext } from "./CalcParser";
 import { IdentifiersContext } from "./CalcParser";
+import { StringContext } from "./CalcParser";
 import { ParenthesesContext } from "./CalcParser";
+import { TupleContext } from "./CalcParser";
+import { FunctionCallContext } from "./CalcParser";
 import { PowerContext } from "./CalcParser";
 import { MultiplicationContext } from "./CalcParser";
 import { DivisionContext } from "./CalcParser";
@@ -23,7 +26,9 @@ import { LesserEqualComparatorContext } from "./CalcParser";
 import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
+import { ListContext } from "./CalcParser";
 import { AssignmentContext } from "./CalcParser";
+import { LambdaContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
@@ -31,18 +36,13 @@ import { StartContext } from "./CalcParser";
 import { StatementContext } from "./CalcParser";
 import { IfThenElseStatementContext } from "./CalcParser";
 import { WhileStatementContext } from "./CalcParser";
-import { TypeContext } from "./CalcParser";
-import { DeclarationContext } from "./CalcParser";
 import { VariableDeclarationContext } from "./CalcParser";
 import { LocalDeclarationContext } from "./CalcParser";
 import { LetDeclarationContext } from "./CalcParser";
 import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
-import { BlockContext } from "./CalcParser";
-import { PrintContext } from "./CalcParser";
-import { ParametersContext } from "./CalcParser";
-import { FunctionContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
+import { ElementsContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -53,17 +53,17 @@ import { ExpressionContext } from "./CalcParser";
  */
 export interface CalcListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the `String`
+	 * Enter a parse tree produced by the `ID`
 	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
-	enterString?: (ctx: StringContext) => void;
+	enterID?: (ctx: IDContext) => void;
 	/**
-	 * Exit a parse tree produced by the `String`
+	 * Exit a parse tree produced by the `ID`
 	 * labeled alternative in `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
-	exitString?: (ctx: StringContext) => void;
+	exitID?: (ctx: IDContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Number`
@@ -118,6 +118,19 @@ export interface CalcListener extends ParseTreeListener {
 	exitIdentifiers?: (ctx: IdentifiersContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterString?: (ctx: StringContext) => void;
+	/**
+	 * Exit a parse tree produced by the `String`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitString?: (ctx: StringContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `Parentheses`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -129,6 +142,32 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitParentheses?: (ctx: ParenthesesContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `Tuple`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterTuple?: (ctx: TupleContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Tuple`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitTuple?: (ctx: TupleContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `FunctionCall`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterFunctionCall?: (ctx: FunctionCallContext) => void;
+	/**
+	 * Exit a parse tree produced by the `FunctionCall`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitFunctionCall?: (ctx: FunctionCallContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Power`
@@ -313,6 +352,19 @@ export interface CalcListener extends ParseTreeListener {
 	exitNotLogical?: (ctx: NotLogicalContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `List`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterList?: (ctx: ListContext) => void;
+	/**
+	 * Exit a parse tree produced by the `List`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitList?: (ctx: ListContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `Assignment`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -324,6 +376,19 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitAssignment?: (ctx: AssignmentContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `Lambda`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterLambda?: (ctx: LambdaContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Lambda`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitLambda?: (ctx: LambdaContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `WhileCondition`
@@ -407,28 +472,6 @@ export interface CalcListener extends ParseTreeListener {
 	exitWhileStatement?: (ctx: WhileStatementContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `CalcParser.type`.
-	 * @param ctx the parse tree
-	 */
-	enterType?: (ctx: TypeContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.type`.
-	 * @param ctx the parse tree
-	 */
-	exitType?: (ctx: TypeContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `CalcParser.declaration`.
-	 * @param ctx the parse tree
-	 */
-	enterDeclaration?: (ctx: DeclarationContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.declaration`.
-	 * @param ctx the parse tree
-	 */
-	exitDeclaration?: (ctx: DeclarationContext) => void;
-
-	/**
 	 * Enter a parse tree produced by `CalcParser.variableDeclaration`.
 	 * @param ctx the parse tree
 	 */
@@ -484,50 +527,6 @@ export interface CalcListener extends ParseTreeListener {
 	exitDeclarationlist?: (ctx: DeclarationlistContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `CalcParser.block`.
-	 * @param ctx the parse tree
-	 */
-	enterBlock?: (ctx: BlockContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.block`.
-	 * @param ctx the parse tree
-	 */
-	exitBlock?: (ctx: BlockContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `CalcParser.print`.
-	 * @param ctx the parse tree
-	 */
-	enterPrint?: (ctx: PrintContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.print`.
-	 * @param ctx the parse tree
-	 */
-	exitPrint?: (ctx: PrintContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `CalcParser.parameters`.
-	 * @param ctx the parse tree
-	 */
-	enterParameters?: (ctx: ParametersContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.parameters`.
-	 * @param ctx the parse tree
-	 */
-	exitParameters?: (ctx: ParametersContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `CalcParser.function`.
-	 * @param ctx the parse tree
-	 */
-	enterFunction?: (ctx: FunctionContext) => void;
-	/**
-	 * Exit a parse tree produced by `CalcParser.function`.
-	 * @param ctx the parse tree
-	 */
-	exitFunction?: (ctx: FunctionContext) => void;
-
-	/**
 	 * Enter a parse tree produced by `CalcParser.identifier`.
 	 * @param ctx the parse tree
 	 */
@@ -537,6 +536,17 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIdentifier?: (ctx: IdentifierContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.elements`.
+	 * @param ctx the parse tree
+	 */
+	enterElements?: (ctx: ElementsContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.elements`.
+	 * @param ctx the parse tree
+	 */
+	exitElements?: (ctx: ElementsContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.expressionStatement`.
