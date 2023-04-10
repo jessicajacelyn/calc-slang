@@ -102,9 +102,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrayExpression: function* (node: es.ArrayExpression, context: Context) {
-    //throw new Error(`not supported yet: ${node.type}`)
-    console.log('array expression at interpreter !!!!!!' )
-    return undefined
+    console.log('node', node.elements)
+    const arr = []
+    for (const element of node.elements) {
+      if (element === null) continue
+      const value = yield* actualValue(element, context)
+      arr.push(value)
+    }
+    console.log('arr', arr)
+    return arr
   },
 
 
@@ -118,13 +124,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   LambdaFunctionExpression: function* (node: es.LambdaFunctionExpression, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)
-    console.log('lambda function expression at interpreter !!!!!!' )
+    console.log('lambda function expression at interpreter !!!!!!')
     return undefined
   },
 
   Identifier: function* (node: es.Identifier, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)
-    console.log('identifier at interpreter: ', node.name )
+    console.log('identifier at interpreter: ', node.name)
     const name = node.name
     const frame = context.runtime.environments[0].head[name];
     return frame;
@@ -356,8 +362,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     // TODO: remove this when var declarations are implemented
     // context.runtime.environments[0].head['temp'] = true
-    // context.runtime.environments[0].head['test'] = false
-    // context.runtime.environments[0].head['num'] = 5
+    context.runtime.environments[0].head['test'] = false
+    context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
     // context.runtime.environments[0].head['num1'] = 8
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
