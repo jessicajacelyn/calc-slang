@@ -97,7 +97,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) {}
+  public constructor(public location: es.SourceLocation, public message: string) { }
 
   public explain() {
     return this.message
@@ -111,7 +111,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -125,7 +125,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Trailing comma'
@@ -415,7 +415,6 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class IdentifierGenerator implements CalcVisitor<es.Identifier> {
-
   visitID(ctx: IDContext): es.Identifier {
     console.log('visit Identifier in parser: ', ctx.text)
     return {
@@ -486,7 +485,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
         elements.push(this.visit(ctx._element.getChild(i)))
       }
     }
-    console.log('list elements are: ', elements)
     return {
       type: 'ArrayExpression',
       elements: elements
@@ -498,19 +496,19 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return ctx.identifier().accept(this)
   }
 
-  visitID(ctx: IDContext) : es.Expression{
+  visitID(ctx: IDContext): es.Expression {
     const generator: IdentifierGenerator = new IdentifierGenerator()
     return ctx.accept(generator)
   }
 
-  visitTuple(ctx: TupleContext) : es.Expression{
+  visitTuple(ctx: TupleContext): es.Expression {
     const elements: es.Expression[] = []
     //console.log('tuple detected at parser!')
     console.log('tuple elements: ', ctx.expression())
     for (let i = 0; i < ctx.expression().length; i++) {
       elements.push(this.visit(ctx.expression(i)))
     }
-    return{
+    return {
       type: 'ArrayExpression',
       elements: elements
     }

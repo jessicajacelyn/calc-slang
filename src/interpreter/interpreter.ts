@@ -102,14 +102,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrayExpression: function* (node: es.ArrayExpression, context: Context) {
-    console.log('node', node.elements)
     const arr = []
     for (const element of node.elements) {
       if (element === null) continue
       const value = yield* actualValue(element, context)
       arr.push(value)
     }
-    console.log('arr', arr)
     return arr
   },
 
@@ -288,11 +286,18 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const right = yield* actualValue(node.right, context)
     if (node.left.type === 'Identifier') {
       const value = yield* evaluate(node.right, context)
-
-      if (context.runtime.environments[0].head[node.left.name] === undefined) {
+      const currEnv = context.runtime.environments[0].head
+      if (currEnv[node.left.name] === undefined) {
         throw new Error(`variable ${node.left.name} is not defined`)
       } else {
-        context.runtime.environments[0].head[node.left.name] = value
+        // console.log('assigning value: ', typeof value, value, ' to variable: ', typeof currEnv[node.left.name], currEnv[node.left.name])
+        if (typeof currEnv[node.left.name] === typeof value) {
+          // console.log('assigning value: ', value, ' to variable: ', currEnv[node.left.name])
+          currEnv[node.left.name] = value
+        } else {
+          // console.log('type mismatch: ', currEnv[node.left.name].type, ' and ', value.type)
+          throw new Error(`type mismatch: ${currEnv[node.left.name].type} and ${value.type}`)
+        }
       }
       console.log('assign environment: ', context.runtime.environments)
       return value
@@ -354,16 +359,20 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   Program: function* (node: es.BlockStatement, context: Context) {
     const env = createGlobalEnvironment()
+
     pushEnvironment(context, env)
+    const temp: boolean = true
+    context.runtime.environments[0].head['test'] = temp
+    context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
     // if (context.runtime.environments.length === 0) {
     //   console.log('pushing env ', context)
+    console.log('env ', context.runtime.environments[0])
     // }
-    console.log('env ', context.runtime.environments)
+    console.log('env ', context.runtime.environments[0].head['test'].type, context.runtime.environments[0].head['test'])
 
     // TODO: remove this when var declarations are implemented
     // context.runtime.environments[0].head['temp'] = true
-    context.runtime.environments[0].head['test'] = false
-    context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
+
     // context.runtime.environments[0].head['num1'] = 8
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
