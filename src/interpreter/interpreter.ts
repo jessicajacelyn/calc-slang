@@ -311,10 +311,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       } else {
         throw new Error(`not supported yet: ${node.type}`)
       }
+    } else if(node.left.type === 'ArrayExpression') {
+      console.log('append list not implemented yet')
+      return undefined
     } else {
       throw new Error(`not supported yet: ${node.type}`)
     }
   },
+
+  // UpdateListExpression: function* (node: es.UpdateListExpression, context: Context) {
+  //   console.log('update list expression at interpreter!')
+  // },
 
   FunctionDeclaration: function* (node: es.FunctionDeclaration, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)

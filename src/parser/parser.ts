@@ -27,7 +27,10 @@ import {
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
+  ListAppendContext,
+  ListConsContext,
   ListContext,
+  ListStructureContext,
   LocalDeclarationContext,
   ModulusContext,
   MultiplicationContext,
@@ -479,15 +482,77 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitList?(ctx: ListContext): es.Expression {
+    return ctx._left.accept(this)
+  }
+
+  visitListStructure(ctx: ListStructureContext) : es.Expression{
     const elements: es.Expression[] = []
     for (let i = 0; i < ctx._element.childCount; i++) {
       if (ctx._element.getChild(i).text != ',') {
         elements.push(this.visit(ctx._element.getChild(i)))
       }
     }
+    console.log('elements in list', elements)
     return {
       type: 'ArrayExpression',
       elements: elements
+    }
+  }
+
+  visitListAppend(ctx: ListAppendContext) : es.Expression{
+   
+    console.log('list append detected at parser!')
+
+    const left_elements: es.Expression[] = []
+    for (let i = 0; i < ctx._left.childCount; i++) {
+      if (ctx._left.getChild(i).text != ',') {
+        left_elements.push(this.visit(ctx._left.getChild(i)))
+      }
+    }
+    console.log('left elements', left_elements)
+
+    const right_elements: es.Expression[] = []
+    for (let i = 0; i < ctx._right.childCount; i++) {
+      if (ctx._right.getChild(i).text != ',') {
+        right_elements.push(this.visit(ctx._right.getChild(i)))
+      }
+    }
+    console.log('right elements', right_elements)
+
+    return {
+      type: 'AssignmentExpression',
+      operator: '@',
+      left: {
+        type: 'ArrayExpression',
+        elements: left_elements
+      },
+      right: {
+        type: 'ArrayExpression',
+        elements: right_elements
+      }
+    }
+  }
+
+  visitListCons?(ctx: ListConsContext) : es.Expression{
+    console.log('list cons detected at parser!')
+
+    const left = ctx._left.accept(this)
+    console.log('left type is: ', left.type)
+    const right_elements: es.Expression[] = []
+    for (let i = 0; i < ctx._right.childCount; i++) {
+      if (ctx._right.getChild(i).text != ',') {
+        right_elements.push(this.visit(ctx._right.getChild(i)))
+      }
+    }
+
+    return{
+      type: 'AssignmentExpression',
+      operator: '::',
+      left: left,
+      right: {
+        type: 'ArrayExpression',
+        elements: right_elements
+      }
     }
   }
 

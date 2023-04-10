@@ -34,8 +34,12 @@ OPAR: '(';
 CPAR: ')';
 OBRACE: '{';
 CBRACE: '}';
+OSQUARE: '[';
+CSQUARE: ']';
 DOUBLEQUOTE: '"';
 ASSIGNMEMT: ':=';
+APPEND: '@';
+CONS: '::';
 emptydeclaration: ';';
 IF: 'if';
 THEN: 'then';
@@ -94,6 +98,9 @@ identifier:
 
 elements : expression (',' expression)*;
 
+listStructure: 
+	OSQUARE element = elements? CSQUARE;
+
 expressionStatement: expression ';';
 
 expression:
@@ -116,6 +123,8 @@ expression:
 	| left = expression operator = AND right = expression	# AndLogical
 	| left = expression operator = OR right = expression	# OrLogical
 	| NOT left = expression									# NotLogical
-	| '['element = elements? ']'							# List
+	| left = listStructure											# List
+	| OSQUARE left = elements? CSQUARE operator = APPEND OSQUARE right = elements? CSQUARE	# ListAppend
+	| left = expression operator = CONS OSQUARE right = elements? CSQUARE	# ListCons
 	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment
 	| FN name = Stringliteral operator = ARROW right = expression 	# Lambda;
