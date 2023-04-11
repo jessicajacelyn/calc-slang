@@ -46,6 +46,7 @@ import { DeclarationlistContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
 import { ElementsContext } from "./CalcParser";
 import { ListStructureContext } from "./CalcParser";
+import { ListInputContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -388,6 +389,13 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitListStructure?: (ctx: ListStructureContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.listInput`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitListInput?: (ctx: ListInputContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.expressionStatement`.

@@ -95,11 +95,14 @@ identifier:
 	| REAL			# Real
 	| BOOLEAN		# Boolean;
 
-
 elements : expression (',' expression)*;
 
 listStructure: 
 	OSQUARE element = elements? CSQUARE;
+
+listInput:
+	listStructure
+	| Stringliteral;
 
 expressionStatement: expression ';';
 
@@ -124,7 +127,7 @@ expression:
 	| left = expression operator = OR right = expression	# OrLogical
 	| NOT left = expression									# NotLogical
 	| left = listStructure											# List
-	| OSQUARE left = elements? CSQUARE operator = APPEND OSQUARE right = elements? CSQUARE	# ListAppend
-	| left = expression operator = CONS OSQUARE right = elements? CSQUARE	# ListCons
+	| left = expression  operator = APPEND right = expression 		# ListAppend
+	| left = expression operator = CONS right = expression			# ListCons
 	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment
 	| FN name = Stringliteral operator = ARROW right = expression 	# Lambda;

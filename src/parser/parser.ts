@@ -100,7 +100,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) { }
+  public constructor(public location: es.SourceLocation, public message: string) {}
 
   public explain() {
     return this.message
@@ -114,7 +114,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -128,7 +128,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Trailing comma'
@@ -485,7 +485,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return ctx._left.accept(this)
   }
 
-  visitListStructure(ctx: ListStructureContext) : es.Expression{
+  visitListStructure(ctx: ListStructureContext): es.Expression {
     const elements: es.Expression[] = []
     for (let i = 0; i < ctx._element.childCount; i++) {
       if (ctx._element.getChild(i).text != ',') {
@@ -499,60 +499,37 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
-  visitListAppend(ctx: ListAppendContext) : es.Expression{
-   
+  visitListAppend(ctx: ListAppendContext): es.Expression {
     console.log('list append detected at parser!')
+    
+    const left = this.visit(ctx._left)
+    console.log('left type is: ', left.type)
+    console.log('left is: ', left)
 
-    const left_elements: es.Expression[] = []
-    for (let i = 0; i < ctx._left.childCount; i++) {
-      if (ctx._left.getChild(i).text != ',') {
-        left_elements.push(this.visit(ctx._left.getChild(i)))
-      }
-    }
-    console.log('left elements', left_elements)
-
-    const right_elements: es.Expression[] = []
-    for (let i = 0; i < ctx._right.childCount; i++) {
-      if (ctx._right.getChild(i).text != ',') {
-        right_elements.push(this.visit(ctx._right.getChild(i)))
-      }
-    }
-    console.log('right elements', right_elements)
+    const right = this.visit(ctx._right)
+    console.log('right type is: ', right.type)
+    console.log('right is: ', right)
 
     return {
       type: 'AssignmentExpression',
       operator: '@',
-      left: {
-        type: 'ArrayExpression',
-        elements: left_elements
-      },
-      right: {
-        type: 'ArrayExpression',
-        elements: right_elements
-      }
+      left: left,
+      right: right
     }
   }
 
-  visitListCons?(ctx: ListConsContext) : es.Expression{
+  visitListCons?(ctx: ListConsContext): es.Expression {
     console.log('list cons detected at parser!')
 
-    const left = ctx._left.accept(this)
-    console.log('left type is: ', left.type)
-    const right_elements: es.Expression[] = []
-    for (let i = 0; i < ctx._right.childCount; i++) {
-      if (ctx._right.getChild(i).text != ',') {
-        right_elements.push(this.visit(ctx._right.getChild(i)))
-      }
-    }
-
-    return{
+    const left = this.visit(ctx._left)
+    console.log('left : ', left)
+    const right = this.visit(ctx._right)
+    console.log('right : ', right)
+    return {
       type: 'AssignmentExpression',
       operator: '::',
       left: left,
-      right: {
-        type: 'ArrayExpression',
-        elements: right_elements
-      }
+      right: right
     }
   }
 

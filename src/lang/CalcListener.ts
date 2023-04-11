@@ -46,6 +46,7 @@ import { DeclarationlistContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
 import { ElementsContext } from "./CalcParser";
 import { ListStructureContext } from "./CalcParser";
+import { ListInputContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -587,6 +588,17 @@ export interface CalcListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitListStructure?: (ctx: ListStructureContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `CalcParser.listInput`.
+	 * @param ctx the parse tree
+	 */
+	enterListInput?: (ctx: ListInputContext) => void;
+	/**
+	 * Exit a parse tree produced by `CalcParser.listInput`.
+	 * @param ctx the parse tree
+	 */
+	exitListInput?: (ctx: ListInputContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `CalcParser.expressionStatement`.
