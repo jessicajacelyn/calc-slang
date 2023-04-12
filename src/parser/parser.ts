@@ -23,11 +23,15 @@ import {
   IDContext,
   IdentifiersContext,
   IfThenElseConditionContext,
+  LambdaApplicationContext,
   LambdaContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
   LetDeclarationContext,
+  ListAppendContext,
+  ListConsContext,
   ListContext,
+  ListStructureContext,
   LocalDeclarationContext,
   ModulusContext,
   MultiplicationContext,
@@ -187,7 +191,6 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
-
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
@@ -416,7 +419,6 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class IdentifierGenerator implements CalcVisitor<es.Identifier> {
-
   visitID(ctx: IDContext): es.Identifier {
     console.log('visit Identifier in parser: ', ctx.text)
     return {
@@ -467,8 +469,22 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitLambda(ctx: LambdaContext): es.Expression {
+    console.log('lamda detected at parser!')
+    return {
+      type: 'ArrowFunctionExpression',
+      params: [
+        {
+          type: 'Identifier',
+          name: ctx._name.text as string
+        }
+      ],
+      expression: true,
+      body: this.visit(ctx._right)
+    }
+  }
 
-    console.log("lamda detected at parser!")
+  visitLambdaApplication(ctx: LambdaApplicationContext): es.Expression {
+    console.log('lambda application detected at parser!')
     return {
       type: 'ArrowFunctionExpression',
       params: [
@@ -479,20 +495,52 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       ],
       expression: true,
       body: this.visit(ctx._right),
+      arguments: this.visit(ctx._params)
     }
   }
 
+
   visitList?(ctx: ListContext): es.Expression {
+    return ctx._left.accept(this)
+  }
+
+  visitListStructure(ctx: ListStructureContext): es.Expression {
     const elements: es.Expression[] = []
     for (let i = 0; i < ctx._element.childCount; i++) {
       if (ctx._element.getChild(i).text != ',') {
         elements.push(this.visit(ctx._element.getChild(i)))
       }
     }
-    console.log('list elements are: ', elements)
     return {
       type: 'ArrayExpression',
       elements: elements
+    }
+  }
+
+  visitListAppend(ctx: ListAppendContext): es.Expression {
+    console.log('list append detected at parser!')
+
+    const left = this.visit(ctx._left)
+    const right = this.visit(ctx._right)
+
+    return {
+      type: 'AssignmentExpression',
+      operator: '@',
+      left: left,
+      right: right
+    }
+  }
+
+  visitListCons?(ctx: ListConsContext): es.Expression {
+    console.log('list cons detected at parser!')
+
+    const left = this.visit(ctx._left)
+    const right = this.visit(ctx._right)
+    return {
+      type: 'AssignmentExpression',
+      operator: '::',
+      left: left,
+      right: right
     }
   }
 
@@ -501,26 +549,25 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return ctx.identifier().accept(this)
   }
 
-  visitID(ctx: IDContext) : es.Expression{
+  visitID(ctx: IDContext): es.Expression {
     const generator: IdentifierGenerator = new IdentifierGenerator()
     return ctx.accept(generator)
   }
 
-  visitTuple(ctx: TupleContext) : es.Expression{
+  visitTuple(ctx: TupleContext): es.Expression {
     const elements: es.Expression[] = []
     //console.log('tuple detected at parser!')
     console.log('tuple elements: ', ctx.expression())
     for (let i = 0; i < ctx.expression().length; i++) {
       elements.push(this.visit(ctx.expression(i)))
     }
-    return{
+    return {
       type: 'ArrayExpression',
       elements: elements
     }
   }
 
   visitString(ctx: StringContext): es.Expression {
-
     console.log('string: ', ctx.text.replace(/"/g, ''))
 
     return {
@@ -532,7 +579,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitNumber(ctx: NumberContext): es.Expression {
-    // console.log('number: ', ctx.text)
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
@@ -542,8 +588,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitReal(ctx: RealContext): es.Expression {
-    console.log('real: ', ctx.text)
-
     return {
       type: 'Literal',
       value: parseFloat(ctx.text),
@@ -554,6 +598,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   visitBoolean(ctx: BooleanContext): es.Expression {
     let val
+    console.log('boolean: ', ctx.text)
     if (ctx.text === 'true') {
       val = true
     } else {

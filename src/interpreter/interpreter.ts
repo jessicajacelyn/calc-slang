@@ -1,5 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 import * as es from 'estree'
+import { isBoolean } from 'lodash'
 
 import createContext, { createGlobalEnvironment } from '../createContext'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
@@ -102,9 +103,13 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrayExpression: function* (node: es.ArrayExpression, context: Context) {
-    //throw new Error(`not supported yet: ${node.type}`)
-    console.log('array expression at interpreter !!!!!!' )
-    return undefined
+    const arr = []
+    for (const element of node.elements) {
+      if (element === null) continue
+      const value = yield* actualValue(element, context)
+      arr.push(value)
+    }
+    return arr
   },
 
 
@@ -121,14 +126,9 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return 'yeyy'
   },
 
-  LambdaFunctionExpression: function* (node: es.LambdaFunctionExpression, context: Context) {
-    console.log('lambda function expression at interpreter !!!!!!')
-    return undefined
-  },
-
   Identifier: function* (node: es.Identifier, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)
-    console.log('identifier at interpreter: ', node.name )
+    console.log('identifier at interpreter: ', node.name)
     const name = node.name
     const frame = context.runtime.environments[0].head[name];
     return frame;
@@ -284,29 +284,202 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
 
-    const right = yield* actualValue(node.right, context)
-    if (node.left.type === 'Identifier') {
-      console.log('assigning value: ', node.right)
-
-      const value = yield* evaluate(node.right, context)
-      if (context.runtime.environments[0].head[node.left.name] === undefined) {
+    if (node.operator === '=' && node.left.type === 'Identifier') {
+      console.log('assigning to identifier: ', node.left.name)
+      const value = yield* actualValue(node.right, context)
+      const currEnv = context.runtime.environments[0].head
+      if (currEnv[node.left.name] === undefined) {
         throw new Error(`variable ${node.left.name} is not defined`)
       } else {
-        context.runtime.environments[0].head[node.left.name] = value
+        let typeEnv = typeof currEnv[node.left.name]
+        let typeVal = typeof value
+        if (typeEnv === 'object') {
+          const temp = currEnv[node.left.name].flat()
+          typeEnv = typeof temp[0]
+        }
+        if (typeVal === 'object') {
+          const temp = value.flat()
+          typeVal = typeof temp[0]
+        }
+        if (typeEnv === typeVal) {
+          currEnv[node.left.name] = value
+        } else {
+          throw new Error(`type mismatch: ${typeEnv} and ${typeVal}`)
+        }
       }
       console.log('assign environment: ', context.runtime.environments)
       return value
-    } else if (node.left.type === 'MemberExpression') {
-      console.log('its a member expression')
-      const object = yield* actualValue(node.left.object, context)
-      const property = yield* actualValue(node.left.property, context)
-      if (object.type === 'object') {
-        object.value[property.value] = right
-        return right
+    } else if (node.operator === '::') {
+      if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const leftType = typeof left[0]
+        const rightType = typeof right[0]
+        const arr = []
+
+        if (leftType !== rightType) {
+          throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+        }
+        for (const element of left) {
+          if (typeof element !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${element.type}`)
+          }
+        }
+        for (const element of right) {
+          if (typeof element !== rightType) {
+            throw new Error(`type mismatch: ${rightType} and ${element.type}`)
+          }
+        }
+        arr.push(left)
+        arr.push(right)
+        return arr
+      } else if (node.left.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left[0]
+        const arr = []
+        if (node.right.type === 'Identifier') {
+          const rightType = typeof right[0]
+          if (currEnv[node.right.name] === undefined) {
+            if (rightType !== leftType) {
+              throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+            } else {
+              arr.push(left)
+              arr.push(right)
+              return arr
+            }
+          } else {
+            if (rightType !== leftType) {
+              throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+            } else {
+              arr.push(left)
+              arr.push(right)
+              return arr
+            }
+          }
+        }
+      } else if (node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left[0]
+        const rightType = typeof right[0]
+        const arr = []
+        if (node.left.type === "Identifier") {
+          if (currEnv[node.left.name] === undefined) {
+            throw new Error(`${left} is not defined`)
+          } else {
+            if (rightType !== leftType) {
+              throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+            } else {
+              arr.push(left)
+              arr.push(right)
+              return arr
+            }
+          }
+        }
       } else {
-        throw new Error(`not supported yet: ${node.type}`)
+        const arr = []
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        let leftType = typeof left
+        let rightType = typeof right
+
+        if (leftType === 'object') {
+          const temp = left.flat()
+          leftType = typeof temp[0]
+        }
+        if (rightType === 'object') {
+          const temp = right.flat()
+          rightType = typeof temp[0]
+        }
+
+        if (leftType !== rightType) {
+          throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+        } else {
+          arr.push(left)
+          arr.push(right)
+        }
+        return arr
       }
-    } else {
+    } else if (node.operator === '@') {
+      if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const leftType = typeof left[0]
+        const rightType = typeof right[0]
+        const arr = []
+
+        if (leftType !== rightType) {
+          throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+        }
+        for (const element of left) {
+          if (typeof element !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${element.type}`)
+          }
+          arr.push(element)
+        }
+        for (const element of right) {
+          if (typeof element !== rightType) {
+            throw new Error(`type mismatch: ${rightType} and ${element.type}`)
+          }
+          arr.push(element)
+        }
+        return arr
+      } else if (node.left.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left[0]
+        const arr = []
+        if (node.right.type === 'Identifier') {
+          const rightType = typeof right[0]
+          if (currEnv[node.right.name] === undefined) {
+            throw new Error(`${right} is not defined`)
+          } else {
+            if (rightType !== leftType) {
+              throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+            } else {
+              for (const element of left) {
+                arr.push(element)
+              }
+              for (const element of right) {
+                arr.push(element)
+              }
+              return arr
+            }
+          }
+        }
+      } else if (node.right.type === "ArrayExpression") {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const rightType = typeof right[0]
+        const arr = []
+
+        const leftType = typeof left[0]
+
+        if (node.left.type === "Identifier") {
+          if (currEnv[node.left.name] === undefined) {
+            throw new Error(`${left} is not defined`)
+          } else {
+            if (rightType !== leftType) {
+              throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+            } else {
+              for (const element of left) {
+                arr.push(element)
+              }
+              for (const element of right) {
+                arr.push(element)
+              }
+              return arr
+            }
+          }
+        }
+      }
+    }
+    else {
       throw new Error(`not supported yet: ${node.type}`)
     }
   },
@@ -354,17 +527,22 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   Program: function* (node: es.BlockStatement, context: Context) {
     const env = createGlobalEnvironment()
+
     pushEnvironment(context, env)
+    const temp: boolean = true
+    context.runtime.environments[0].head['test'] = temp
+    context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
     // if (context.runtime.environments.length === 0) {
     //   console.log('pushing env ', context)
+    console.log('env ', context.runtime.environments[0])
     // }
-    console.log('env ', context.runtime.environments)
+    console.log('env ', context.runtime.environments[0].head['test'].type, context.runtime.environments[0].head['test'])
 
     // TODO: remove this when var declarations are implemented
-    // context.runtime.environments[0].head['temp'] = true
-    // context.runtime.environments[0].head['test'] = false
-    context.runtime.environments[0].head['num'] = 5
-    // context.runtime.environments[0].head['num1'] = 8
+    context.runtime.environments[0].head['temp'] = [true, true]
+    context.runtime.environments[0].head['test'] = false
+    context.runtime.environments[0].head['num'] = 1
+    context.runtime.environments[0].head['num1'] = [true, false]
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;

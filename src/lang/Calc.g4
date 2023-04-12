@@ -34,8 +34,12 @@ OPAR: '(';
 CPAR: ')';
 OBRACE: '{';
 CBRACE: '}';
+OSQUARE: '[';
+CSQUARE: ']';
 DOUBLEQUOTE: '"';
-ASSIGNMEMT: ':=';
+ASSIGNMENT: ':=';
+APPEND: '@';
+CONS: '::';
 emptydeclaration: ';';
 IF: 'if';
 THEN: 'then';
@@ -79,7 +83,7 @@ letDeclaration:
 	LET del = declarationType IN delist = declarationlist END ';';
 
 declarationType:
-	variableDeclaration 
+	variableDeclaration
 	| localDeclaration
 	| letDeclaration;
 
@@ -91,31 +95,37 @@ identifier:
 	| REAL			# Real
 	| BOOLEAN		# Boolean;
 
+elements: expression (',' expression)*;
 
-elements : expression (',' expression)*;
+listStructure: OSQUARE element = elements? CSQUARE;
+
+listInput: listStructure | Stringliteral;
 
 expressionStatement: expression ';';
 
 expression:
-	identifier												# Identifiers
-	| '"' Stringliteral '"'									# String
-	| OPAR inner = expression CPAR							# Parentheses
-	| OPAR expression (',' expression)* CPAR				# Tuple	
-	| name = identifier params = identifier                 # FunctionCall
-	| left = expression operator = POW right = expression	# Power
-	| left = expression operator = MUL right = expression	# Multiplication
-	| left = expression operator = DIV right = expression	# Division
-	| left = expression operator = ADD right = expression	# Addition
-	| left = expression operator = SUB right = expression	# Subtraction
-	| left = expression operator = MOD right = expression	# Modulus
-	| left = expression operator = EQUAL right = expression	# EqualComparator
-	| left = expression operator = GT right = expression	# GreaterComparator
-	| left = expression operator = LT right = expression	# LesserComparator
-	| left = expression operator = GE right = expression	# GreaterEqualComparator
-	| left = expression operator = LE right = expression	# LesserEqualComparator
-	| left = expression operator = AND right = expression	# AndLogical
-	| left = expression operator = OR right = expression	# OrLogical
-	| NOT left = expression									# NotLogical
-	| '['element = elements? ']'							# List
-	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment
-	| FN name = Stringliteral operator = ARROW right = expression 	# Lambda;
+	identifier														# Identifiers
+	| '"' Stringliteral '"'											# String
+	| OPAR inner = expression CPAR									# Parentheses
+	| OPAR expression (',' expression)* CPAR						# Tuple
+	| name = Stringliteral OPAR params = expression	CPAR			# FunctionCall
+	| left = expression operator = POW right = expression			# Power
+	| left = expression operator = MUL right = expression			# Multiplication
+	| left = expression operator = DIV right = expression			# Division
+	| left = expression operator = ADD right = expression			# Addition
+	| left = expression operator = SUB right = expression			# Subtraction
+	| left = expression operator = MOD right = expression			# Modulus
+	| left = expression operator = EQUAL right = expression			# EqualComparator
+	| left = expression operator = GT right = expression			# GreaterComparator
+	| left = expression operator = LT right = expression			# LesserComparator
+	| left = expression operator = GE right = expression			# GreaterEqualComparator
+	| left = expression operator = LE right = expression			# LesserEqualComparator
+	| left = expression operator = AND right = expression			# AndLogical
+	| left = expression operator = OR right = expression			# OrLogical
+	| NOT left = expression											# NotLogical
+	| left = listStructure											# List
+	| left = expression operator = APPEND right = expression		# ListAppend
+	| left = expression operator = CONS right = expression			# ListCons
+	| left = Stringliteral operator = ASSIGNMENT right = expression	# Assignment
+	| FN name = Stringliteral operator = ARROW right = expression	# Lambda
+	| FN name = Stringliteral operator = ARROW right = expression OPAR params = expression CPAR # LambdaApplication;

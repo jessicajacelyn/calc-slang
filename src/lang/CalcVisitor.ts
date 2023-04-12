@@ -27,8 +27,11 @@ import { AndLogicalContext } from "./CalcParser";
 import { OrLogicalContext } from "./CalcParser";
 import { NotLogicalContext } from "./CalcParser";
 import { ListContext } from "./CalcParser";
+import { ListAppendContext } from "./CalcParser";
+import { ListConsContext } from "./CalcParser";
 import { AssignmentContext } from "./CalcParser";
 import { LambdaContext } from "./CalcParser";
+import { LambdaApplicationContext } from "./CalcParser";
 import { WhileConditionContext } from "./CalcParser";
 import { IfThenElseConditionContext } from "./CalcParser";
 import { EmptydeclarationContext } from "./CalcParser";
@@ -43,6 +46,8 @@ import { DeclarationTypeContext } from "./CalcParser";
 import { DeclarationlistContext } from "./CalcParser";
 import { IdentifierContext } from "./CalcParser";
 import { ElementsContext } from "./CalcParser";
+import { ListStructureContext } from "./CalcParser";
+import { ListInputContext } from "./CalcParser";
 import { ExpressionStatementContext } from "./CalcParser";
 import { ExpressionContext } from "./CalcParser";
 
@@ -248,6 +253,22 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitList?: (ctx: ListContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `ListAppend`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitListAppend?: (ctx: ListAppendContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `ListCons`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitListCons?: (ctx: ListConsContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `Assignment`
 	 * labeled alternative in `CalcParser.expression`.
 	 * @param ctx the parse tree
@@ -262,6 +283,14 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLambda?: (ctx: LambdaContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `LambdaApplication`
+	 * labeled alternative in `CalcParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLambdaApplication?: (ctx: LambdaApplicationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `WhileCondition`
@@ -362,6 +391,20 @@ export interface CalcVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitElements?: (ctx: ElementsContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.listStructure`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitListStructure?: (ctx: ListStructureContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `CalcParser.listInput`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitListInput?: (ctx: ListInputContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `CalcParser.expressionStatement`.
