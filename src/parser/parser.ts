@@ -190,6 +190,7 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
+
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
@@ -468,16 +469,18 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitLambda(ctx: LambdaContext): es.Expression {
-    console.log('lamda detected at parser!')
+
+    console.log("lamda detected at parser!")
     return {
-      type: 'LambdaFunctionExpression',
-      id: {
-        type: 'Identifier',
-        name: ctx._name.text as string
-      },
-      operator: '=>',
+      type: 'ArrowFunctionExpression',
+      params: [
+        {
+          type: 'Identifier',
+          name: ctx._name.text as string
+        }
+      ],
+      expression: true,
       body: this.visit(ctx._right),
-      value: this.visit(ctx._right)
     }
   }
 
@@ -557,7 +560,9 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
+
     console.log('string: ', ctx.text.replace(/"/g, ''))
+
     return {
       type: 'Literal',
       value: ctx.text.replace(/"/g, ''),

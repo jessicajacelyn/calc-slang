@@ -117,13 +117,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrowFunctionExpression: function* (node: es.ArrowFunctionExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
-  },
+    const value = yield* evaluate(node.body, context)
+    const right = yield* actualValue(node.body, context)
 
-  LambdaFunctionExpression: function* (node: es.LambdaFunctionExpression, context: Context) {
-    //throw new Error(`not supported yet: ${node.type}`)
-    console.log('lambda function expression at interpreter !!!!!!')
-    return undefined
+    console.log('lambda', node)
+    console.log('name', node.params[0])
+    return 'yeyy'
   },
 
   Identifier: function* (node: es.Identifier, context: Context) {
@@ -283,6 +282,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
+
     const right = yield* actualValue(node.right, context)
     if (node.left.type === 'Identifier') {
       const value = yield* evaluate(node.right, context)
@@ -379,7 +379,8 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     // TODO: remove this when var declarations are implemented
     // context.runtime.environments[0].head['temp'] = true
-
+    // context.runtime.environments[0].head['test'] = false
+    context.runtime.environments[0].head['num'] = 5
     // context.runtime.environments[0].head['num1'] = 8
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
