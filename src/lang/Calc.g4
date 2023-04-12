@@ -47,13 +47,12 @@ STRING: 'string';
 INT: 'int';
 BOOL: 'bool';
 REALNUM: 'real';
-Stringliteral: [a-zA-Z] [a-zA-Z0-9]*;
-ID : ('a'..'z' | 'A'..'Z' | '_' | '\'') ('a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '\'')*;
+Stringliteral: [a-zA-Z] [a-zA-Z0-9]+;
 
 /*
  * Productions
  */
-start: (statement | function)*;
+start: statement*;
 
 statement:
 	ifThenElseStatement
@@ -86,20 +85,22 @@ declarationType:
 
 declarationlist: declarationType*;
 
-function:
-	FUN name = identifier params = identifier operator = EQUAL body = statement;	
-
 identifier:
-	Stringliteral	# String
+	Stringliteral	# ID
 	| NUMBER		# Number
 	| REAL			# Real
 	| BOOLEAN		# Boolean;
+
+
+elements : expression (',' expression)*;
 
 expressionStatement: expression ';';
 
 expression:
 	identifier												# Identifiers
+	| '"' Stringliteral '"'									# String
 	| OPAR inner = expression CPAR							# Parentheses
+	| OPAR expression (',' expression)* CPAR				# Tuple	
 	| name = identifier params = identifier                 # FunctionCall
 	| left = expression operator = POW right = expression	# Power
 	| left = expression operator = MUL right = expression	# Multiplication
@@ -115,5 +116,6 @@ expression:
 	| left = expression operator = AND right = expression	# AndLogical
 	| left = expression operator = OR right = expression	# OrLogical
 	| NOT left = expression									# NotLogical
+	| '['element = elements? ']'							# List
 	| left = Stringliteral operator = ASSIGNMEMT right = expression	# Assignment
-	| FN name = Stringliteral operator = ARROW right = expression # Lambda;
+	| FN name = Stringliteral operator = ARROW right = expression 	# Lambda;
