@@ -101,7 +101,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) {}
+  public constructor(public location: es.SourceLocation, public message: string) { }
 
   public explain() {
     return this.message
@@ -115,7 +115,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -129,7 +129,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Trailing comma'
@@ -216,7 +216,6 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
   }
 
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.Statement {
-    // console.log('visitVariableDeclaration!!!!!!!!!!')
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
   }
@@ -331,7 +330,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   }
 
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
-    console.log('var declaration', ctx._left.text)
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
       type: 'VariableDeclaration',
@@ -420,7 +418,6 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 
 class IdentifierGenerator implements CalcVisitor<es.Identifier> {
   visitID(ctx: IDContext): es.Identifier {
-    console.log('visit Identifier in parser: ', ctx.text)
     return {
       type: 'Identifier',
       name: ctx.text
@@ -469,7 +466,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitLambda(ctx: LambdaContext): es.Expression {
-    console.log('lamda detected at parser!')
     return {
       type: 'ArrowFunctionExpression',
       params: [
@@ -484,7 +480,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitLambdaApplication(ctx: LambdaApplicationContext): es.Expression {
-    console.log('lambda application detected at parser!')
     return {
       type: 'ArrowFunctionExpression',
       params: [
@@ -498,7 +493,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       arguments: this.visit(ctx._params)
     }
   }
-
 
   visitList?(ctx: ListContext): es.Expression {
     return ctx._left.accept(this)
@@ -518,8 +512,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitListAppend(ctx: ListAppendContext): es.Expression {
-    console.log('list append detected at parser!')
-
     const left = this.visit(ctx._left)
     const right = this.visit(ctx._right)
 
@@ -532,8 +524,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitListCons?(ctx: ListConsContext): es.Expression {
-    console.log('list cons detected at parser!')
-
     const left = this.visit(ctx._left)
     const right = this.visit(ctx._right)
     return {
@@ -545,7 +535,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitIdentifiers(ctx: IdentifiersContext): es.Expression {
-    //const generator: ExpressionGenerator = new ExpressionGenerator()
     return ctx.identifier().accept(this)
   }
 
@@ -556,8 +545,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   visitTuple(ctx: TupleContext): es.Expression {
     const elements: es.Expression[] = []
-    //console.log('tuple detected at parser!')
-    console.log('tuple elements: ', ctx.expression())
     for (let i = 0; i < ctx.expression().length; i++) {
       elements.push(this.visit(ctx.expression(i)))
     }
@@ -568,8 +555,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
-    console.log('string: ', ctx.text.replace(/"/g, ''))
-
     return {
       type: 'Literal',
       value: ctx.text.replace(/"/g, ''),
@@ -598,7 +583,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   visitBoolean(ctx: BooleanContext): es.Expression {
     let val
-    console.log('boolean: ', ctx.text)
     if (ctx.text === 'true') {
       val = true
     } else {
@@ -849,7 +833,6 @@ export function parse(source: string, context: Context) {
       return undefined
     }
   } else {
-    console.log('first else')
     return undefined
   }
 }
