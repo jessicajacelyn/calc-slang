@@ -70,13 +70,13 @@ whileStatement:
 	WHILE test = expression DO body = statement # WhileCondition;
 
 variableDeclaration:
-	VAL left = Stringliteral operator = EQUAL right = expression;
+	VAL left = Stringliteral operator = EQUAL right = expression ';';
 
 localDeclaration:
-	LOCAL del = declarationlist IN delist = declarationlist END;
+	LOCAL del = declarationlist IN delist = declarationlist END ';';
 
 letDeclaration:
-	LET del = declarationType IN delist = declarationlist END;
+	LET del = declarationType IN delist = declarationlist END ';';
 
 declarationType:
 	variableDeclaration 
