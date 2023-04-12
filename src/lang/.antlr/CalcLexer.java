@@ -1,4 +1,4 @@
-// Generated from /Users/suenkoh/4215_project/calc-slang/src/lang/Calc.g4 by ANTLR 4.9.2
+// Generated from /Users/jessicajacelyn/cs4215-calc-slang/src/lang/Calc.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -20,7 +20,7 @@ public class CalcLexer extends Lexer {
 		AND=11, OR=12, NOT=13, BOOLEAN=14, GT=15, LT=16, GE=17, LE=18, NUMBER=19, 
 		REAL=20, WHITESPACE=21, LETTER=22, LET=23, IN=24, END=25, VAL=26, LOCAL=27, 
 		FUN=28, FN=29, OPAR=30, CPAR=31, OBRACE=32, CBRACE=33, OSQUARE=34, CSQUARE=35, 
-		DOUBLEQUOTE=36, ASSIGNMEMT=37, APPEND=38, CONS=39, IF=40, THEN=41, ELSE=42, 
+		DOUBLEQUOTE=36, ASSIGNMENT=37, APPEND=38, CONS=39, IF=40, THEN=41, ELSE=42, 
 		WHILE=43, DO=44, CHAR=45, STRING=46, INT=47, BOOL=48, REALNUM=49, Stringliteral=50;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
@@ -36,7 +36,7 @@ public class CalcLexer extends Lexer {
 			"AND", "OR", "NOT", "BOOLEAN", "GT", "LT", "GE", "LE", "NUMBER", "REAL", 
 			"WHITESPACE", "LETTER", "LET", "IN", "END", "VAL", "LOCAL", "FUN", "FN", 
 			"OPAR", "CPAR", "OBRACE", "CBRACE", "OSQUARE", "CSQUARE", "DOUBLEQUOTE", 
-			"ASSIGNMEMT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", "DO", 
+			"ASSIGNMENT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", "DO", 
 			"CHAR", "STRING", "INT", "BOOL", "REALNUM", "Stringliteral"
 		};
 	}
@@ -59,7 +59,7 @@ public class CalcLexer extends Lexer {
 			"ARROW", "AND", "OR", "NOT", "BOOLEAN", "GT", "LT", "GE", "LE", "NUMBER", 
 			"REAL", "WHITESPACE", "LETTER", "LET", "IN", "END", "VAL", "LOCAL", "FUN", 
 			"FN", "OPAR", "CPAR", "OBRACE", "CBRACE", "OSQUARE", "CSQUARE", "DOUBLEQUOTE", 
-			"ASSIGNMEMT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", "DO", 
+			"ASSIGNMENT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", "DO", 
 			"CHAR", "STRING", "INT", "BOOL", "REALNUM", "Stringliteral"
 		};
 	}

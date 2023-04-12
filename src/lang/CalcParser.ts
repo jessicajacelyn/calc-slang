@@ -64,7 +64,7 @@ export class CalcParser extends Parser {
 	public static readonly OSQUARE = 34;
 	public static readonly CSQUARE = 35;
 	public static readonly DOUBLEQUOTE = 36;
-	public static readonly ASSIGNMEMT = 37;
+	public static readonly ASSIGNMENT = 37;
 	public static readonly APPEND = 38;
 	public static readonly CONS = 39;
 	public static readonly IF = 40;
@@ -115,7 +115,7 @@ export class CalcParser extends Parser {
 		"EQUAL", "ARROW", "AND", "OR", "NOT", "BOOLEAN", "GT", "LT", "GE", "LE", 
 		"NUMBER", "REAL", "WHITESPACE", "LETTER", "LET", "IN", "END", "VAL", "LOCAL", 
 		"FUN", "FN", "OPAR", "CPAR", "OBRACE", "CBRACE", "OSQUARE", "CSQUARE", 
-		"DOUBLEQUOTE", "ASSIGNMEMT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", 
+		"DOUBLEQUOTE", "ASSIGNMENT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", 
 		"DO", "CHAR", "STRING", "INT", "BOOL", "REALNUM", "Stringliteral",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcParser._LITERAL_NAMES, CalcParser._SYMBOLIC_NAMES, []);
@@ -876,7 +876,7 @@ export class CalcParser extends Parser {
 				this.state = 143;
 				(_localctx as AssignmentContext)._left = this.match(CalcParser.Stringliteral);
 				this.state = 144;
-				(_localctx as AssignmentContext)._operator = this.match(CalcParser.ASSIGNMEMT);
+				(_localctx as AssignmentContext)._operator = this.match(CalcParser.ASSIGNMENT);
 				this.state = 145;
 				(_localctx as AssignmentContext)._right = this.expression(2);
 				}
@@ -2840,7 +2840,7 @@ export class AssignmentContext extends ExpressionContext {
 	public _operator!: Token;
 	public _right!: ExpressionContext;
 	public Stringliteral(): TerminalNode { return this.getToken(CalcParser.Stringliteral, 0); }
-	public ASSIGNMEMT(): TerminalNode { return this.getToken(CalcParser.ASSIGNMEMT, 0); }
+	public ASSIGNMENT(): TerminalNode { return this.getToken(CalcParser.ASSIGNMENT, 0); }
 	public expression(): ExpressionContext {
 		return this.getRuleContext(0, ExpressionContext);
 	}

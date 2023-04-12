@@ -290,19 +290,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       if (currEnv[node.left.name] === undefined) {
         throw new Error(`variable ${node.left.name} is not defined`)
       } else {
-        // console.log('assigning value: ', typeof value, value, ' to variable: ', typeof currEnv[node.left.name], currEnv[node.left.name])
         if (typeof currEnv[node.left.name] === typeof value) {
-          // console.log('assigning value: ', value, ' to variable: ', currEnv[node.left.name])
           currEnv[node.left.name] = value
         } else {
-          // console.log('type mismatch: ', currEnv[node.left.name].type, ' and ', value.type)
           throw new Error(`type mismatch: ${currEnv[node.left.name].type} and ${value.type}`)
         }
       }
       console.log('assign environment: ', context.runtime.environments)
       return value
     } else if (node.left.type === 'MemberExpression') {
-      console.log('its a member expression')
       const object = yield* actualValue(node.left.object, context)
       const property = yield* actualValue(node.left.property, context)
       if (object.type === 'object') {
@@ -311,9 +307,34 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       } else {
         throw new Error(`not supported yet: ${node.type}`)
       }
-    } else if(node.left.type === 'ArrayExpression') {
-      console.log('append list not implemented yet')
-      return undefined
+    } else if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
+      const leftType = typeof node.left.elements[0]
+      const rightType = typeof node.right.elements[0]
+      if (leftType !== rightType) {
+        throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+      }
+      for (const element of node.left.elements) {
+        const value = yield* evaluate(node.right, context)
+        console.log('value: ', value)
+
+        if (typeof element !== leftType) {
+          throw new Error(`type mismatch: ${leftType} and ${typeof element}`)
+        }
+      }
+      for (const element of node.right.elements) {
+        if (typeof element !== rightType) {
+          throw new Error(`type mismatch: ${rightType} and ${typeof element}`)
+        }
+      }
+
+
+      const value = yield* evaluate(node.right, context)
+      const currEnv = context.runtime.environments[0].head
+      // if (typeof currEnv[node.left.name] === typeof value) {
+      //   currEnv[node.left.name] = value
+      // }
+      console.log('assign environment: ', context.runtime.environments)
+      return value
     } else {
       throw new Error(`not supported yet: ${node.type}`)
     }

@@ -52,7 +52,7 @@ export class CalcLexer extends Lexer {
 	public static readonly OSQUARE = 34;
 	public static readonly CSQUARE = 35;
 	public static readonly DOUBLEQUOTE = 36;
-	public static readonly ASSIGNMEMT = 37;
+	public static readonly ASSIGNMENT = 37;
 	public static readonly APPEND = 38;
 	public static readonly CONS = 39;
 	public static readonly IF = 40;
@@ -82,7 +82,7 @@ export class CalcLexer extends Lexer {
 		"AND", "OR", "NOT", "BOOLEAN", "GT", "LT", "GE", "LE", "NUMBER", "REAL", 
 		"WHITESPACE", "LETTER", "LET", "IN", "END", "VAL", "LOCAL", "FUN", "FN", 
 		"OPAR", "CPAR", "OBRACE", "CBRACE", "OSQUARE", "CSQUARE", "DOUBLEQUOTE", 
-		"ASSIGNMEMT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", "DO", "CHAR", 
+		"ASSIGNMENT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", "DO", "CHAR", 
 		"STRING", "INT", "BOOL", "REALNUM", "Stringliteral",
 	];
 
@@ -99,7 +99,7 @@ export class CalcLexer extends Lexer {
 		"EQUAL", "ARROW", "AND", "OR", "NOT", "BOOLEAN", "GT", "LT", "GE", "LE", 
 		"NUMBER", "REAL", "WHITESPACE", "LETTER", "LET", "IN", "END", "VAL", "LOCAL", 
 		"FUN", "FN", "OPAR", "CPAR", "OBRACE", "CBRACE", "OSQUARE", "CSQUARE", 
-		"DOUBLEQUOTE", "ASSIGNMEMT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", 
+		"DOUBLEQUOTE", "ASSIGNMENT", "APPEND", "CONS", "IF", "THEN", "ELSE", "WHILE", 
 		"DO", "CHAR", "STRING", "INT", "BOOL", "REALNUM", "Stringliteral",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(CalcLexer._LITERAL_NAMES, CalcLexer._SYMBOLIC_NAMES, []);
