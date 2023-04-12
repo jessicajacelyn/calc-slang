@@ -127,16 +127,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         currEnv[node.params[0].name] = arg
         return yield* evaluate(node.body, context)
       }
+    } else {
+      return node
     }
-
-    console.log('lambda', node)
-    console.log('name', node.params[0])
-    return 'yeyy'
   },
 
   Identifier: function* (node: es.Identifier, context: Context) {
-    //throw new Error(`not supported yet: ${node.type}`)
-    console.log('identifier at interpreter: ', node.name)
     const name = node.name
     const frame = context.runtime.environments[0].head[name];
     return frame;
@@ -144,7 +140,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   CallExpression: function* (node: es.CallExpression, context: Context) {
-    throw new Error(`not supported yet: ${node.type}`)
+    const currEnv = context.runtime.environments[0].head
+    if (node.callee.type === 'Identifier') {
+      if (currEnv[node.callee.name] !== undefined) {
+        const func = currEnv[node.callee.name]
+        const arg = yield* evaluate(node.arguments[0], context)
+        currEnv[func.params[0].name] = arg
+        return yield* evaluate(func.body, context)
+      }
+    } else {
+      throw new Error(`function not found`)
+    }
   },
 
   NewExpression: function* (node: es.NewExpression, context: Context) {
@@ -199,7 +205,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ConditionalExpression: function* (node: es.ConditionalExpression, context: Context) {
-    console.log('IF statement evaluating')
     return yield* this.IfStatement(node, context)
   },
 
@@ -232,7 +237,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
-    console.log('Variable declaration evaluating', node.declarations)
     let name
 
     for (const dec of node.declarations) {
@@ -250,12 +254,11 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       context.runtime.environments[0].head[name] = value
 
     }
-    console.log('after var declaration in interpreter: ', context.runtime.environments)
+    console.log('after var declaration: ', context.runtime.environments)
     return 'Successfully declared variable'
   },
 
   LocalDeclaration: function* (node: es.LocalDeclaration, context: Context) {
-    console.log('Local Variable declaration evaluating')
     let name
 
     if (node.declarations[0].id.type !== 'Identifier') {
@@ -265,9 +268,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     }
 
     if (node.declarations[0].init === null || node.declarations[0].init === undefined) {
-      // context.runtime.environments[0].head[name] = null
-      // console.log('after var declaration with no value: ', context.runtime.environments)
-      // return undefined
       throw new Error(`not supported yet: ${node.declarations[0].id.type}`)
     }
 
@@ -293,7 +293,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
 
     if (node.operator === '=' && node.left.type === 'Identifier') {
-      console.log('assigning to identifier: ', node.left.name)
       const value = yield* actualValue(node.right, context)
       const currEnv = context.runtime.environments[0].head
       if (currEnv[node.left.name] === undefined) {
@@ -494,7 +493,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   FunctionDeclaration: function* (node: es.FunctionDeclaration, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)
-    console.log('function declaration not done yet!!!!')
   },
 
   IfStatement: function* (node: es.IfStatement | es.ConditionalExpression, context: Context) {
@@ -537,20 +535,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const env = createGlobalEnvironment()
 
     pushEnvironment(context, env)
-    const temp: boolean = true
-    context.runtime.environments[0].head['test'] = temp
-    context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
-    // if (context.runtime.environments.length === 0) {
-    //   console.log('pushing env ', context)
-    console.log('env ', context.runtime.environments[0])
-    // }
-    console.log('env ', context.runtime.environments[0].head['test'].type, context.runtime.environments[0].head['test'])
+    // const temp: boolean = true
+    // context.runtime.environments[0].head['test'] = temp
+    // context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
+
+    // console.log('env ', context.runtime.environments[0].head['test'].type, context.runtime.environments[0].head['test'])
 
     // TODO: remove this when var declarations are implemented
-    context.runtime.environments[0].head['temp'] = [true, true]
-    context.runtime.environments[0].head['test'] = false
-    context.runtime.environments[0].head['num'] = 1
-    context.runtime.environments[0].head['num1'] = [true, false]
+    // context.runtime.environments[0].head['temp'] = [true, true]
+    // context.runtime.environments[0].head['test'] = false
+    // context.runtime.environments[0].head['num'] = 1
+    // context.runtime.environments[0].head['num1'] = [true, false]
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
