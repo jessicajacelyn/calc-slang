@@ -100,7 +100,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) {}
+  public constructor(public location: es.SourceLocation, public message: string) { }
 
   public explain() {
     return this.message
@@ -114,7 +114,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -128,7 +128,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) {}
+  public constructor(public location: es.SourceLocation) { }
 
   public explain() {
     return 'Trailing comma'
@@ -190,7 +190,6 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
 }
 
 class StatementGenerator implements CalcVisitor<es.Statement> {
-
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
@@ -469,8 +468,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitLambda(ctx: LambdaContext): es.Expression {
-
-    console.log("lamda detected at parser!")
+    console.log('lamda detected at parser!')
     return {
       type: 'ArrowFunctionExpression',
       params: [
@@ -480,7 +478,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
         }
       ],
       expression: true,
-      body: this.visit(ctx._right),
+      body: this.visit(ctx._right)
     }
   }
 
@@ -495,7 +493,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
         elements.push(this.visit(ctx._element.getChild(i)))
       }
     }
-    console.log('elements in list', elements)
     return {
       type: 'ArrayExpression',
       elements: elements
@@ -504,14 +501,9 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   visitListAppend(ctx: ListAppendContext): es.Expression {
     console.log('list append detected at parser!')
-    
-    const left = this.visit(ctx._left)
-    console.log('left type is: ', left.type)
-    console.log('left is: ', left)
 
+    const left = this.visit(ctx._left)
     const right = this.visit(ctx._right)
-    console.log('right type is: ', right.type)
-    console.log('right is: ', right)
 
     return {
       type: 'AssignmentExpression',
@@ -525,9 +517,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     console.log('list cons detected at parser!')
 
     const left = this.visit(ctx._left)
-    console.log('left : ', left)
     const right = this.visit(ctx._right)
-    console.log('right : ', right)
     return {
       type: 'AssignmentExpression',
       operator: '::',
@@ -560,7 +550,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitString(ctx: StringContext): es.Expression {
-
     console.log('string: ', ctx.text.replace(/"/g, ''))
 
     return {
@@ -572,7 +561,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitNumber(ctx: NumberContext): es.Expression {
-    // console.log('number: ', ctx.text)
     return {
       type: 'Literal',
       value: parseInt(ctx.text),
@@ -582,8 +570,6 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 
   visitReal(ctx: RealContext): es.Expression {
-    console.log('real: ', ctx.text)
-
     return {
       type: 'Literal',
       value: parseFloat(ctx.text),
@@ -594,6 +580,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   visitBoolean(ctx: BooleanContext): es.Expression {
     let val
+    console.log('boolean: ', ctx.text)
     if (ctx.text === 'true') {
       val = true
     } else {
