@@ -299,85 +299,154 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
       console.log('assign environment: ', context.runtime.environments)
       return value
-    } else if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression' && node.operator === '@') {
-      const left = yield* actualValue(node.left, context)
-      const right = yield* actualValue(node.right, context)
-      const leftType = typeof left[0]
-      const rightType = typeof right[0]
-      const arr = []
+    } else if (node.operator === '::') {
+      if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const leftType = typeof left[0]
+        const rightType = typeof right[0]
+        const arr = []
 
-      if (leftType !== rightType) {
-        throw new Error(`type mismatch: ${leftType} and ${rightType}`)
-      }
-      for (const element of left) {
-        arr.push(element)
-        if (typeof element !== leftType) {
-          throw new Error(`type mismatch: ${leftType} and ${element.type}`)
-        }
-      }
-      for (const element of right) {
-        arr.push(element)
-        if (typeof element !== rightType) {
-          throw new Error(`type mismatch: ${rightType} and ${element.type}`)
-        }
-      }
-      return arr
-    } else if (node.left.type === 'ArrayExpression' && node.operator === '::') {
-      const left = yield* actualValue(node.left, context)
-      const right = yield* actualValue(node.right, context)
-      const currEnv = context.runtime.environments[0].head
-      const leftType = typeof left[0]
-      const rightType = typeof right
-      const arr = []
-      if (currEnv[right] === undefined) {
-        if (rightType !== leftType) {
+        if (leftType !== rightType) {
           throw new Error(`type mismatch: ${leftType} and ${rightType}`)
-        } else {
-          for (const element of left) {
-            arr.push(element)
-          }
-          arr.push(right)
-          return arr
         }
-      } else {
-        const rightValue = currEnv[right]
-        if (rightType !== leftType) {
-          throw new Error(`type mismatch: ${leftType} and ${rightType}`)
-        } else {
-          for (const element of left) {
-            arr.push(element)
+        for (const element of left) {
+          if (typeof element !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${element.type}`)
           }
-          arr.push(rightValue)
-          return arr
+        }
+        for (const element of right) {
+          if (typeof element !== rightType) {
+            throw new Error(`type mismatch: ${rightType} and ${element.type}`)
+          }
+        }
+        arr.push(left)
+        arr.push(right)
+        return arr
+      } else if (node.left.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left[0]
+        const rightType = typeof right
+        const arr = []
+        if (currEnv[right] === undefined) {
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            for (const element of left) {
+              arr.push(element)
+            }
+            arr.push(right)
+            return arr
+          }
+        } else {
+          const rightValue = currEnv[right]
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            for (const element of left) {
+              arr.push(element)
+            }
+            arr.push(rightValue)
+            return arr
+          }
+        }
+      } else if (node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left
+        const rightType = typeof right[0]
+        const arr = []
+        if (currEnv[left] === undefined) {
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            arr.push(left)
+            for (const element of right) {
+              arr.push(element)
+            }
+            return arr
+          }
+        } else {
+          const leftValue = currEnv[left]
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            arr.push(leftValue)
+            for (const element of right) {
+              arr.push(element)
+            }
+            return arr
+          }
         }
       }
-    } else if (node.right.type === 'ArrayExpression' && node.operator === '::') {
-      const left = yield* actualValue(node.left, context)
-      const right = yield* actualValue(node.right, context)
-      const currEnv = context.runtime.environments[0].head
-      const leftType = typeof left
-      const rightType = typeof right[0]
-      const arr = []
-      if (currEnv[left] === undefined) {
-        if (rightType !== leftType) {
+    } else if (node.operator === '@') {
+      if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const leftType = typeof left[0]
+        const rightType = typeof right[0]
+        const arr = []
+
+        if (leftType !== rightType) {
           throw new Error(`type mismatch: ${leftType} and ${rightType}`)
-        } else {
-          arr.push(left)
-          for (const element of right) {
-            arr.push(element)
-          }
-          return arr
         }
-      } else {
-        const leftValue = currEnv[left]
-        if (rightType !== leftType) {
-          throw new Error(`type mismatch: ${leftType} and ${rightType}`)
-        } else {
-          arr.push(leftValue)
-          for (const element of right) {
-            arr.push(element)
+        for (const element of left) {
+          if (typeof element !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${element.type}`)
           }
-          return arr
+          arr.push(element)
+        }
+        for (const element of right) {
+          if (typeof element !== rightType) {
+            throw new Error(`type mismatch: ${rightType} and ${element.type}`)
+          }
+          arr.push(element)
+        }
+        return arr
+      } else if (node.left.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left[0]
+        const rightType = typeof right
+        const arr = []
+        if (currEnv[right] === undefined) {
+          throw new Error(`${right} is not defined`)
+        } else {
+          const rightValue = currEnv[right]
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            for (const element of left) {
+              arr.push(element)
+            }
+            arr.push(rightValue)
+            return arr
+          }
+        }
+      } else if (node.right.type === 'ArrayExpression') {
+        const left = yield* actualValue(node.left, context)
+        const right = yield* actualValue(node.right, context)
+        const currEnv = context.runtime.environments[0].head
+        const leftType = typeof left
+        const rightType = typeof right[0]
+        const arr = []
+        if (currEnv[left] === undefined) {
+          throw new Error(`${left} is not defined`)
+        } else {
+          const leftValue = currEnv[left]
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            arr.push(leftValue)
+            for (const element of right) {
+              arr.push(element)
+            }
+            return arr
+          }
         }
       }
     } else {
