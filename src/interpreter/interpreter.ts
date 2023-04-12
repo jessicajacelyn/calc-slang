@@ -5,6 +5,7 @@ import { isBoolean } from 'lodash'
 import createContext, { createGlobalEnvironment } from '../createContext'
 import { RuntimeSourceError } from '../errors/runtimeSourceError'
 import { Context, Environment, Value } from '../types'
+import { binaryExpression } from '../utils/astCreator'
 import {
   evaluateBinaryExpression,
   evaluateLogicalExpression,
@@ -118,8 +119,15 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
   },
 
   ArrowFunctionExpression: function* (node: es.ArrowFunctionExpression, context: Context) {
-    const value = yield* evaluate(node.body, context)
-    const right = yield* actualValue(node.body, context)
+
+    if (node.arguments !== undefined) {
+      const arg = yield* evaluate(node.arguments, context)
+      const currEnv = context.runtime.environments[0].head
+      if (node.params[0].type === 'Identifier') {
+        currEnv[node.params[0].name] = arg
+        return yield* evaluate(node.body, context)
+      }
+    }
 
     console.log('lambda', node)
     console.log('name', node.params[0])
@@ -243,7 +251,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
     }
     console.log('after var declaration in interpreter: ', context.runtime.environments)
-    return null
+    return 'Successfully declared variable'
   },
 
   LocalDeclaration: function* (node: es.LocalDeclaration, context: Context) {
