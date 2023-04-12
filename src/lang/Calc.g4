@@ -108,7 +108,7 @@ expression:
 	| '"' Stringliteral '"'											# String
 	| OPAR inner = expression CPAR									# Parentheses
 	| OPAR expression (',' expression)* CPAR						# Tuple
-	| name = identifier params = identifier							# FunctionCall
+	| name = Stringliteral OPAR params = expression	CPAR			# FunctionCall
 	| left = expression operator = POW right = expression			# Power
 	| left = expression operator = MUL right = expression			# Multiplication
 	| left = expression operator = DIV right = expression			# Division
@@ -127,4 +127,5 @@ expression:
 	| left = expression operator = APPEND right = expression		# ListAppend
 	| left = expression operator = CONS right = expression			# ListCons
 	| left = Stringliteral operator = ASSIGNMENT right = expression	# Assignment
-	| FN name = Stringliteral operator = ARROW right = expression	# Lambda;
+	| FN name = Stringliteral operator = ARROW right = expression	# Lambda
+	| FN name = Stringliteral operator = ARROW right = expression OPAR params = expression CPAR # LambdaApplication;

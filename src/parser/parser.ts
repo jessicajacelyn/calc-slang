@@ -23,6 +23,7 @@ import {
   IDContext,
   IdentifiersContext,
   IfThenElseConditionContext,
+  LambdaApplicationContext,
   LambdaContext,
   LesserComparatorContext,
   LesserEqualComparatorContext,
@@ -481,6 +482,23 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
       body: this.visit(ctx._right)
     }
   }
+
+  visitLambdaApplication(ctx: LambdaApplicationContext): es.Expression {
+    console.log('lambda application detected at parser!')
+    return {
+      type: 'ArrowFunctionExpression',
+      params: [
+        {
+          type: 'Identifier',
+          name: ctx._name.text as string
+        }
+      ],
+      expression: true,
+      body: this.visit(ctx._right),
+      arguments: this.visit(ctx._params)
+    }
+  }
+
 
   visitList?(ctx: ListContext): es.Expression {
     return ctx._left.accept(this)
