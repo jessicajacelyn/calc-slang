@@ -299,36 +299,30 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
       console.log('assign environment: ', context.runtime.environments)
       return value
-    } else if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
-      console.log('assigning to array: ')
-
+    } else if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression' && node.operator === '@') {
       const left = yield* actualValue(node.left, context)
       const right = yield* actualValue(node.right, context)
       const leftType = typeof left[0]
       const rightType = typeof right[0]
       const arr = []
-      console.log('leftType: ', leftType)
-      console.log('rightType: ', rightType)
 
       if (leftType !== rightType) {
         throw new Error(`type mismatch: ${leftType} and ${rightType}`)
       }
       for (const element of left) {
-        console.log('left element: ', element)
         arr.push(element)
         if (typeof element !== leftType) {
           throw new Error(`type mismatch: ${leftType} and ${element.type}`)
         }
       }
       for (const element of right) {
-        console.log('right element: ', element)
         arr.push(element)
         if (typeof element !== rightType) {
           throw new Error(`type mismatch: ${rightType} and ${element.type}`)
         }
       }
       return arr
-    } else if (node.left.type === 'ArrayExpression') {
+    } else if (node.left.type === 'ArrayExpression' && node.operator === '::') {
       const left = yield* actualValue(node.left, context)
       const right = yield* actualValue(node.right, context)
       const currEnv = context.runtime.environments[0].head
@@ -357,7 +351,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
           return arr
         }
       }
-    } else if (node.right.type === 'ArrayExpression') {
+    } else if (node.right.type === 'ArrayExpression' && node.operator === '::') {
       const left = yield* actualValue(node.left, context)
       const right = yield* actualValue(node.right, context)
       const currEnv = context.runtime.environments[0].head
