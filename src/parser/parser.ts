@@ -101,7 +101,7 @@ export class DisallowedConstructError implements SourceError {
 export class FatalSyntaxError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation, public message: string) { }
+  public constructor(public location: es.SourceLocation, public message: string) {}
 
   public explain() {
     return this.message
@@ -115,7 +115,7 @@ export class FatalSyntaxError implements SourceError {
 export class MissingSemicolonError implements SourceError {
   public type = ErrorType.SYNTAX
   public severity = ErrorSeverity.ERROR
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Missing semicolon at the end of statement'
@@ -129,7 +129,7 @@ export class MissingSemicolonError implements SourceError {
 export class TrailingCommaError implements SourceError {
   public type: ErrorType.SYNTAX
   public severity: ErrorSeverity.WARNING
-  public constructor(public location: es.SourceLocation) { }
+  public constructor(public location: es.SourceLocation) {}
 
   public explain() {
     return 'Trailing comma'
@@ -154,11 +154,11 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
 }
 
 /**
- * Generates an estree expression from a CalcParser expression context 
+ * Generates an estree expression from a CalcParser expression context
  * parse each statements to call this respective visitor
  * @param ctx Expression context
  * @param context Context of the expression
- * 
+ *
  */
 class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
   visitStart?: ((ctx: StartContext) => es.Statement[]) | undefined
@@ -208,7 +208,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
   /**
    * Parse if conditional statement
-   * @param ctx 
+   * @param ctx
    * @returns IfStatement context used in interpreter
    */
   visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Statement {
@@ -223,7 +223,7 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
   /**
    * Parse while conditional statement
-   * @param ctx 
+   * @param ctx
    * @returns WhileStatement context used in interpreter
    */
   visitWhileCondition(ctx: WhileConditionContext): es.Statement {
@@ -237,18 +237,18 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
   /**
    * Parse variable declaration by calling DeclarationGenerator
-   * @param ctx 
-   * @returns 
+   * @param ctx
+   * @returns
    */
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
-  } 
+  }
 
   /**
    * Parse let declaration by calling DeclarationGenerator
-   * @param ctx 
-   * @returns 
+   * @param ctx
+   * @returns
    */
   visitLetDeclaration(ctx: LetDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
@@ -257,8 +257,8 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
 
   /**
    * Parse local declaration by calling DeclarationGenerator
-   * @param ctx 
-   * @returns 
+   * @param ctx
+   * @returns
    */
   visitLocalDeclaration(ctx: LocalDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
@@ -301,11 +301,10 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
  * Generate declaration for variable, let and local
  */
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
-
   /**
    * Parse Let declaration to be used in interpreter
    * checks for the type of variable declaration and add it to the list
-   * @param ctx 
+   * @param ctx
    * @returns VariableDeclarator type with declaration list
    */
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
@@ -343,8 +342,8 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
   /**
    * Parse local variable declaration to be used in interpreter
    * checks for the type of variable declaration and add it to the list
-   * @param ctx 
-   * @returns 
+   * @param ctx
+   * @returns
    */
   visitLocalDeclaration(ctx: LocalDeclarationContext): es.VariableDeclaration {
     const stmtGenerator: StatementGenerator = new StatementGenerator()
@@ -375,8 +374,8 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
 
   /**
    * Parse variable declaration to be used in interpreter
-   * @param ctx 
-   * @returns 
+   * @param ctx
+   * @returns
    */
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
     const generator: ExpressionGenerator = new ExpressionGenerator()
@@ -466,11 +465,10 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class IdentifierGenerator implements CalcVisitor<es.Identifier> {
-
   /**
    * Parse identifier to be used in interpreter
-   * @param ctx 
-   * @returns 
+   * @param ctx
+   * @returns
    */
   visitID(ctx: IDContext): es.Identifier {
     return {
@@ -508,10 +506,9 @@ class IdentifierGenerator implements CalcVisitor<es.Identifier> {
   }
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
-
   /**
    * Parse assignment to be used in interpreter
-   * @param ctx 
+   * @param ctx
    * @returns AssignmentExpression type
    */
   visitAssignment(ctx: AssignmentContext): es.Expression {
@@ -528,7 +525,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   /**
    * Parse lambda function expression to be used in interpreter
-   * @param ctx 
+   * @param ctx
    * @returns ArrownFunctionExpression type
    */
   visitLambda(ctx: LambdaContext): es.Expression {
@@ -547,7 +544,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   /**
    * Parse lambda function application to be used in interpreter
-   * @param ctx 
+   * @param ctx
    * @returns ArrownFunctionExpression type
    */
   visitLambdaApplication(ctx: LambdaApplicationContext): es.Expression {
@@ -572,7 +569,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   /**
    * Parse list to be used in interpreter
    * Retrieve all elements in the list and return an array
-   * @param ctx 
+   * @param ctx
    * @returns ArrayExpresson type
    */
   visitListStructure(ctx: ListStructureContext): es.Expression {
@@ -590,7 +587,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   /**
    * Parse list append to be used in interpreter
-   * @param ctx 
+   * @param ctx
    * @returns  AssignmentExpression type
    */
   visitListAppend(ctx: ListAppendContext): es.Expression {
@@ -607,7 +604,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 
   /**
    * Parse list cons to be used in interpreter
-   * @param ctx 
+   * @param ctx
    * @returns AssignmentExpression type
    */
   visitListCons?(ctx: ListConsContext): es.Expression {
@@ -691,7 +688,7 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   /**
    * Parse function call to be used in interpreter
    * get the aruguments and add it to an array
-   * @param ctx 
+   * @param ctx
    * @returns CallExpression type
    */
   visitFunctionCall(ctx: FunctionCallContext): es.Expression {
@@ -888,8 +885,8 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
 }
 
 /**
- * 
- * @param start 
+ *
+ * @param start
  * accepts an array of statements as input
  * @returns ExpressionArrayGenerator
  */
