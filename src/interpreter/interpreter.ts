@@ -103,6 +103,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
+  /**
+   * Interpreter for list
+   * @param node 
+   * @param context 
+   * @returns element of list
+   */
   ArrayExpression: function* (node: es.ArrayExpression, context: Context) {
     const arr = []
     for (const element of node.elements) {
@@ -118,13 +124,19 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
+  /**
+   * Interpreter for lambda function
+   * @param node 
+   * @param context 
+   * @returns result of lambda function if arguments exists else return node
+   */
   ArrowFunctionExpression: function* (node: es.ArrowFunctionExpression, context: Context) {
-
+    // check if argument exists
     if (node.arguments !== undefined) {
       const arg = yield* evaluate(node.arguments, context)
       const currEnv = context.runtime.environments[0].head
       if (node.params[0].type === 'Identifier') {
-        currEnv[node.params[0].name] = arg
+        currEnv[node.params[0].name] = arg // store argument in environment
         return yield* evaluate(node.body, context)
       }
     } else {
@@ -139,13 +151,20 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
 
   },
 
+  /**
+   * Interpreter for function call
+   * @param node 
+   * @param context 
+   * @returns result of function call
+   */
   CallExpression: function* (node: es.CallExpression, context: Context) {
     const currEnv = context.runtime.environments[0].head
     if (node.callee.type === 'Identifier') {
+      // check if function is in environment
       if (currEnv[node.callee.name] !== undefined) {
-        const func = currEnv[node.callee.name]
+        const func = currEnv[node.callee.name] // get function from environment
         const arg = yield* evaluate(node.arguments[0], context)
-        currEnv[func.params[0].name] = arg
+        currEnv[func.params[0].name] = arg // store argument in environment
         return yield* evaluate(func.body, context)
       }
     } else {
@@ -157,10 +176,17 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
+  /**
+   * Interpreter for unary expression
+   * @param node
+   * @param context
+   * @returns result of unary expression
+   */
   UnaryExpression: function* (node: es.UnaryExpression, context: Context) {
     let value = yield* actualValue(node.argument, context)
     const frame = context.runtime.environments[0].head
 
+    // Check if value is a boolean
     if (!(typeof value === 'boolean')) {
       if (frame[value] !== undefined && (typeof frame[value] === 'boolean')) {
         value = frame[value]
@@ -176,11 +202,18 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return evaluateUnaryExpression(node.operator, value)
   },
 
+  /**
+   * Interpreter for binary expression
+   * @param node 
+   * @param context 
+   * @returns result of binary expression
+   */
   BinaryExpression: function* (node: es.BinaryExpression, context: Context) {
     let left = yield* actualValue(node.left, context)
     let right = yield* actualValue(node.right, context)
     const frame = context.runtime.environments[0].head
 
+    // Check if left and right are numbers
     if (isNaN(Number(left))) {
       if (frame[left] !== undefined && !isNaN(Number(frame[left]))) {
         left = frame[left]
@@ -208,11 +241,18 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return yield* this.IfStatement(node, context)
   },
 
+  /**
+   * Interpreter for logical expression
+   * @param node
+   * @param context
+   * @returns result of logical expression
+  */
   LogicalExpression: function* (node: es.LogicalExpression, context: Context) {
     let left = yield* actualValue(node.left, context)
     let right = yield* actualValue(node.right, context)
     const frame = context.runtime.environments[0].head
 
+    // Check if left and right are booleans
     if (!(typeof left === 'boolean')) {
       if (frame[left] !== undefined && (typeof frame[left] === 'boolean')) {
         left = frame[left]
@@ -236,6 +276,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return evaluateLogicalExpression(node.operator, left, right)
   },
 
+  /**
+   * Interpreter for variable declaration
+   * @param node 
+   * @param context 
+   * @returns success message
+   */
   VariableDeclaration: function* (node: es.VariableDeclaration, context: Context) {
     let name
 
@@ -258,6 +304,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     return 'Successfully declared variable'
   },
 
+  /**
+   * Interpreter for local declaration
+   * @param node 
+   * @param context 
+   * @returns success message
+   */
   LocalDeclaration: function* (node: es.LocalDeclaration, context: Context) {
     let name
 
@@ -275,7 +327,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     context.runtime.environments[0].head[name] = value
 
     console.log('after var declaration: ', context.runtime.environments)
-    return value
+    return 'Successfully declared variable'
   },
 
   ContinueStatement: function* (_node: es.ContinueStatement, _context: Context) {
@@ -290,6 +342,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     throw new Error(`not supported yet: ${node.type}`)
   },
 
+  /**
+   * Interpreter for assignment expression
+   * @param node 
+   * @param context 
+   * @returns 
+   */
   AssignmentExpression: function* (node: es.AssignmentExpression, context: Context) {
 
     if (node.operator === '=' && node.left.type === 'Identifier') {
@@ -316,7 +374,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
       }
       console.log('assign environment: ', context.runtime.environments)
       return value
-    } else if (node.operator === '::') {
+    } else if (node.operator === '::') { // for list consing
       if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
         const left = yield* actualValue(node.left, context)
         const right = yield* actualValue(node.right, context)
@@ -410,7 +468,7 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         }
         return arr
       }
-    } else if (node.operator === '@') {
+    } else if (node.operator === '@') { // for list appending
       if (node.left.type === 'ArrayExpression' && node.right.type === 'ArrayExpression') {
         const left = yield* actualValue(node.left, context)
         const right = yield* actualValue(node.right, context)
@@ -495,6 +553,12 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     //throw new Error(`not supported yet: ${node.type}`)
   },
 
+  /**
+   * Interpreter for if statement
+   * @param node 
+   * @param context 
+   * @returns result of the if statement
+   */
   IfStatement: function* (node: es.IfStatement | es.ConditionalExpression, context: Context) {
     //throw new Error(`not supported yet: ${node.type}`)
     const test = yield* actualValue(node.test, context)
@@ -535,17 +599,6 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
     const env = createGlobalEnvironment()
 
     pushEnvironment(context, env)
-    // const temp: boolean = true
-    // context.runtime.environments[0].head['test'] = temp
-    // context.runtime.environments[0].head['num'] = [1, 2, 3, 4]
-
-    // console.log('env ', context.runtime.environments[0].head['test'].type, context.runtime.environments[0].head['test'])
-
-    // TODO: remove this when var declarations are implemented
-    // context.runtime.environments[0].head['temp'] = [true, true]
-    // context.runtime.environments[0].head['test'] = false
-    // context.runtime.environments[0].head['num'] = 1
-    // context.runtime.environments[0].head['num1'] = [true, false]
 
     const result = yield* forceIt(yield* evaluateBlockSatement(context, node), context);
     return result;
