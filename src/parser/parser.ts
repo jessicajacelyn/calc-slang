@@ -153,6 +153,13 @@ function contextToLocation(ctx: ExpressionContext): es.SourceLocation {
   }
 }
 
+/**
+ * Generates an estree expression from a CalcParser expression context 
+ * parse each statements to call this respective visitor
+ * @param ctx Expression context
+ * @param context Context of the expression
+ * 
+ */
 class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
   visitStart?: ((ctx: StartContext) => es.Statement[]) | undefined
 
@@ -190,12 +197,20 @@ class ExpressionArrayGenerator implements CalcVisitor<es.Statement[]> {
   }
 }
 
+/**
+ * Statement generator for each statements
+ */
 class StatementGenerator implements CalcVisitor<es.Statement> {
   visitExpressionStatement(ctx: ExpressionStatementContext): es.Statement {
     const generator: ExpressionStatementGenerator = new ExpressionStatementGenerator()
     return ctx.accept(generator)
   }
 
+  /**
+   * Parse if conditional statement
+   * @param ctx 
+   * @returns IfStatement context used in interpreter
+   */
   visitIfThenElseCondition(ctx: IfThenElseConditionContext): es.Statement {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
@@ -206,6 +221,11 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
+  /**
+   * Parse while conditional statement
+   * @param ctx 
+   * @returns WhileStatement context used in interpreter
+   */
   visitWhileCondition(ctx: WhileConditionContext): es.Statement {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
@@ -215,16 +235,31 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
     }
   }
 
+  /**
+   * Parse variable declaration by calling DeclarationGenerator
+   * @param ctx 
+   * @returns 
+   */
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
-  }
+  } 
 
+  /**
+   * Parse let declaration by calling DeclarationGenerator
+   * @param ctx 
+   * @returns 
+   */
   visitLetDeclaration(ctx: LetDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
   }
 
+  /**
+   * Parse local declaration by calling DeclarationGenerator
+   * @param ctx 
+   * @returns 
+   */
   visitLocalDeclaration(ctx: LocalDeclarationContext): es.Statement {
     const generator: DeclarationGenerator = new DeclarationGenerator()
     return ctx.accept(generator)
@@ -262,7 +297,17 @@ class StatementGenerator implements CalcVisitor<es.Statement> {
   }
 }
 
+/**
+ * Generate declaration for variable, let and local
+ */
 class DeclarationGenerator implements CalcVisitor<es.Declaration> {
+
+  /**
+   * Parse Let declaration to be used in interpreter
+   * checks for the type of variable declaration and add it to the list
+   * @param ctx 
+   * @returns VariableDeclarator type with declaration list
+   */
   visitLetDeclaration(ctx: LetDeclarationContext): es.VariableDeclaration {
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
@@ -275,7 +320,6 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
       const newdel = del as es.LocalDeclaration
       varDeclarators.push(...newdel.declarations)
     }
-    //console.log("del type is:", ctx._delist)
 
     for (let i = 0; i < ctx._delist.childCount; i++) {
       const del = ctx._delist.getChild(i).accept(stmtGenerator)
@@ -287,10 +331,7 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
         const newdel = del as es.LocalDeclaration
         varDeclarators.push(...newdel.declarations)
       }
-      console.log('delist del type is:', del.type)
     }
-
-    //console.log("varDeclarators after pushing is: ", varDeclarators)
 
     return {
       type: 'VariableDeclaration',
@@ -299,14 +340,17 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
     }
   }
 
+  /**
+   * Parse local variable declaration to be used in interpreter
+   * checks for the type of variable declaration and add it to the list
+   * @param ctx 
+   * @returns 
+   */
   visitLocalDeclaration(ctx: LocalDeclarationContext): es.VariableDeclaration {
     const stmtGenerator: StatementGenerator = new StatementGenerator()
     const varDeclarators: es.VariableDeclarator[] = []
 
-    console.log('ctx._delist:', ctx._delist)
-    console.log('del raw:', ctx._del)
     for (let i = 0; i < ctx._del.childCount; i++) {
-      // console.log('del child', i, ':', ctx._del.getChild(i))
       const del = ctx._del.getChild(i).accept(stmtGenerator)
       if (del.type === 'VariableDeclaration') {
         const newdel = del as es.VariableDeclaration
@@ -329,6 +373,11 @@ class DeclarationGenerator implements CalcVisitor<es.Declaration> {
     }
   }
 
+  /**
+   * Parse variable declaration to be used in interpreter
+   * @param ctx 
+   * @returns 
+   */
   visitVariableDeclaration(ctx: VariableDeclarationContext): es.VariableDeclaration {
     const generator: ExpressionGenerator = new ExpressionGenerator()
     return {
@@ -417,6 +466,12 @@ class ExpressionStatementGenerator implements CalcVisitor<es.ExpressionStatement
 }
 
 class IdentifierGenerator implements CalcVisitor<es.Identifier> {
+
+  /**
+   * Parse identifier to be used in interpreter
+   * @param ctx 
+   * @returns 
+   */
   visitID(ctx: IDContext): es.Identifier {
     return {
       type: 'Identifier',
@@ -453,6 +508,12 @@ class IdentifierGenerator implements CalcVisitor<es.Identifier> {
   }
 }
 class ExpressionGenerator implements CalcVisitor<es.Expression> {
+
+  /**
+   * Parse assignment to be used in interpreter
+   * @param ctx 
+   * @returns AssignmentExpression type
+   */
   visitAssignment(ctx: AssignmentContext): es.Expression {
     return {
       type: 'AssignmentExpression',
@@ -465,6 +526,11 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  /**
+   * Parse lambda function expression to be used in interpreter
+   * @param ctx 
+   * @returns ArrownFunctionExpression type
+   */
   visitLambda(ctx: LambdaContext): es.Expression {
     return {
       type: 'ArrowFunctionExpression',
@@ -479,6 +545,11 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  /**
+   * Parse lambda function application to be used in interpreter
+   * @param ctx 
+   * @returns ArrownFunctionExpression type
+   */
   visitLambdaApplication(ctx: LambdaApplicationContext): es.Expression {
     return {
       type: 'ArrowFunctionExpression',
@@ -498,6 +569,12 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return ctx._left.accept(this)
   }
 
+  /**
+   * Parse list to be used in interpreter
+   * Retrieve all elements in the list and return an array
+   * @param ctx 
+   * @returns ArrayExpresson type
+   */
   visitListStructure(ctx: ListStructureContext): es.Expression {
     const elements: es.Expression[] = []
     for (let i = 0; i < ctx._element.childCount; i++) {
@@ -511,6 +588,11 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  /**
+   * Parse list append to be used in interpreter
+   * @param ctx 
+   * @returns  AssignmentExpression type
+   */
   visitListAppend(ctx: ListAppendContext): es.Expression {
     const left = this.visit(ctx._left)
     const right = this.visit(ctx._right)
@@ -523,6 +605,11 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     }
   }
 
+  /**
+   * Parse list cons to be used in interpreter
+   * @param ctx 
+   * @returns AssignmentExpression type
+   */
   visitListCons?(ctx: ListConsContext): es.Expression {
     const left = this.visit(ctx._left)
     const right = this.visit(ctx._right)
@@ -601,6 +688,12 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
     return this.visit(ctx.expression())
   }
 
+  /**
+   * Parse function call to be used in interpreter
+   * get the aruguments and add it to an array
+   * @param ctx 
+   * @returns CallExpression type
+   */
   visitFunctionCall(ctx: FunctionCallContext): es.Expression {
     const callee: es.Identifier = {
       type: 'Identifier',
@@ -794,6 +887,12 @@ class ExpressionGenerator implements CalcVisitor<es.Expression> {
   }
 }
 
+/**
+ * 
+ * @param start 
+ * accepts an array of statements as input
+ * @returns ExpressionArrayGenerator
+ */
 function convertStatementExpression(start: StartContext): Array<es.Statement> {
   const generator = new ExpressionArrayGenerator()
   return start.accept(generator)
