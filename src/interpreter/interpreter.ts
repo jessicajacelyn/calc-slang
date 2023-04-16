@@ -403,9 +403,10 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
         const right = yield* actualValue(node.right, context)
         const currEnv = context.runtime.environments[0].head
         const leftType = typeof left[0]
+        let rightType = typeof right[0]
+
         const arr = []
         if (node.right.type === 'Identifier') {
-          const rightType = typeof right[0]
           if (currEnv[node.right.name] === undefined) {
             if (rightType !== leftType) {
               throw new Error(`type mismatch: ${leftType} and ${rightType}`)
@@ -423,12 +424,21 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
               return arr
             }
           }
+        } else {
+          rightType = typeof right
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            arr.push(left)
+            arr.push(right)
+            return arr
+          }
         }
       } else if (node.right.type === 'ArrayExpression') {
         const left = yield* actualValue(node.left, context)
         const right = yield* actualValue(node.right, context)
         const currEnv = context.runtime.environments[0].head
-        const leftType = typeof left[0]
+        let leftType = typeof left[0]
         const rightType = typeof right[0]
         const arr = []
         if (node.left.type === "Identifier") {
@@ -442,6 +452,16 @@ export const evaluators: { [nodeType: string]: Evaluator<es.Node> } = {
               arr.push(right)
               return arr
             }
+          }
+        }
+        else {
+          leftType = typeof left
+          if (rightType !== leftType) {
+            throw new Error(`type mismatch: ${leftType} and ${rightType}`)
+          } else {
+            arr.push(left)
+            arr.push(right)
+            return arr
           }
         }
       } else {
